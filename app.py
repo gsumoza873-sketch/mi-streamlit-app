@@ -51,4 +51,4 @@ if st.button("Ver mi calificación 🏆"):
     else:
         st.warning(f"Buen intento, Fariana. Sacaste {nota}/5. ¡Sigue estudiando!")
 
-st.sidebar.info("Minijuego creado por Matías.")
+st.sidebar.info("Minijuego creado por Gabriel.")
