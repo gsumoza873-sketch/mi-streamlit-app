@@ -16,22 +16,21 @@ st.markdown("""
         border-radius: 20px;
         border: 1px solid #00d4ff;
         text-align: center;
+        min-height: 400px;
     }
     </style>
     """, unsafe_allow_html=True)
 
 st.title("💎 Gabriel's Luxury Store")
 
-# 2. Diccionario de Productos (Simplificado)
-# Las URLs son imágenes de ejemplo de alta calidad
+# 2. Productos con fotos de alta disponibilidad
 productos = {
-    "MacBook Pro": {"precio": 2500, "img": "https://m.media-amazon.com/images/I/618mS9vmSUL._AC_SL1500_.jpg"},
-    "iPhone 15 Pro": {"precio": 1100, "img": "https://m.media-amazon.com/images/I/81SigFo7_LL._AC_SL1500_.jpg"},
-    "AirPods Max": {"precio": 550, "img": "https://m.media-amazon.com/images/I/815mXvXQRAL._AC_SL1500_.jpg"},
-    "Apple Watch": {"precio": 400, "img": "https://m.media-amazon.com/images/I/71LfnkS8SUL._AC_SL1500_.jpg"}
+    "MacBook Pro": {"precio": 2500, "img": "https://images.unsplash.com/photo-1517336712461-83ad53ffbbdf?w=500&q=80"},
+    "iPhone 15 Pro": {"precio": 1100, "img": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=500&q=80"},
+    "AirPods Max": {"precio": 550, "img": "https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=500&q=80"},
+    "Apple Watch": {"precio": 400, "img": "https://images.unsplash.com/photo-1546868871-70c122467d9b?w=500&q=80"}
 }
 
-# Inicializar carrito de forma segura
 if 'carrito' not in st.session_state:
     st.session_state.carrito = {}
 
@@ -40,27 +39,25 @@ cols = st.columns(4)
 for i, (nombre, info) in enumerate(productos.items()):
     with cols[i]:
         st.markdown('<div class="product-box">', unsafe_allow_html=True)
-        st.image(info["img"], use_container_width=True)
-        st.subheader(nombre)
+        # Usamos st.image de forma sencilla
+        st.image(info["img"], caption=nombre, use_container_width=True)
         st.write(f"Precio: **${info['precio']}**")
-        if st.button(f"Añadir", key=f"add_{nombre}"):
+        if st.button(f"Añadir al carrito", key=f"add_{nombre}"):
             st.session_state.carrito[nombre] = st.session_state.carrito.get(nombre, 0) + 1
             st.toast(f"✅ {nombre} añadido")
         st.markdown('</div>', unsafe_allow_html=True)
 
-# 4. Barra Lateral (Carrito)
+# 4. Barra Lateral
 with st.sidebar:
     st.header("🛒 Tu Compra")
     total = 0
-    
-    # Solo procesamos lo que está en nuestro diccionario actual
     items_en_carrito = list(st.session_state.carrito.items())
     
     if not items_en_carrito:
         st.write("Tu carrito está vacío.")
     else:
         for item, cant in items_en_carrito:
-            if item in productos: # <-- ESTO EVITA EL ERROR DE LA FOTO
+            if item in productos:
                 subtotal = productos[item]["precio"] * cant
                 total += subtotal
                 st.write(f"**{item}** x{cant}: ${subtotal}")
@@ -71,10 +68,6 @@ with st.sidebar:
         if st.button("Vaciar Carrito"):
             st.session_state.carrito = {}
             st.rerun()
-        
-        if st.button("Pagar por WhatsApp"):
-            st.balloons()
-            st.success("¡Pedido enviado!")
 
     st.markdown("---")
     st.info("Creado por **Gabriel**")
