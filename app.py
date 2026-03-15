@@ -1,13 +1,18 @@
 import streamlit as st
 
-st.title("Conversación")
+# Configuración de la página
+st.set_page_config(page_title="Saludo para Matías", page_icon="👋")
 
-st.write("¿Hola Sofia, por qué eres tan fea?")
+# Título principal
+st.title("¡Hola Matías! ¿Cómo estás?")
 
-respuesta = st.text_input("Sofia responde:")
+# Casilla de respuesta (Input)
+respuesta = st.text_input("Cuéntame cómo va tu día:", placeholder="Escribe aquí...")
 
-if respuesta:
-    if respuesta.lower() == "porque si":
-        st.write("y punto")
+# Botón y lógica de respuesta
+if st.button("Enviar respuesta"):
+    if respuesta.strip():
+        st.success(f"¡Qué bueno saber de ti, Matías! Dijiste: '{respuesta}'")
+        st.balloons()  # Esto lanza los globos
     else:
-        st.write("Respuesta no válida")
+        st.warning("Por favor, escribe algo antes de enviar.")
