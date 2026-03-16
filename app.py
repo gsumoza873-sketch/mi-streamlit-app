@@ -1,120 +1,95 @@
 import streamlit as st
 
-# 1. Configuración de pantalla completa deportiva
-st.set_page_config(page_title="LVBP Grand Slam Trivia", page_icon="🇻🇪", layout="wide")
+# 1. Configuración de pantalla
+st.set_page_config(page_title="LVBP Master Stats", page_icon="🇻🇪", layout="wide")
 
-# 2. CSS Avanzado para diseño "Estadio de Noche"
+# CSS para el estilo Estadio
 st.markdown("""
     <style>
-    /* Fondo verde grama profundo */
     .stApp {
-        background-color: #003300;
-        background-image: linear-gradient(180deg, #001a00 0%, #004d00 100%);
+        background: linear-gradient(180deg, #001a00 0%, #004d00 100%);
         color: white;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-    /* Título estilo pantalla de estadio */
     .titulo-estadio {
         background-color: #000;
-        color: #f1c40f; /* Amarillo brillante */
-        padding: 20px;
-        border: 5px solid #bdc3c7;
+        color: #f1c40f;
+        padding: 15px;
+        border: 4px solid #f1c40f;
         border-radius: 10px;
         text-align: center;
-        font-family: 'Courier New', Courier, monospace;
-        font-weight: bold;
-        box-shadow: 0px 0px 20px #f1c40f;
-        margin-bottom: 30px;
+        font-family: 'Arial Black', sans-serif;
     }
-
-    /* Tarjetas de preguntas tipo Dugout */
     .stRadio > div {
-        background-color: rgba(255, 255, 255, 0.1);
-        padding: 25px;
-        border-radius: 20px;
-        border: 2px solid #f1c40f;
-        margin-top: 15px;
-        transition: 0.3s;
-    }
-
-    /* Estilo para los botones */
-    .stButton > button {
-        background: linear-gradient(to bottom, #c0392b 5%, #96281b 100%);
-        background-color: #c0392b;
-        border-radius: 28px;
-        border: 2px solid #ffffff;
-        color: #ffffff !important;
-        font-size: 22px !important;
-        font-weight: bold;
-        padding: 15px 40px;
-        width: 100%;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    /* Barra lateral */
-    [data-testid="stSidebar"] {
-        background-color: #001a33;
-        border-right: 4px solid #f1c40f;
+        background-color: rgba(255,255,255,0.1);
+        padding: 15px;
+        border-radius: 10px;
+        border-left: 5px solid #f1c40f;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Encabezado Impactante
-st.markdown('<div class="titulo-estadio"><h1>🏟️ LVBP - EL DESAFÍO DEL FANÁTICO ⚾</h1></div>', unsafe_allow_html=True)
-
-# 4. Preguntas de la Liga Venezolana
-col1, col2 = st.columns([2, 1])
-
-with col1:
-    st.subheader("📝 ¡Responde rápido, que te cantan el tercer strike!")
-    
-    p1 = st.radio("1. ¿Cuál es el actual campeón (2023-24) que rompió la sequía de casi 38 años?", 
-                 ["Cardenales de Lara", "Leones del Caracas", "Tiburones de La Guaira", "Tigres de Aragua"])
-
-    p2 = st.radio("2. ¿Quién es el máximo jonronero histórico de la LVBP?", 
-                 ["Alex Cabrera", "Robert Pérez", "Eliezer Alfonzo", "Oscar Azócar"])
-
-    p3 = st.radio("3. ¿Cuál de estos estadios es el nuevo hogar de los Leones y el más moderno de Latinoamérica?", 
-                 ["Universitario", "Estadio Monumental Simón Bolívar", "José Bernardo Pérez", "Guatamare"])
-
-    p4 = st.radio("4. ¿Qué equipo protagoniza junto al Magallanes el 'Eterno Rival'?", 
-                 ["Caribes de Anzoátegui", "Águilas del Zulia", "Leones del Caracas", "Bravos de Margarita"])
-
-    p5 = st.radio("5. ¿A qué leyenda se le conoce como 'El Señor Pelota'?", 
-                 ["Luis Aparicio", "Andrés Galarraga", "Robert Pérez", "Víctor Davalillo"])
-
-with col2:
-    st.image("https://images.unsplash.com/photo-1547619232-983637691a3c?w=400&q=80", caption="¡Sentimiento Nacional!")
-    st.info("💡 **Dato Curioso:** Venezuela es el país con más Series del Caribe ganadas después de República Dominicana.")
-
-st.markdown("---")
-
-# 5. Botón de RESULTADOS
-if st.button("⚾ ¡CANTAR EL RESULTADO!"):
-    nota = 0
-    # Validación
-    if p1 == "Tiburones de La Guaira": nota += 1
-    if p2 == "Eliezer Alfonzo": nota += 1
-    if p3 == "Estadio Monumental Simón Bolívar": nota += 1
-    if p4 == "Leones del Caracas": nota += 1
-    if p5 == "Víctor Davalillo": nota += 1
-
-    st.markdown("### 📊 Pizarra Final:")
-    
-    if nota == 5:
-        st.success(f"🏆 ¡JONRÓN CON LAS BASES LLENAS! Sacaste {nota}/5. ¡Eres un verdadero manager!")
-        st.balloons()
-    elif nota >= 3:
-        st.warning(f"🏃 ¡A salvo en primera! Sacaste {nota}/5. Sabes de béisbol, pero te falta entrenamiento.")
-    else:
-        st.error(f"🧤 ¡PONCHADO! Sacaste {nota}/5. Tienes que ver más juegos en el estadio.")
-
-# Barra lateral
+# --- BARRA LATERAL: HISTORIA Y CRÉDITOS ---
 with st.sidebar:
-    st.title("👨‍💻 Info")
-    st.write("Esta página es oficial de:")
-    st.header("GABRIEL")
-    st.write("---")
-    st.write("Temporada 2026")
+    st.markdown("<h1 style='color: #f1c40f;'>🏟️ INFO LVBP</h1>", unsafe_allow_html=True)
+    st.write(f"Creado por: **Gabriel**")
+    st.divider()
+    
+    st.subheader("📚 Historia de los Equipos")
+    equipo = st.selectbox("Selecciona un equipo para ver su historia:", [
+        "Leones del Caracas", "Navegantes del Magallanes", "Tigres de Aragua", 
+        "Cardenales de Lara", "Tiburones de La Guaira", "Águilas del Zulia",
+        "Caribes de Anzoátegui", "Bravos de Margarita"
+    ])
+    
+    # Datos de los equipos
+    info_equipos = {
+        "Leones del Caracas": {"títulos": 21, "jugador": "Víctor Davalillo", "historia": "Fundados en 1942. Es el equipo con más títulos en la historia de la liga."},
+        "Navegantes del Magallanes": {"títulos": 13, "jugador": "Luis 'Camaleón' García", "historia": "El equipo más antiguo de Venezuela (1917). Protagonista del eterno rival."},
+        "Tigres de Aragua": {"títulos": 10, "jugador": "David Concepción", "historia": "Famosos por su dinastía en los 2000 ganando varios títulos seguidos."},
+        "Cardenales de Lara": {"títulos": 6, "jugador": "Robert Pérez", "historia": "Símbolo de constancia en el occidente del país."},
+        "Tiburones de La Guaira": {"títulos": 8, "jugador": "Luis Aparicio", "historia": "Rompieron una sequía histórica en la 23-24 de la mano de Ozzie Guillén."},
+        "Águilas del Zulia": {"títulos": 6, "jugador": "Luis Aparicio", "historia": "Gran tradición zuliana, campeones de dos Series del Caribe."},
+        "Caribes de Anzoátegui": {"títulos": 4, "jugador": "Eliézer Alfonzo", "historia": "La 'Tribu' ha sido el equipo más dominante del oriente en la última década."},
+        "Bravos de Margarita": {"títulos": 0, "jugador": "Henry Blanco", "historia": "Anteriormente Pastora de los Llanos, ahora representan a la Isla de Margarita."}
+    }
+    
+    # Mostrar la info en la barra lateral
+    st.info(f"**Títulos:** {info_equipos[equipo]['títulos']}\n\n**Máximo Jugador:** {info_equipos[equipo]['jugador']}\n\n**Reseña:** {info_equipos[equipo]['historia']}")
+
+# --- CUERPO PRINCIPAL: TRIVIA ---
+st.markdown('<div class="titulo-estadio"><h1>⚾ DESAFÍO DE BÉISBOL PROFESIONAL ⚾</h1></div>', unsafe_allow_html=True)
+st.write("")
+
+# Diccionario de preguntas para poder comparar después
+trivia = [
+    {"id": "p1", "q": "¿Quién es el actual campeón (23-24)?", "ops": ["Magallanes", "Tiburones", "Leones"], "ans": "Tiburones"},
+    {"id": "p2", "q": "¿Qué equipo tiene más títulos?", "ops": ["Magallanes", "Leones", "Tigres"], "ans": "Leones"},
+    {"id": "p3", "q": "¿Dónde juegan las Águilas?", "ops": ["Maracay", "Maracaibo", "Valencia"], "ans": "Maracaibo"},
+    {"id": "p4", "q": "¿Apodo del Magallanes?", "ops": ["Los Melenudos", "La Nave Turca", "Los Salados"], "ans": "La Nave Turca"},
+    {"id": "p5", "q": "¿Quién es 'El Señor Pelota'?", "ops": ["Luis Aparicio", "Víctor Davalillo", "Robert Pérez"], "ans": "Víctor Davalillo"}
+]
+
+# Guardar respuestas
+user_ans = {}
+for item in trivia:
+    user_ans[item["id"]] = st.radio(item["q"], item["ops"], key=item["id"])
+    st.write("")
+
+if st.button("🏟️ FINALIZAR JUEGO"):
+    puntos = 0
+    st.subheader("📋 REPORTE DEL UMPIRE:")
+    
+    for item in trivia:
+        if user_ans[item["id"]] == item["ans"]:
+            st.success(f"✅ **CORRECTO:** {item['q']} -> **{item['ans']}**")
+            puntos += 1
+        else:
+            # AQUÍ TE DICE EN CUÁL TE EQUIVOCASTE
+            st.error(f"❌ **ERROR:** {item['q']}\n\nElegiste: *{user_ans[item['id']]}*. La correcta era: **{item['ans']}**")
+    
+    st.divider()
+    if puntos == 5:
+        st.balloons()
+        st.write(f"## 🏆 ¡GRAND SLAM! Puntaje: {puntos}/5")
+    else:
+        st.write(f"## ⚾ Puntaje Final: {puntos}/5. ¡Sigue practicando, Gabriel!")
