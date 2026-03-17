@@ -1,89 +1,84 @@
 import streamlit as st
+import time
 
 # 1. Configuración de la página
-st.set_page_config(page_title="Misión Secreta: El Enigma", page_icon="🕵️‍♂️", layout="centered")
+st.set_page_config(page_title="Detector de Verdad 3000", page_icon="🕵️‍♂️")
 
-# Estilo visual tipo Hacker/Misterio
+# Estilo visual de terminal de inteligencia secreta
 st.markdown("""
     <style>
     .stApp {
-        background-color: #000000;
-        color: #00FF00; /* Verde tipo Matrix */
+        background-color: #0a0a0a;
+        color: #00ff41;
         font-family: 'Courier New', Courier, monospace;
     }
     .stRadio > div {
-        background-color: #111111;
-        padding: 15px;
-        border: 1px solid #00FF00;
+        background-color: #1a1a1a;
+        padding: 20px;
+        border: 2px solid #00ff41;
         border-radius: 10px;
     }
-    .pista-box {
-        background-color: #002200;
+    .status-box {
+        border: 1px solid #00ff41;
         padding: 10px;
-        border-left: 5px solid #00FF00;
-        margin-top: 10px;
-        font-weight: bold;
+        margin: 10px 0;
+        text-align: center;
     }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🕵️‍♂️ EXPEDIENTE X: MANUEL")
-st.write("### Resuelve los acertijos para desbloquear la verdad oculta...")
-
-# --- LÓGICA DE LOS ACERTIJOS ---
-
-# Acertijo 1
+st.title("📂 SISTEMA DE ANÁLISIS: CASO MANUEL")
 st.write("---")
-st.subheader("Nivel 1: El Objeto")
-a1 = st.radio("Soy algo que se rompe antes de usarse, ¿qué soy?", 
-              ["Una piedra", "Un huevo", "Una promesa", "Un cristal"], key="a1")
+st.write("### 🚨 INSTRUCCIONES:")
+st.write("Responde los siguientes acertijos de comportamiento para que la IA procese los datos.")
 
-if a1 == "Un huevo":
-    st.markdown('<div class="pista-box">🔓 PISTA 1: A Manuel le gusta...</div>', unsafe_allow_html=True)
-else:
-    st.write("❌ Bloqueado: Respuesta incorrecta")
+# --- ACERTIJOS ---
 
-# Acertijo 2
-st.write("---")
-st.subheader("Nivel 2: La Acción")
-a2 = st.radio("Si me tienes, quieres compartirme. Si me compartes, ya no me tienes. ¿Qué soy?", 
-              ["Dinero", "Un secreto", "Comida", "Un bostezo"], key="a2")
-
-if a2 == "Un secreto":
-    st.markdown('<div class="pista-box">🔓 PISTA 2: ...mucho el brillo y...</div>', unsafe_allow_html=True)
-else:
-    st.write("❌ Bloqueado: Pista oculta")
-
-# Acertijo 3
-st.write("---")
-st.subheader("Nivel 3: El Destino")
-a3 = st.radio("Vuelo sin alas, lloro sin ojos. ¿Qué soy?", 
-              ["Un fantasma", "El viento", "Una nube", "Un pensamiento"], key="a3")
-
-if a3 == "Una nube":
-    st.markdown('<div class="pista-box">🔓 PISTA 3: ...la compañía masculina.</div>', unsafe_allow_html=True)
-else:
-    st.write("❌ Bloqueado: Sigue intentando")
+st.subheader("🔍 ACERTIJO 1: EL GUSTO")
+a1 = st.radio("Se dice que Manuel ve a un hombre guapo en la calle y...", 
+              ["Mira hacia otro lado (Miente)", "Disimula pero detalla", "Se le sale un suspiro"])
 
 st.write("---")
 
-# --- REVELACIÓN FINAL ---
-if st.button("🔓 DESBLOQUEAR ARCHIVO FINAL"):
-    if a1 == "Un huevo" and a2 == "Un secreto" and a3 == "Una nube":
-        st.balloons()
-        st.error("⚠️ ARCHIVO DESBLOQUEADO ⚠️")
-        st.markdown("""
-            <h1 style='text-align: center; color: #ff00ff; font-size: 50px;'>
-            🌈 ¡CONFIRMADO! 🌈
-            </h1>
-            <h2 style='text-align: center; color: white;'>
-            Manuel es 100% GAY.
-            </h2>
-            <p style='text-align: center;'>No hay dudas en el sistema.</p>
-        """, unsafe_allow_html=True)
-    else:
-        st.warning("⚠️ ACCESO DENEGADO: Debes resolver todos los acertijos correctamente para ver la verdad.")
+st.subheader("🔍 ACERTIJO 2: EL SECRETO")
+a2 = st.radio("¿Qué guarda Manuel en su 'carpeta secreta' del celular?", 
+              ["Fotos de paisajes", "Memes de béisbol", "Fotos de tipos del gimnasio"])
 
-# Firma
-st.sidebar.write("Investigación liderada por:")
-st.sidebar.info(f"**Agente Gabriel**")
+st.write("---")
+
+st.subheader("🔍 ACERTIJO 3: EL DESTINO")
+a3 = st.radio("Si Manuel va a una fiesta, ¿hacia dónde gravita su mirada?", 
+              ["Hacia la comida", "Hacia el televisor", "Hacia los pantalones ajustados"])
+
+# --- PROCESAMIENTO FINAL ---
+st.write("---")
+if st.button("🧬 INICIAR ESCANEO DE ADN Y COMPORTAMIENTO"):
+    
+    with st.status("Analizando patrones de Manuel...", expanded=True) as status:
+        st.write("Calculando niveles de estrógeno...")
+        time.sleep(1)
+        st.write("Revisando historial de miradas sospechosas...")
+        time.sleep(1)
+        st.write("Verificando atracción por el mismo sexo...")
+        time.sleep(1)
+        status.update(label="¡Análisis Completado!", state="complete", expanded=False)
+
+    # El resultado final SIEMPRE es positivo
+    st.markdown("""
+        <div style='background-color: #ff0055; padding: 30px; border-radius: 15px; text-align: center; border: 5px solid white;'>
+            <h1 style='color: white; font-size: 40px;'>⚠️ RESULTADO POSITIVO ⚠️</h1>
+            <h2 style='color: white;'>LA IA HA HABLADO:</h2>
+            <h1 style='color: yellow; font-size: 60px;'>🌈 MANUEL ES GAY 🌈</h1>
+            <p style='color: white; font-size: 20px;'>Nivel de certeza: 100.9%</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.balloons()
+    st.snow()
+
+# Barra lateral
+st.sidebar.title("📊 STATUS")
+st.sidebar.write("Estado: **Escaneando...**")
+st.sidebar.write("Objetivo: **Manuel**")
+st.sidebar.markdown("---")
+st.sidebar.info(f"Sistema desarrollado por el **Agente Gabriel**")
