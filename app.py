@@ -2,83 +2,73 @@ import streamlit as st
 import time
 
 # 1. Configuración de la página
-st.set_page_config(page_title="Detector de Verdad 3000", page_icon="🕵️‍♂️")
+st.set_page_config(page_title="Detector de Verdad 3000", page_icon="⚾")
 
-# Estilo visual de terminal de inteligencia secreta
+# Estilo visual y Animación de Pelotas
 st.markdown("""
     <style>
     .stApp {
-        background-color: #0a0a0a;
+        background-color: #050505;
         color: #00ff41;
         font-family: 'Courier New', Courier, monospace;
     }
-    .stRadio > div {
-        background-color: #1a1a1a;
-        padding: 20px;
-        border: 2px solid #00ff41;
-        border-radius: 10px;
+    
+    /* Animación de pelotas cayendo */
+    @keyframes falling {
+        0% { transform: translateY(-100vh) rotate(0deg); }
+        100% { transform: translateY(100vh) rotate(360deg); }
     }
-    .status-box {
-        border: 1px solid #00ff41;
-        padding: 10px;
-        margin: 10px 0;
-        text-align: center;
+
+    .ball {
+        position: fixed;
+        top: -10%;
+        font-size: 2rem;
+        z-index: 9999;
+        animation: falling 3s linear infinite;
     }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("📂 SISTEMA DE ANÁLISIS: CASO MANUEL")
+st.title("📂 ANÁLISIS DE ADN: CASO MANUEL")
 st.write("---")
-st.write("### 🚨 INSTRUCCIONES:")
-st.write("Responde los siguientes acertijos de comportamiento para que la IA procese los datos.")
 
 # --- ACERTIJOS ---
+st.subheader("🔍 ACERTIJO 1")
+a1 = st.radio("¿Qué prefiere Manuel en un estadio?", 
+              ["Ver el juego", "Ver a los jugadores en el dugout", "Que le den un 'strike'"])
 
-st.subheader("🔍 ACERTIJO 1: EL GUSTO")
-a1 = st.radio("Se dice que Manuel ve a un hombre guapo en la calle y...", 
-              ["Mira hacia otro lado (Miente)", "Disimula pero detalla", "Se le sale un suspiro"])
+st.subheader("🔍 ACERTIJO 2")
+a2 = st.radio("Si Manuel atrapa una pelota, ¿qué hace?", 
+              ["Se la guarda", "La regala a un niño", "Se emociona porque es 'redonda y dura'"])
 
-st.write("---")
-
-st.subheader("🔍 ACERTIJO 2: EL SECRETO")
-a2 = st.radio("¿Qué guarda Manuel en su 'carpeta secreta' del celular?", 
-              ["Fotos de paisajes", "Memes de béisbol", "Fotos de tipos del gimnasio"])
-
-st.write("---")
-
-st.subheader("🔍 ACERTIJO 3: EL DESTINO")
-a3 = st.radio("Si Manuel va a una fiesta, ¿hacia dónde gravita su mirada?", 
-              ["Hacia la comida", "Hacia el televisor", "Hacia los pantalones ajustados"])
-
-# --- PROCESAMIENTO FINAL ---
-st.write("---")
-if st.button("🧬 INICIAR ESCANEO DE ADN Y COMPORTAMIENTO"):
+# --- PROCESAMIENTO ---
+if st.button("🧬 REALIZAR PRUEBA DE CAMPO"):
     
-    with st.status("Analizando patrones de Manuel...", expanded=True) as status:
-        st.write("Calculando niveles de estrógeno...")
+    with st.status("Procesando datos sospechosos...", expanded=True) as status:
         time.sleep(1)
-        st.write("Revisando historial de miradas sospechosas...")
+        st.write("Verificando radar de 'bateo'...")
         time.sleep(1)
-        st.write("Verificando atracción por el mismo sexo...")
+        st.write("Confirmando orientación...")
         time.sleep(1)
-        status.update(label="¡Análisis Completado!", state="complete", expanded=False)
+        status.update(label="¡ANÁLISIS COMPLETADO!", state="complete", expanded=False)
 
-    # El resultado final SIEMPRE es positivo
+    # REVELACIÓN CON LLUVIA DE PELOTAS
+    # Generamos 20 pelotas en posiciones aleatorias usando HTML
+    balls_html = "".join([f'<div class="ball" style="left: {i*5}%; animation-delay: {i*0.2}s;">⚾</div>' for i in range(20)])
+    st.markdown(balls_html, unsafe_allow_html=True)
+
     st.markdown("""
         <div style='background-color: #ff0055; padding: 30px; border-radius: 15px; text-align: center; border: 5px solid white;'>
             <h1 style='color: white; font-size: 40px;'>⚠️ RESULTADO POSITIVO ⚠️</h1>
-            <h2 style='color: white;'>LA IA HA HABLADO:</h2>
+            <h2 style='color: white;'>LA IA DE GABRIEL DETERMINA:</h2>
             <h1 style='color: yellow; font-size: 60px;'>🌈 MANUEL ES GAY 🌈</h1>
-            <p style='color: white; font-size: 20px;'>Nivel de certeza: 100.9%</p>
+            <p style='color: white; font-size: 20px;'>¡Se ponchó! ⚾</p>
         </div>
     """, unsafe_allow_html=True)
     
-    st.balloons()
+    # También lanzamos nieve para que haya más movimiento
     st.snow()
 
 # Barra lateral
-st.sidebar.title("📊 STATUS")
-st.sidebar.write("Estado: **Escaneando...**")
-st.sidebar.write("Objetivo: **Manuel**")
-st.sidebar.markdown("---")
-st.sidebar.info(f"Sistema desarrollado por el **Agente Gabriel**")
+st.sidebar.title("👨‍💻 LAB")
+st.sidebar.info("Investigación: **Gabriel**")
