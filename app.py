@@ -1,55 +1,41 @@
 import streamlit as st
 import time
 
-# 1. Configuración de la página
-st.set_page_config(page_title="Roseline's Beauty Challenge", page_icon="💄", layout="centered")
+# 1. Configuración Básica
+st.set_page_config(page_title="Beauty Quiz Roseline", page_icon="💄")
 
-# Estilo visual: Soft Pink & Gold (Estilo Sephora/Ulta)
-st.markdown("""
-    <style>
-    .stApp {
-        background: linear-gradient(180deg, #fff0f3 0%, #ffccd5 100%);
-        color: #590d22;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
-    
-    .beauty-card {
-        background-color: white;
-        padding: 20px;
-        border-radius: 15px;
-        border-left: 8px solid #ff4d6d;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        margin-bottom: 20px;
-        color: #333;
-    }
-
-    .stButton>button {
-        background: linear-gradient(90deg, #ff4d6d 0%, #c9184a 100%) !important;
-        color: white !important;
-        border-radius: 25px !important;
-        font-size: 20px !important;
-        font-weight: bold !important;
-        border: none !important;
-        height: 3em !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-st.title("💄 ROSELINE: BEAUTY GURU QUIZ")
+st.title("💄 ROSELINE: BEAUTY QUIZ")
 st.write("---")
-st.write("### ¿Eres una experta en maquillaje? ¡Demuéstralo!")
 
-# --- CUESTIONARIO DE MAQUILLAJE ---
+# --- PREGUNTAS SIMPLES ---
+st.subheader("Responde con sinceridad:")
 
-with st.container():
-    st.markdown('<div class="beauty-card">', unsafe_allow_html=True)
-    m1 = st.selectbox("1. ¿Qué producto se aplica para que el maquillaje dure todo el día?", 
-                    ["Corrector", "Primer (Prebase)", "Iluminador", "Bronzer"])
-    st.markdown('</div>', unsafe_allow_html=True)
+m1 = st.selectbox("1. ¿Producto para que el maquillaje dure?", ["Selecciona...", "Primer", "Corrector", "Base"])
+m2 = st.radio("2. ¿Para qué sirve el 'Baking'?", ["Cocinar", "Sellar maquillaje", "Limpiar"])
+m3 = st.radio("3. ¿Te maquillas seguido?", ["Nunca", "A veces", "Siempre"])
+m4 = st.radio("4. ¿Tragas o escupes?", ["Trago", "Escupo", "Depende"])
+m5 = st.selectbox("5. ¿Mejor herramienta para la base?", ["Brocha", "Esponja", "Dedos"])
 
-    st.markdown('<div class="beauty-card">', unsafe_allow_html=True)
-    m2 = st.radio("2. ¿Para qué sirve el 'Baking' en el maquillaje?", 
-                ["Para cocinar", "Para sellar el corrector con polvos traslúcidos", "Para limpiar las brochas", "Para hidratar la piel"])
-    st.markdown('</div>', unsafe_allow_html=True)
+st.write("---")
 
-    st.markdown('<div class
+# --- BOTÓN DE RESULTADO ---
+if st.button("VER MI DIAGNÓSTICO"):
+    if m1 == "Selecciona...":
+        st.warning("Responde la primera pregunta primero.")
+    else:
+        with st.spinner("Analizando..."):
+            time.sleep(2)
+        
+        st.balloons()
+        st.success("¡ANÁLISIS COMPLETADO!")
+        
+        # Cuadro de resultado
+        st.markdown(f"""
+            <div style="background-color: #ffc0cb; padding: 20px; border-radius: 10px; text-align: center;">
+                <h2 style="color: #d63384;">✨ RESULTADO PARA ROSELINE ✨</h2>
+                <p style="color: black; font-size: 20px;">¡Eres una experta total!</p>
+                <h1 style="color: #d63384;">¡SALIÓ POSITIVO! 🌈</h1>
+            </div>
+        """, unsafe_allow_html=True)
+
+st.sidebar.write("Creado por: **Gabriel**")
