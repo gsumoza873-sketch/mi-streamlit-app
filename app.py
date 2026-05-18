@@ -59,7 +59,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Banner de Bienvenida y Humor para Fariana
+# 3. Banner de Bienvenida para Fariana
 st.markdown("""
     <div class="main-card">
         <h1 class="titulo-principal">🧠 OPERATIVO EXPOSICIÓN: ¡FARIANA SACA 20!</h1>
@@ -67,7 +67,8 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-st.warning("⚠️ **Estrategia mental para Fariana:** Si en plena exposición te da pánico y te quedas en blanco, mira fijamente al profesor con mucha seguridad y di 'Hueso Hioides'. Eso te da +5 puntos de confianza automáticamente.")
+# Consejo corregido según lo que me pediste
+st.info("💡 **Un recordatorio para Fariana:** Si en plena exposición se te olvida algo por los nervios, no te preocupes. Respira profundo durante tres segundos, piensa con calma y retoma la idea. ¡Tú puedes con esto!")
 
 # 4. Tema 1: Músculos Infrahioideos
 st.markdown("## 🏢 El Edificio del Cuello: Músculos Infrahioideos")
@@ -117,55 +118,3 @@ with col2:
         </p>
     </div>
     """, unsafe_allow_html=True)
-
-# 5. Tema 2: Irrigación
-st.markdown("## 🩸 El Sistema de Tuberías: La Irrigación Sanguínea")
-st.markdown("""
-<div class="bloque-explicacion">
-    ¿Quién le lleva los nutrientes y el oxígeno a todos estos músculos y órganos vitales (como la tiroides y la laringe)? El agua y la luz corren por cuenta de dos arterias principales que trabajan en equipo:
-    <ul>
-        <li><b>Arteria Carótida Externa:</b> Es la manguera principal que sube por el cuello. De ella sale una rama clave llamada <b>Arteria Tiroidea Superior</b>, que baja a encargarse de la parte alta de la tiroides y los músculos del frente.</li>
-        <li><b>Arteria Subclavia:</b> Pasa por debajo de la clavícula y despacha hacia arriba otra rama llamada <b>Arteria Tiroidea Inferior</b>.</li>
-    </ul>
-    💡 <b>Dato pro para lucirse con el profe:</b> La arteria tiroidea superior y la inferior se unen en el cuello (hacen una <i>anastomosis</i>). Así arman una red de seguridad brutal para que a la tiroides y a la laringe jamás les falte sangre.
-</div>
-""", unsafe_allow_html=True)
-
-# 6. El Cuestionario de 3 preguntas para Fariana (Versión Ultra-Compatible)
-st.write("---")
-st.markdown("## 📝 ¡Quiz de Control para Fariana!")
-st.write("Elige una opción en cada pregunta para comprobar tus conocimientos:")
-
-# Pregunta 1
-p1 = st.radio(
-    "1. ¿Cuál de estos músculos se frena a mitad de camino y NO toca el hueso hioides?",
-    ["--- Selecciona una opción ---", "Esternocleidohioideo", "Omohioideo", "Esternotiroideo"]
-)
-if p1 == "Esternotiroideo":
-    st.success("¡Brutal, Fariana! Ese se rinde antes, en el cartílago tiroides. ¡Llevas un punto! 🔥")
-elif p1 != "--- Selecciona una opción ---":
-    st.error("Nop. Ese sí completa la ruta hasta arriba. ¡Acuérdate del que se frena a mitad de camino!")
-
-# Pregunta 2
-p2 = st.radio(
-    "2. ¿Qué músculo es el 'raro' que tiene dos vientres y viaja desde el omóplato?",
-    ["--- Selecciona una opción ---", "Tirohioideo", "Omohioideo", "Esternohioideo"]
-)
-if p2 == "Omohioideo":
-    st.success("¡Excelente! El prefijo 'Omo' viene de hombro/omóplato. ¡Dominado! 🧠")
-elif p2 != "--- Selecciona una opción ---":
-    st.error("Incorrecto. Piensa en el aventurero que hace el viaje largo en diagonal desde la espalda.")
-
-# Pregunta 3
-p3 = st.radio(
-    "3. ¿De qué arteria principal nace la Arteria Tiroidea Superior que nutre esta zona?",
-    ["--- Selecciona una opción ---", "Arteria Carótida Externa", "Arteria Subclavia", "Arteria Aorta"]
-)
-if p3 == "Arteria Carótida Externa":
-    st.balloons()  # ¡Lluvia de globos virtuales!
-    st.success("¡Coronaste! La Carótida Externa es la mamá de la rama superior. ¡Lista para destrozar esa exposición! 🎓")
-elif p3 != "--- Selecciona una opción ---":
-    st.error("Casi, pero esa manda la inferior. La superior viene desde más arriba (la carótida).")
-
-st.write("---")
-st.caption("Guía de Estudio Interactiva Especial • Hecho por Gabriel Sumoza para Fariana • ¡Mano, tengo fe! 🇻🇪")
