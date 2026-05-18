@@ -7,14 +7,13 @@ st.set_page_config(
     layout="wide"
 )
 
-# 2. Estilos CSS (Estructura de Revista y Bandera reubicada)
+# 2. Estilos CSS (Estructura de Revista, Bandera reubicada y Tarjetas Estéticas)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0f172a;
         color: #f8fafc;
     }
-    /* Bandera bajada para que no la tape el menú de Streamlit */
     .top-left-flag {
         position: fixed;
         top: 60px;
@@ -52,26 +51,29 @@ st.markdown("""
         border-left: 5px solid #FFD700;
         margin-bottom: 20px;
     }
-    /* Tarjetas elegantes para Símbolos sin imágenes */
+    /* Tarjetas para Símbolos Patrios y Naturales */
     .simbolo-card {
         background-color: #1e293b;
         padding: 25px;
         border-radius: 12px;
         border-top: 4px solid #0038A8;
-        text-align: center;
         box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
     .simbolo-titulo {
         color: #FFD700;
-        font-size: 22px;
+        font-size: 24px;
         font-weight: bold;
         margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
-    .simbolo-cientifico {
+    .simbolo-sub {
         color: #94a3b8;
-        font-style: italic;
         font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         margin-bottom: 15px;
     }
     .simbolo-desc {
@@ -79,6 +81,10 @@ st.markdown("""
         font-size: 15px;
         line-height: 1.6;
         text-align: justify;
+    }
+    .simbolo-desc ul {
+        margin-top: 5px;
+        padding-left: 20px;
     }
     h1, h2, h3 {
         color: #FFD700 !important;
@@ -124,8 +130,14 @@ Ejes temáticos preparados:
 """)
 
 # 6. Menú de pestañas de Contenido
-tab_historia, tab_simbolos, tab_geografia = st.tabs(["📜 Crónica Política Actualizada", "🌿 Símbolos Naturales e Himno", "📍 Organización Territorial"])
+tab_historia, tab_patrios, tab_naturales, tab_geografia = st.tabs([
+    "📜 Crónica Política Actualizada", 
+    "🛡️ Símbolos Patrios", 
+    "🌿 Símbolos Naturales", 
+    "📍 Organización Territorial"
+])
 
+# PESTAÑA 1: HISTORIA POLITICA
 with tab_historia:
     st.header("Cronología de Hechos Políticos (1992 - Al día de hoy: Marzo 2026)")
     
@@ -142,7 +154,7 @@ with tab_historia:
     
     <div class="section-box">
         <h3>2013 - 2024: Crisis Estructural, Conflictividad Extrema y Elecciones</h3>
-        <p>A la muerte de Chávez en 2013, Nicolás Maduro Moros asumió el mando ejecutivo. El país enfrentó una severa contracción económica, hiperinflación, tensiones diplomáticas internacionales, sanciones institucionales y corrientes migratorias masivas. Tras años de reajustes complejos, el ciclo cerró con el complejo proceso electoral presidencial de julio de 2024, cuyos resultados oficiales emitidos por el CNE abrieron intensos debates sobre transparencia y legitimidad ante la comunidad internacional.</p>
+        <p>A la muerte de Chávez in 2013, Nicolás Maduro Moros asumió el mando ejecutivo. El país enfrentó una severa contracción económica, hiperinflación, tensiones diplomáticas internacionales, sanciones institucionales y corrientes migratorias masivas. Tras años de reajustes complejos, el ciclo cerró con el complejo proceso electoral presidencial de julio de 2024, cuyos resultados oficiales emitidos por el CNE abrieron intensos debates sobre transparencia y legitimidad ante la comunidad internacional.</p>
     </div>
     
     <div class="section-box">
@@ -151,52 +163,93 @@ with tab_historia:
     </div>
     """, unsafe_allow_html=True)
 
-with tab_simbolos:
-    st.header("Identidad y Emblemas de la República")
+# PESTAÑA 2: SÍMBOLOS PATRIOS (Corregida con los 3 pilares, descripciones y sin audio)
+with tab_patrios:
+    st.header("Símbolos Patrios e Identidad Nacional")
     
-    st.subheader("🎵 Himno Nacional de Venezuela")
+    col_p1, col_p2 = st.columns(2)
     
-    # AUDIO REAL: Versión Instrumental Oficial y Legítima de la Banda de la Marina de EE.UU.
-    st.audio("https://upload.wikimedia.org/wikipedia/commons/1/1e/National_Anthem_of_Venezuela_by_US_Navy_Band.mp3")
-    
-    with st.expander("📖 Leer el texto oficial completo (Letra de Vicente Salias / Música de Juan José Landaeta)"):
+    with col_p1:
+        # LA BANDERA
         st.markdown("""
-        <div style='font-size: 16px; line-height: 1.8; color: #e2e8f0;'>
-        <b style='color: #FFD700;'>CORO</b><br>
-        Gloria al bravo pueblo que el yugo lanzó<br>
-        la Ley respetando la virtud y honor. (Bis)<br><br>
-        
-        <b style='color: #FFD700;'>I</b><br>
-        ¡Abajo cadenas! (Bis) gritaba el señor;<br>
-        y el pobre en su choza Libertad pidió:<br>
-        a este santo nombre tembló de pavor<br>
-        el vil egoísmo que otra vez triunfó.<br><br>
-        
-        <b style='color: #FFD700;'>II</b><br>
-        Gritemos con brío: (Bis) ¡Muera la opresión!<br>
-        Compatriotas fieles, la fuerza es la unión;<br>
-        y desde el Empíreo el Supremo Autor,<br>
-        un sublime aliento al pueblo infundió.<br><br>
-        
-        <b style='color: #FFD700;'>III</b><br>
-        Unida con lazos (Bis) que el cielo formó,<br>
-        la América toda existe en nación;<br>
-        y si el despotismo levanta la voz,<br>
-        seguid el ejemplo que Caracas dio.
+        <div class="simbolo-card">
+            <div class="simbolo-titulo">🇻🇪 La Bandera Nacional</div>
+            <div class="simbolo-sub">Emblema de Libertad y Soberanía</div>
+            <div class="simbolo-desc">
+                Inspirada en el diseño original traído por el Generalísimo Francisco de Miranda en 1806, la bandera actual está compuesta por tres franjas horizontales de igual tamaño con los colores amarillo, azul y rojo, un arco de ocho estrellas blancas y el escudo nacional opcional en la esquina superior izquierda.<br><br>
+                <b>Significado de sus elementos:</b>
+                <ul>
+                    <li><b>Amarillo:</b> Representa las riquezas del suelo venezolano, el oro, el sol radiante y las virtudes de la justicia y clemencia.</li>
+                    <li><b>Azul:</b> Simboliza el ancho mar Caribe, los ríos indomables y el cielo que cubre y separa a la patria de los opresores.</li>
+                    <li><b>Rojo:</b> Evoca la sangre derramada por los próceres y mártires independentistas en los campos de batalla para conquistar la libertad.</li>
+                    <li><b>Las 8 Estrellas:</b> Representan las provincias originales que firmaron el Acta de la Independencia, incluyendo la incorporación de la provincia de Guayana decretada por Simón Bolívar.</li>
+                </ul>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-    st.write("---")
-    st.subheader("🌿 Símbolos Naturales de la Nación (Fichas Descriptivas)")
+    with col_p2:
+        # EL ESCUDO
+        st.markdown("""
+        <div class="simbolo-card">
+            <div class="simbolo-titulo">🛡️ El Escudo de Armas</div>
+            <div class="simbolo-sub">Heráldica Oficial de la República</div>
+            <div class="simbolo-desc">
+                El Escudo Nacional refleja la unión, el triunfo y la riqueza del pueblo a través de tres cuarteles heráldicos que llevan los colores de la bandera:<br><br>
+                <ul>
+                    <li><b>Cuartel Rojo (Izquierdo):</b> Contiene un manojo de 24 espigas de trigo que simbolizan la unión de los estados de la República y la riqueza de la producción agrícola del país.</li>
+                    <li><b>Cuartel Amarillo (Derecho):</b> Muestra un conjunto de armas (espadas y lanzas) entrelazadas con una bandera nacional, representando el triunfo militar en las guerras independentistas.</li>
+                    <li><b>Cuartel Azul (Base):</b> Aloja a un caballo blanco salvaje que corre indómito hacia la izquierda, símbolo absoluto de la libertad, el patriotismo y la soberanía nacional.</li>
+                    <li><b>Cresta y Flancos:</b> En la cima sobresalen dos cornucopias cruzadas que derraman frutos de abundancia. A los lados, una rama de laurel (victoria) y una de palma (paz) se amarran abajo con una cinta tricolor que dicta las fechas históricas patrias.</li>
+                </ul>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # EL HIMNO NACIONAL (Abajo ocupando el ancho completo)
+    st.markdown("""
+    <div class="simbolo-card" style="border-top: 4px solid #CE1126;">
+        <div class="simbolo-titulo">🎼 El Himno Nacional: Gloria al Bravo Pueblo</div>
+        <div class="simbolo-sub">Letra de Vicente Salias • Música de Juan José Landaeta</div>
+        <div class="simbolo-desc" style="text-align: center; font-size: 16px; line-height: 1.8;">
+            Adoptado oficialmente el 25 de mayo de 1881 por decreto del presidente Antonio Guzmán Blanco. Su composición histórica data de los días posteriores al primer grito de independencia del 19 de abril de 1810, naciendo como un canto patriótico popular que incitaba a la unión de toda América contra la opresión colonial.<br><br>
+            <hr style="border: 0; border-top: 1px solid #475569; margin: 20px 0;">
+            <b>CORO</b><br>
+            Gloria al bravo pueblo que el yugo lanzó<br>
+            la Ley respetando la virtud y honor. (Bis)<br><br>
+            
+            <b>I</b><br>
+            ¡Abajo cadenas! (Bis) gritaba el señor;<br>
+            y el pobre en su choza Libertad pidió:<br>
+            a este santo nombre tembló de pavor<br>
+            el vil egoísmo que otra vez triunfó.<br><br>
+            
+            <b>II</b><br>
+            Gritemos con brío: (Bis) ¡Muera la opresión!<br>
+            Compatriotas fieles, la fuerza es la unión;<br>
+            y desde el Empíreo el Supremo Autor,<br>
+            un sublime aliento al pueblo infundió.<br><br>
+            
+            <b>III</b><br>
+            Unida con lazos (Bis) que el cielo formó,<br>
+            la América toda existe en nación;  <br>
+            y si el despotismo levanta la voz,<br>
+            seguid el ejemplo que Caracas dio.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# PESTAÑA 3: SÍMBOLOS NATURALES
+with tab_naturales:
+    st.header("Símbolos Naturales de la Nación (Fichas Descriptivas)")
     
-    # Renderizado estético de información escrita sin depender de archivos de fotos externos
     c1, c2, c3 = st.columns(3)
     
     with c1:
         st.markdown("""
         <div class="simbolo-card">
             <div class="simbolo-titulo">🌳 El Araguaney</div>
-            <div class="simbolo-cientifico">Handroanthus chrysanthus</div>
+            <div class="simbolo-sub">Handroanthus chrysanthus</div>
             <div class="simbolo-desc">
                 Declarado Árbol Nacional de Venezuela el 29 de mayo de 1948. Su nombre proviene de una voz indígena americana. Se caracteriza por una impresionante y densa floración de color amarillo dorado, la cual ocurre de manera sincronizada durante la transición de la época de sequía a las primeras lluvias, simbolizando la riqueza del suelo venezolano.
             </div>
@@ -207,7 +260,7 @@ with tab_simbolos:
         st.markdown("""
         <div class="simbolo-card">
             <div class="simbolo-titulo">🐦 El Turpial</div>
-            <div class="simbolo-cientifico">Icterus icterus</div>
+            <div class="simbolo-sub">Icterus icterus</div>
             <div class="simbolo-desc">
                 Designado como el Ave Nacional el 23 de mayo de 1958. Es un pájaro cantor de hermoso plumaje contrastado en tonos amarillo-anaranjado, negro y detalles blancos en sus alas. Destaca por su potente, melodioso y característico canto que resuena al amanecer, habitando principalmente de forma solitaria o en parejas en zonas cálidas y sabanas del territorio.
             </div>
@@ -218,13 +271,14 @@ with tab_simbolos:
         st.markdown("""
         <div class="simbolo-card">
             <div class="simbolo-titulo">🌸 La Orquídea</div>
-            <div class="simbolo-cientifico">Cattleya mossiae</div>
+            <div class="simbolo-sub">Cattleya mossiae</div>
             <div class="simbolo-desc">
                 Oficializada como Flor Nacional el 23 de mayo de 1951. Conocida popularmente como la "Flor de Mayo", debido a que históricamente se utilizaba para adornar las festividades de la Cruz de Mayo. Sus pétalos exhiben tonalidades violetas, lilas y rosadas con un centro purpúreo; representa la belleza natural y la biodiversidad de la Cordillera de la Costa.
             </div>
         </div>
         """, unsafe_allow_html=True)
 
+# PESTAÑA 4: TERRITORIO
 with tab_geografia:
     st.header("Organización Político-Territorial: Estados y Capitales")
     st.write("Configuración del mapa geográfico de la República de acuerdo con las leyes territoriales vigentes:")
@@ -242,5 +296,4 @@ with tab_geografia:
     st.table({"Estado Federal": [i[0] for i in data], "Capital Administrativa": [i[1] for i in data]})
 
 st.write("---")
-# Pie de página formal con tu firma solicitada
-st.caption("La Gaceta Tricolor v3.0 • Revista Digital Semanal Educativa. Hecho por Gabriel Sumoza • ¡Mano, tengo fe! 🇻🇪")
+st.caption("La Gaceta Tricolor v3.5 • Revista Digital Semanal Educativa. Hecho por Gabriel Sumoza • ¡Mano, tengo fe! 🇻🇪")
