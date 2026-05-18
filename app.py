@@ -1,108 +1,177 @@
-# Agrega "tab_amiga" a tu lista de pestañas arriba en el código, por ejemplo:
-# tab_historia, tab_patrios, tab_naturales, tab_geografia, tab_amiga = st.tabs([...])
+import streamlit as st
 
-with tab_amiga:
-    st.header("🧠 ¡Operativo Salvación! - Guía de Estudio para la Exposición")
-    st.write("Dile a tu amiga que respire hondo. Aquí está el beta de los **Músculos Infrahioideos** explicado para que no se le olvide ni con los nervios en frente del profesor.")
+# 1. Configuración de la página única
+st.set_page_config(
+    page_title="Operativo Salvación: Anatomía",
+    page_icon="🧠",
+    layout="centered"
+)
 
-    # Alerta motivacional/chistosa
-    st.warning("⚠️ **Regla de oro para la exposición:** Si te quedas en blanco, di 'Hioides' con mucha seguridad. Ese hueso es el jefe de la zona.")
+# 2. Estilos CSS personalizados para el ambiente de estudio de Fariana
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: #0f172a;
+        color: #f8fafc;
+    }
+    .main-card {
+        background-color: #1e293b;
+        padding: 30px;
+        border-radius: 15px;
+        border-top: 6px solid #3b82f6;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        margin-bottom: 25px;
+    }
+    .titulo-principal {
+        color: #3b82f6 !important;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .sub-titulo {
+        color: #94a3b8;
+        text-align: center;
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+    .bloque-explicacion {
+        background-color: #334155;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #f59e0b;
+        margin-bottom: 20px;
+    }
+    .musculo-card {
+        background-color: #1e293b;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #475569;
+        margin-bottom: 15px;
+    }
+    .musculo-nombre {
+        color: #f59e0b;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    h2, h3 {
+        color: #3b82f6 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-    # 1. INTRODUCCIÓN CON HUMOR
+# 3. Banner de Bienvenida y Humor para Fariana
+st.markdown("""
+    <div class="main-card">
+        <h1 class="titulo-principal">🧠 OPERATIVO EXPOSICIÓN: ¡FARIANA SACA 20!</h1>
+        <p class="sub-titulo">Guía interactiva y express para dominar el cuello anterior sin morir en el intento</p>
+    </div>
+""", unsafe_allow_html=True)
+
+st.warning("⚠️ **Estrategia mental para Fariana:** Si en plena exposición te da pánico y te quedas en blanco, mira fijamente al profesor con mucha seguridad y di 'Hueso Hioides'. Eso te da +5 puntos de confianza automáticamente.")
+
+# 4. Tema 1: Músculos Infrahioideos
+st.markdown("## 🏢 El Edificio del Cuello: Músculos Infrahioideos")
+st.markdown("""
+<div class="bloque-explicacion">
+    <b>¿Qué son en cristiano?</b> Son 4 pares de músculos delgados que están <b>debajo del hueso hioides</b>. 
+    Su trabajo es bajar el hioides y la laringe cuando tragamos comida o cuando hablamos. Para que no se te olviden, están organizados en dos pisos (planos musculares).
+</div>
+""", unsafe_allow_html=True)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("### 🚪 Primer Piso (Plano Superficial)")
+    st.write("Los que se ven a primera vista al quitar la piel:")
+    
     st.markdown("""
-    <div class="section-box" style="border-left: 5px solid #0038A8;">
-        <h3>📍 ¿Qué son los Músculos Infrahioideos?</h3>
-        <p>Para decírselo al profe: Son 4 pares de músculos delgados que están <b>debajo del hueso hioides</b>. Su trabajo principal es bajar el hioides y la laringe cuando tragamos o hablamos.</p>
-        <p><b>Para entenderlo en cristiano:</b> Son los encargados de que puedas pasar la comida sin ahogarte y de mover la caja de voz. Están organizados en dos pisos (planos musculares). ¡Vamos a ver quién vive en cada piso!</p>
+    <div class="musculo-card">
+        <div class="musculo-nombre">1. Esternocleidohioideo</div>
+        <p style='font-size: 14px; color: #e2e8f0; margin-top:5px;'>
+            El nombre es un trabalenguas, pero su ruta es fácil: Nace en el <b>esternón</b> y la clavícula, y sube derechito en línea recta hasta insertarse en el <b>hioides</b>. Es el guardaespaldas principal del frente.
+        </p>
+    </div>
+    <div class="musculo-card">
+        <div class="musculo-nombre">2. Omohioideo</div>
+        <p style='font-size: 14px; color: #e2e8f0; margin-top:5px;'>
+            Este es el 'viajero rumbero' porque tiene <b>dos vientres musculares</b> unidos por un tendón en el medio. Hace el viaje largo: viene en diagonal desde el <b>omóplato</b> (atrás en la espalda) cruzando todo el cuello hasta llegar al hioides.
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
-    # 2. LOS PLANOS MUSCULARES
-    st.subheader("🏢 El Edificio del Cuello: Planos Musculares")
+with col2:
+    st.markdown("### 🚪 Planta Baja (Plano Profundo)")
+    st.write("Los que están escondidos abajo protegiendo los órganos:")
     
-    col_piso1, col_piso2 = st.columns(2)
-    
-    with col_piso1:
-        st.markdown("""
-        <div class="simbolo-card" style="border-top: 4px solid #FFD700;">
-            <div class="simbolo-titulo">🚪 Plano Superficial (Primer Piso)</div>
-            <div class="simbolo-sub">Los que se ven a primera vista</div>
-            <div class="simbolo-desc">
-                Aquí viven dos tipos que son los más largos de la zona:
-                <ul>
-                    <li><b>Esternocleidohioideo (o Esternohioideo):</b> El nombre asusta, pero su camino es fácil. Va desde el esternón y la clavícula directo hasta el hioides. Es el guardaespaldas principal del frente del cuello.</li>
-                    <li><b>Omohioideo:</b> Este es el 'raro' del grupo porque tiene dos panzas (vientres) unidas por un tendón en el medio. Viene viajando desde el omóplato (en la espalda) y cruza todo el cuello de lado hasta llegar al hioides. ¡Un aventurero!</li>
-                </ul>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col_piso2:
-        st.markdown("""
-        <div class="simbolo-card" style="border-top: 4px solid #CE1126;">
-            <div class="simbolo-titulo">🚪 Plano Profundo (Planta Baja)</div>
-            <div class="simbolo-sub">Los que están escondidos abajo</div>
-            <div class="simbolo-desc">
-                Si quitas los dos anteriores, te encuentras a los que están pegados a la laringe y la tiroides:
-                <ul>
-                    <li><b>Esternotiroideo:</b> Este no llega hasta el hioides. Es flojo, arranca en el esternón y se cansa rápido, quedándose plantado en el cartílago tiroides.</li>
-                    <li><b>Tirohioideo:</b> Este continúa el trabajo del anterior. Arranca justo donde el otro se cansó (cartílago tiroides) y sube hasta el hueso hioides. Básicamente es el ascensor que conecta la tiroides con el techo.</li>
-                </ul>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # 3. LA IRRIGACIÓN
     st.markdown("""
-    <div class="section-box" style="border-left: 5px solid #CE1126;">
-        <h3>🩸 Tuberías Premium: La Irrigación Sanguínea</h3>
-        <p>¿Quién le lleva los nutrientes y la sangre a todos estos señores y a los órganos del cuello? La red eléctrica y de agua está a cargo de dos arterias principales:</p>
-        <ul>
-            <li><b>Arteria Carótida Externa:</b> Es la tubería matriz del cuello y la cara. De ella sale una rama súper importante llamada <b>Arteria Tiroidea Superior</b>, que baja a irrigar la tiroides y a los músculos vecinos.</li>
-            <li><b>Arteria Subclavia:</b> Pasa por debajo de la clavícula y manda una rama hacia arriba llamada <b>Arteria Tiroidea Inferior</b>.</li>
-        </ul>
-        <p>💡 <b>Dato para lucirse:</b> Las arterias tiroideas superior e inferior se unen en el cuello creando una <i>red de vasos sanguíneos</i> brutal para asegurarse de que a la laringe, la tráquea y la tiroides nunca les falte sangre.</p>
+    <div class="musculo-card">
+        <div class="musculo-nombre">3. Esternotiroideo</div>
+        <p style='font-size: 14px; color: #e2e8f0; margin-top:5px;'>
+            Empieza abajo en el <b>esternón</b> pero le dio flojera y se cansó a mitad de camino, plantándose únicamente en el <b>cartílago tiroides</b>. ¡Este no llega al hioides!
+        </p>
+    </div>
+    <div class="musculo-card">
+        <div class="musculo-nombre">4. Tirohioideo</div>
+        <p style='font-size: 14px; color: #e2e8f0; margin-top:5px;'>
+            Es el relevo del flojo. Arranca justo donde el anterior se rindió (en el <b>cartílago tiroides</b>) y sube el tramo final que faltaba hasta el hueso <b>hioides</b>. Básicamente es el ascensor de conexión.
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
-    # 4. EL CUESTIONARIO INTERACTIVO (Las 3 preguntas con botones nativos de Streamlit)
-    st.write("---")
-    st.subheader("📝 ¡Quiz Relámpago! Pon a prueba a tu amiga antes de salir al ruedo")
-    st.write("Selecciona la respuesta correcta para ver si estás lista para el 20 de nota:")
+# 5. Tema 2: Irrigación
+st.markdown("## 🩸 El Sistema de Tuberías: La Irrigación Sanguínea")
+st.markdown("""
+<div class="bloque-explicacion">
+    ¿Quién le lleva los nutrientes y el oxígeno a todos estos músculos y órganos vitales (como la tiroides y la laringe)? El agua y la luz corren por cuenta de dos arterias principales que trabajan en equipo:
+    <ul>
+        <li><b>Arteria Carótida Externa:</b> Es la manguera principal que sube por el cuello. De ella sale una rama clave llamada <b>Arteria Tiroidea Superior</b>, que baja a encargarse de la parte alta de la tiroides y los músculos del frente.</li>
+        <li><b>Arteria Subclavia:</b> Pasa por debajo de la clavícula y despacha hacia arriba otra rama llamada <b>Arteria Tiroidea Inferior</b>.</li>
+    </ul>
+    💡 <b>Dato pro para lucirse con el profe:</b> La arteria tiroidea superior y la inferior se unen en el cuello (hacen una <i>anastomosis</i>). Así arman una red de seguridad brutal para que a la tiroides y a la laringe jamás les falte sangre.
+</div>
+""", unsafe_allow_html=True)
 
-    # Pregunta 1
-    p1 = st.radio(
-        "1. ¿Cuál de estos músculos NO llega directamente al hueso hioides?",
-        ["Esternocleidohioideo", "Omohioideo", "Esternotiroideo"],
-        index=None,
-        placeholder="Elige tu respuesta..."
-    )
-    if p1 == "Esternotiroideo":
-        st.success("¡Excelente! Ese se queda flojo a mitad de camino en el cartílago tiroides. 🔥")
-    elif p1 is not None:
-        st.error("Nopo. Ese sí llega al hioides. ¡Acuérdate del que se cansa a mitad de camino!")
+# 6. El Cuestionario de 3 preguntas para Fariana
+st.write("---")
+st.markdown("## 📝 ¡Quiz de Control para Fariana!")
+st.write("Selecciona las opciones correctas para comprobar que estás lista para el 20 de nota:")
 
-    # Pregunta 2
-    p2 = st.radio(
-        "2. ¿Qué músculo tiene la rareza de tener dos 'vientres' y venir desde el omóplato?",
-        ["Tirohioideo", "Omohioideo", "Esternohioideo"],
-        index=None,
-        placeholder="Elige tu respuesta..."
-    )
-    if p2 == "Omohioideo":
-        st.success("¡Brutal! El Omohioideo viaja desde el hombro cruzando todo el cuello. 🧠")
-    elif p2 is not None:
-        st.error("Incorrecto. Piensa en el que hace el viaje largo desde atrás ('Omo' de omóplato).")
+# Pregunta 1
+p1 = st.radio(
+    "1. ¿Cuál de estos músculos se frena a mitad de camino y NO toca el hueso hioides?",
+    ["Esternocleidohioideo", "Omohioideo", "Esternotiroideo"],
+    index=None,
+    placeholder="Elige una respuesta..."
+)
+if p1 == "Esternotiroideo":
+    st.success("¡Brutal, Fariana! Ese se rinde en el cartílago tiroides. ¡Llevas un punto! 🔥")
+elif p1 is not None:
+    st.error("Nop. Ese sí completa la ruta. ¡Acuérdate del que se frena a mitad de camino!")
 
-    # Pregunta 3
-    p3 = st.radio(
-        "3. ¿De qué gran arteria nace la Arteria Tiroidea Superior que irriga esta zona anterior?",
-        ["Arteria Carótida Externa", "Arteria Subclavia", "Arteria Aorta"],
-        index=None,
-        placeholder="Elige tu respuesta..."
-    )
-    if p3 == "Arteria Carótida Externa":
-        st.balloons()  # ¡Efecto de celebración si saca la última buena!
-        st.success("¡Coronaste! La Carótida Externa es la jefa que manda esa rama superior. ¡Lista para la exposición! 🎓")
-    elif p3 is not None:
-        st.error("Casi, pero no. La subclavia se encarga de la inferior, la superior viene de más arriba.")
+# Pregunta 2
+p2 = st.radio(
+    "2. ¿Qué músculo es el 'raro' que tiene dos vientres y viaja desde el omóplato?",
+    ["Tirohioideo", "Omohioideo", "Esternohioideo"],
+    index=None,
+    placeholder="Elige una respuesta..."
+)
+if p2 == "Omohioideo":
+    st.success("¡Excelente! El prefijo 'Omo' viene de hombro/omóplato. ¡Dominado! 🧠")
+elif p2 is not None:
+    st.error("Incorrecto. Piensa en el aventurero que hace el viaje largo en diagonal desde la espalda.")
+
+# Pregunta 3
+p3 = st.radio(
+    "3. ¿De qué arteria principal nace la Arteria Tiroidea Superior que nutre esta zona?",
+    ["Arteria Carótida Externa", "Arteria Subclavia", "Arteria Aorta"],
+    index=None,
+    placeholder="Elige una respuesta..."
+)
+if p3 == "Arteria Carótida Externa":
+    st.balloons()  # ¡Lluvia de globos virtuales para celebrar!
+    st.success("¡Coronaste! La Carótida Externa es la mamá de la rama superior. ¡Lista para destrozar esa exposición! 🎓")
+elif p3 is not None:
+    st.error("Casi, pero esa manda la inferior. La superior viene desde más arriba.")
+
+st.write("---")
+st.caption("Guía de Estudio Interactiva Especial • Hecho por Gabriel Sumoza para Fariana • ¡Mano, tengo fe! 🇻🇪")
