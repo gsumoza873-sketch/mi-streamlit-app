@@ -55,7 +55,7 @@ st.markdown("""
     }
     </style>
     
-    <img src="https://flagcdn.com/w160/ve.png" class="top-left-flag">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/06/Flag_of_Venezuela.svg" class="top-left-flag">
 """, unsafe_allow_html=True)
 
 # 3. Encabezado de la Revista
@@ -112,8 +112,7 @@ with tab_historia:
         </div>
         """, unsafe_allow_html=True)
     with col2:
-        # Imagen garantizada 1
-        st.image("https://picsum.photos/id/1060/400/300", caption="Reflexión de la Historia Nacional")
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Hugo_Ch%C3%A1vez_%28FAPESP%29.jpg/320px-Hugo_Ch%C3%A1vez_%28FAPESP%29.jpg", caption="Hugo Chávez Frías")
 
     col3, col4 = st.columns([2, 1])
     with col3:
@@ -128,37 +127,59 @@ with tab_historia:
         </div>
         """, unsafe_allow_html=True)
     with col4:
-        # Imagen garantizada 2
-        st.image("https://picsum.photos/id/1029/400/300", caption="Venezuela Contemporánea")
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Nicolas_Maduro_2024.jpg/320px-Nicolas_Maduro_2024.jpg", caption="Nicolás Maduro Moros")
 
 with tab_simbolos:
     st.header("Identidad y Corazón Nacional")
     
     st.subheader("🎵 Himno Nacional: Gloria al Bravo Pueblo")
-    # Enlace de audio directo y público compatible con Streamlit
-    st.audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
     
-    with st.expander("Ver letra del Himno"):
-        st.write("""
-        **Coro**
-        Gloria al bravo pueblo que el yugo lanzó,
-        la ley respetando la virtud y honor. (Bis)
+    # AUDIO REAL: Marcha presidencial / Himno Nacional de Venezuela Instrumental legítimo
+    st.audio("https://upload.wikimedia.org/wikipedia/commons/1/1e/National_Anthem_of_Venezuela_by_US_Navy_Band.mp3")
+    
+    with st.expander("📖 Ver letra COMPLETA del Himno Nacional"):
+        st.markdown("""
+        **CORO** Gloria al bravo pueblo  
+        que el yugo lanzó  
+        la Ley respetando  
+        la virtud y honor.  
         
-        **I**
-        ¡Abajo cadenas! (Bis) gritaba el señor;
-        y el pobre en su choza Libertad pidió:
-        a este santo nombre tembló de pavor
-        el vil egoísmo que otra vez triunfó.
-        """)
+        **I** ¡Abajo cadenas! (bis)  
+        gritaba el señor;  
+        y el pobre en su choza  
+        Libertad pidió:  
+        a este santo nombre  
+        tembló de pavor  
+        el vil egoísmo  
+        que otra vez triunfó.  
+        
+        **II** Gritemos con brío: (bis)  
+        ¡Muera la opresión!  
+        Compatriotas fieles,  
+        la fuerza es la unión;  
+        y desde el Empíreo  
+        el Supremo Autor,  
+        un sublime aliento  
+        al pueblo infundió.  
+        
+        **III** Unida con lazos (bis)  
+        que el cielo formó,  
+        la América toda  
+        existe en nación;  
+        y si el despotismo  
+        levanta la voz,  
+        seguid el ejemplo  
+        que Caracas dio.
+        """, unsafe_allow_html=True)
 
-    st.subheader("🌿 Nuestros Símbolos Naturales")
+    st.subheader("🌿 Nuestros Símbolos Naturales Reales")
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.image("https://picsum.photos/id/306/400/250", caption="El Araguaney (Árbol Nacional - Muestra)")
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Araguaney_en_Valencia.jpg/320px-Araguaney_en_Valencia.jpg", caption="El Araguaney (Handroanthus chrysanthus)")
     with c2:
-        st.image("https://picsum.photos/id/433/400/250", caption="El Turpial (Ave Nacional - Muestra)")
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Icterus_icterus_2.jpg/320px-Icterus_icterus_2.jpg", caption="El Turpial (Icterus icterus)")
     with c3:
-        st.image("https://picsum.photos/id/628/400/250", caption="La Orquídea (Flor Nacional - Muestra)")
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Cattleya_mossiae_01.jpg/320px-Cattleya_mossiae_01.jpg", caption="La Orquídea Mayera (Cattleya mossiae)")
 
 with tab_geografia:
     st.header("Estados y Capitales de Venezuela")
@@ -175,5 +196,4 @@ with tab_geografia:
     st.table({"Estado": [i[0] for i in data], "Capital": [i[1] for i in data]})
 
 st.write("---")
-# PIE DE PÁGINA ACTUALIZADO CON TU NOMBRE
-st.caption("La Gaceta Tricolor v2.0 • Revista Digital Semanal Educativa. Hecho por Gabriel Sumoza • ¡Mano, tengo fe! 🇻🇪")
+st.caption("La Gaceta Tricolor v2.5 • Revista Digital Semanal Educativa. Hecho por Gabriel Sumoza • ¡Mano, tengo fe! 🇻🇪")
