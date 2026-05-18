@@ -131,47 +131,41 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 6. El Cuestionario de 3 preguntas para Fariana
+# 6. El Cuestionario de 3 preguntas para Fariana (Versión Ultra-Compatible)
 st.write("---")
 st.markdown("## 📝 ¡Quiz de Control para Fariana!")
-st.write("Selecciona las opciones correctas para comprobar que estás lista para el 20 de nota:")
+st.write("Elige una opción en cada pregunta para comprobar tus conocimientos:")
 
 # Pregunta 1
 p1 = st.radio(
     "1. ¿Cuál de estos músculos se frena a mitad de camino y NO toca el hueso hioides?",
-    ["Esternocleidohioideo", "Omohioideo", "Esternotiroideo"],
-    index=None,
-    placeholder="Elige una respuesta..."
+    ["--- Selecciona una opción ---", "Esternocleidohioideo", "Omohioideo", "Esternotiroideo"]
 )
 if p1 == "Esternotiroideo":
-    st.success("¡Brutal, Fariana! Ese se rinde en el cartílago tiroides. ¡Llevas un punto! 🔥")
-elif p1 is not None:
-    st.error("Nop. Ese sí completa la ruta. ¡Acuérdate del que se frena a mitad de camino!")
+    st.success("¡Brutal, Fariana! Ese se rinde antes, en el cartílago tiroides. ¡Llevas un punto! 🔥")
+elif p1 != "--- Selecciona una opción ---":
+    st.error("Nop. Ese sí completa la ruta hasta arriba. ¡Acuérdate del que se frena a mitad de camino!")
 
 # Pregunta 2
 p2 = st.radio(
     "2. ¿Qué músculo es el 'raro' que tiene dos vientres y viaja desde el omóplato?",
-    ["Tirohioideo", "Omohioideo", "Esternohioideo"],
-    index=None,
-    placeholder="Elige una respuesta..."
+    ["--- Selecciona una opción ---", "Tirohioideo", "Omohioideo", "Esternohioideo"]
 )
 if p2 == "Omohioideo":
     st.success("¡Excelente! El prefijo 'Omo' viene de hombro/omóplato. ¡Dominado! 🧠")
-elif p2 is not None:
+elif p2 != "--- Selecciona una opción ---":
     st.error("Incorrecto. Piensa en el aventurero que hace el viaje largo en diagonal desde la espalda.")
 
 # Pregunta 3
 p3 = st.radio(
     "3. ¿De qué arteria principal nace la Arteria Tiroidea Superior que nutre esta zona?",
-    ["Arteria Carótida Externa", "Arteria Subclavia", "Arteria Aorta"],
-    index=None,
-    placeholder="Elige una respuesta..."
+    ["--- Selecciona una opción ---", "Arteria Carótida Externa", "Arteria Subclavia", "Arteria Aorta"]
 )
 if p3 == "Arteria Carótida Externa":
-    st.balloons()  # ¡Lluvia de globos virtuales para celebrar!
+    st.balloons()  # ¡Lluvia de globos virtuales!
     st.success("¡Coronaste! La Carótida Externa es la mamá de la rama superior. ¡Lista para destrozar esa exposición! 🎓")
-elif p3 is not None:
-    st.error("Casi, pero esa manda la inferior. La superior viene desde más arriba.")
+elif p3 != "--- Selecciona una opción ---":
+    st.error("Casi, pero esa manda la inferior. La superior viene desde más arriba (la carótida).")
 
 st.write("---")
 st.caption("Guía de Estudio Interactiva Especial • Hecho por Gabriel Sumoza para Fariana • ¡Mano, tengo fe! 🇻🇪")
