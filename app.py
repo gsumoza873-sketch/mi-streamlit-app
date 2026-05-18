@@ -7,7 +7,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# 2. Estilos CSS (Look tricolor con bandera y diseño de revista)
+# 2. Estilos CSS (Look tricolor con bandera fija en la esquina)
 st.markdown("""
     <style>
     .stApp {
@@ -112,8 +112,8 @@ with tab_historia:
         </div>
         """, unsafe_allow_html=True)
     with col2:
-        # Imagen de Chávez con link alternativo estable
-        st.image("https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400", caption="Reflexión de la Historia")
+        # Imagen garantizada 1
+        st.image("https://picsum.photos/id/1060/400/300", caption="Reflexión de la Historia Nacional")
 
     col3, col4 = st.columns([2, 1])
     with col3:
@@ -128,26 +128,37 @@ with tab_historia:
         </div>
         """, unsafe_allow_html=True)
     with col4:
-        # Imagen representativa de Caracas/Vzla estable
-        st.image("https://images.unsplash.com/photo-1544913716-e570df4a5695?w=400", caption="Venezuela Contemporánea")
+        # Imagen garantizada 2
+        st.image("https://picsum.photos/id/1029/400/300", caption="Venezuela Contemporánea")
 
 with tab_simbolos:
     st.header("Identidad y Corazón Nacional")
     
     st.subheader("🎵 Himno Nacional: Gloria al Bravo Pueblo")
-    st.audio("https://upload.wikimedia.org/wikipedia/commons/3/30/Gloria_al_Bravo_Pueblo_instrumental.ogg")
+    # Enlace de audio directo y público compatible con Streamlit
+    st.audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
+    
+    with st.expander("Ver letra del Himno"):
+        st.write("""
+        **Coro**
+        Gloria al bravo pueblo que el yugo lanzó,
+        la ley respetando la virtud y honor. (Bis)
+        
+        **I**
+        ¡Abajo cadenas! (Bis) gritaba el señor;
+        y el pobre en su choza Libertad pidió:
+        a este santo nombre tembló de pavor
+        el vil egoísmo que otra vez triunfó.
+        """)
 
     st.subheader("🌿 Nuestros Símbolos Naturales")
     c1, c2, c3 = st.columns(3)
     with c1:
-        # Árbol/Naturaleza
-        st.image("https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400", caption="El Araguaney (Árbol Nacional - Representación)")
+        st.image("https://picsum.photos/id/306/400/250", caption="El Araguaney (Árbol Nacional - Muestra)")
     with c2:
-        # Ave/Fauna
-        st.image("https://images.unsplash.com/photo-1444464666168-49d633b86797?w=400", caption="El Turpial (Ave Nacional - Representación)")
+        st.image("https://picsum.photos/id/433/400/250", caption="El Turpial (Ave Nacional - Muestra)")
     with c3:
-        # Flor
-        st.image("https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?w=400", caption="La Orquídea (Flor Nacional - Representación)")
+        st.image("https://picsum.photos/id/628/400/250", caption="La Orquídea (Flor Nacional - Muestra)")
 
 with tab_geografia:
     st.header("Estados y Capitales de Venezuela")
@@ -164,4 +175,5 @@ with tab_geografia:
     st.table({"Estado": [i[0] for i in data], "Capital": [i[1] for i in data]})
 
 st.write("---")
-st.caption("La Gaceta Tricolor v1.6 • Revista Digital Semanal Educativa. ¡Mano, tengo fe! 🇻🇪")
+# PIE DE PÁGINA ACTUALIZADO CON TU NOMBRE
+st.caption("La Gaceta Tricolor v2.0 • Revista Digital Semanal Educativa. Hecho por Gabriel Sumoza • ¡Mano, tengo fe! 🇻🇪")
