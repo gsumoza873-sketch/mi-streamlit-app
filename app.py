@@ -9,7 +9,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. Diseño estético de alta calidad (Dark Mode con detalles Neón)
+# 2. Diseño estético (Dark Mode con detalles Neón)
 st.markdown("""
     <style>
     .stApp {
@@ -63,7 +63,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-st.info("ℹ️ **Aviso del Sistema:** Este cuestionario recopila datos en tiempo real para determinar el origen exacto de las conductas alegres de Ipia. Responde con la verdad.")
+st.info("ℹ️ **Aviso del Sistema:** Este cuestionario recopila el visaje en tiempo real para determinar por qué a Ipia se le moja la canoa tan feo. Responde la firme.")
 
 # Inicializar estados de la memoria de Streamlit
 if "procesado" not in st.session_state:
@@ -71,95 +71,19 @@ if "procesado" not in st.session_state:
 if "resultado_actual" not in st.session_state:
     st.session_state.resultado_actual = ""
 
-# Lista de resultados aleatorios bien cerrada para evitar SyntaxError
+# Lista de resultados aleatorios bien caleños y exagerados
 resultados_locos = [
-    "🚨 DIAGNÓSTICO TRÁGICO: Los niveles de sospecha superan el 99.8%. No hay retorno. Se recomienda regalarle una cartera rosa de inmediato.",
-    "🧬 ANÁLISIS ADN: Se detectó que Sebastián prefiere ver partidos de fútbol solo para analizar los pantalones de los jugadores. Caso confirmado.",
-    "🎭 INFORME FINAL: El sujeto finge que le gustan las mujeres pero se sabe la discografía completa de Katy Perry y baila frente al espejo cuando nadie lo ve.",
-    "⚠️ ALERTA DE SISTEMA: El algoritmo colapsó debido al exceso de energía delicada detectada en el historial de Sebastián. Veredicto: Recontra confirmado.",
-    "📈 ESTADÍSTICA CIENTÍFICA: El 100% de los satélites espaciales confirman que a Sebastián se le moja la canoa incluso cuando no está lloviendo."
+    "🚨 VERDICTO TRÁGICO: El visaje supera el 100%. No hay nada que hacer, mano. Ya le están tramitando una cartera rosa para que salga a dar vueltas por el parque.",
+    "🧬 ANÁLISIS CIENTÍFICO: Se confirmó que Sebastián solo va a las rumbas a mirar cómo les quedan los pantalones a los otros manes. Caso recontra cerrado.",
+    "🎭 INFORME SECRETO: El tipo se las da de muy parado, pero en el baño se pone a ensayar las canciones de Karol G frente al espejo haciendo los pasitos prohibidos. ¡Pillado!",
+    "⚠️ ALERTA DE SUCURSAL: El sistema colapsó por exceso de energía delicada. Este man bota más plumas que una gallina en un trancón. Veredicto: Es bien pato.",
+    "📈 ESTADÍSTICA LOCAL: Los satélites de la zona confirman que a Sebastián se le quiebra la muñeca solita apenas escucha un sartenazo de salsa baúl."
 ]
 
-# --- BLOQUE DE PREGUNTAS ---
+# --- BLOQUE DE PREGUNTAS (6 PREGUNTAS) ---
 
-# Pregunta 1: Selección Múltiple
+# Pregunta 1
 st.markdown('<div class="pregunta-box">', unsafe_allow_html=True)
-st.markdown("### 1️⃣ ¿Cuál crees que fue el detonante principal en su vida?")
+st.markdown("### 1️⃣ ¿Cuál fue el detonante principal para que Ipia se volviera así?")
 p1 = st.radio(
-    "Selecciona la teoría más acertada:",
-    [
-        "--- Selecciona una opción ---",
-        "Se cayó de chiquito en un balde de agua bendita con brillantina.",
-        "Escuchó una canción de Lady Gaga al revés a los 8 años.",
-        "Un defecto genético que lo obliga a caminar con un flow sospechoso.",
-        "Todas las anteriores juntas (Teoría más respaldada)."
-    ],
-    key="pregunta_1"
-)
-st.markdown('</div>', unsafe_allow_html=True)
-
-
-# Pregunta 2: CASILLA ABIERTA PARA ESCRIBIR LA RESPUESTA
-st.markdown('<div class="pregunta-box">', unsafe_allow_html=True)
-st.markdown("### 2️⃣ Teoría Libre del Evaluador")
-st.markdown("<p style='color: #94a3b8; font-size: 14px;'>Escribe aquí detalladamente tu respuesta y por qué consideras que él es así:</p>", unsafe_allow_html=True)
-
-respuesta_libre = st.text_area(
-    "Tu respuesta:", 
-    placeholder="Ej: Yo opino que desde que empezó a usar pantalones tubito se le nota que...",
-    key="respuesta_usuario"
-)
-st.markdown('</div>', unsafe_allow_html=True)
-
-
-# Pregunta 3: Selección Múltiple de Síntomas
-st.markdown('<div class="pregunta-box">', unsafe_allow_html=True)
-st.markdown("### 3️⃣ Síntoma más evidente en el día a día")
-p3 = st.radio(
-    "¿En qué momento es imposible disimularlo?",
-    [
-        "--- Selecciona una opción ---",
-        "Cuando saluda y se le dobla la muñeca automáticamente.",
-        "Cuando mira fijamente a sus amigos con ojos de enamorado.",
-        "Cuando le da miedo ensuciarse los tenis y camina en puntitas.",
-        "Cuando respira."
-    ],
-    key="pregunta_3"
-)
-st.markdown('</div>', unsafe_allow_html=True)
-
-
-# --- BOTÓN DE ENVÍO Y EFECTO MÁGICO ---
-
-st.write("")
-if st.button("🚀 ENVIAR RESPUESTAS AL SERVIDOR CENTRAL", use_container_width=True):
-    if not respuesta_libre or p1 == "--- Selecciona una opción ---" or p3 == "--- Selecciona una opción ---":
-        st.warning("⚠️ Debes llenar todo el cuestionario y escribir tu respuesta para que el sistema lo analice.")
-    else:
-        with st.spinner("🧠 Analizando texto libre enviado..."):
-            time.sleep(1.2)
-        with st.spinner("🛰️ Midiendo niveles de desviación en el servidor de Ipia..."):
-            time.sleep(1.2)
-        with st.spinner("💾 Encriptando y borrando respuestas del historial..."):
-            time.sleep(0.8)
-        
-        st.session_state.resultado_actual = random.choice(resultados_locos)
-        st.session_state.procesado = True
-        st.rerun()
-
-# Mostrar el resultado
-if st.session_state.procesado:
-    st.markdown(f"""
-        <div class="resultado-box">
-            <h3>📊 VERDICTO DEL ALGORITMO:</h3>
-            <p style='font-size: 18px;'>{st.session_state.resultado_actual}</p>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    if st.button("🔄 Realizar nueva prueba de laboratorio"):
-        st.session_state.procesado = False
-        st.session_state.resultado_actual = ""
-        st.rerun()
-
-st.write("---")
-st.caption("🔬 Software de Entretenimiento de Código Abierto • Prohibido para Sebastián Ipia 🤫")
+    "Selecciona la teoría más respaldada por el barrio:",
