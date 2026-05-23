@@ -1,120 +1,75 @@
 import streamlit as st
+import time
+import random
 
 # 1. Configuración de la página única
 st.set_page_config(
-    page_title="Operativo Salvación: Anatomía",
-    page_icon="🧠",
+    page_title="Test de Ipia",
+    page_icon="🌈",
     layout="centered"
 )
 
-# 2. Estilos CSS personalizados para el ambiente de estudio de Fariana
+# 2. Diseño estético de alta calidad (Dark Mode con detalles Neón)
 st.markdown("""
     <style>
     .stApp {
-        background-color: #0f172a;
-        color: #f8fafc;
+        background-color: #090d16;
+        color: #e2e8f0;
     }
-    .main-card {
-        background-color: #1e293b;
-        padding: 30px;
-        border-radius: 15px;
-        border-top: 6px solid #3b82f6;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        margin-bottom: 25px;
-    }
-    .titulo-principal {
-        color: #3b82f6 !important;
+    .main-panel {
+        background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+        padding: 35px;
+        border-radius: 20px;
+        border: 2px solid #6366f1;
+        box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
         text-align: center;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-    .sub-titulo {
-        color: #94a3b8;
-        text-align: center;
-        font-size: 16px;
         margin-bottom: 30px;
     }
-    .bloque-explicacion {
-        background-color: #334155;
-        padding: 20px;
-        border-radius: 10px;
-        border-left: 5px solid #f59e0b;
-        margin-bottom: 20px;
+    .titulo {
+        color: #f43f5e !important;
+        font-family: 'Impact', sans-serif;
+        font-weight: bold;
+        letter-spacing: 1px;
     }
-    .musculo-card {
+    .pregunta-box {
         background-color: #1e293b;
         padding: 20px;
+        border-radius: 12px;
+        border-left: 5px solid #a855f7;
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+    .resultado-box {
+        background-color: #064e3b;
+        border: 2px solid #10b981;
+        padding: 20px;
         border-radius: 10px;
-        border: 1px solid #475569;
-        margin-bottom: 15px;
-    }
-    .musculo-nombre {
-        color: #f59e0b;
-        font-size: 18px;
+        color: #34d399;
         font-weight: bold;
+        text-align: center;
+        margin-top: 20px;
     }
-    h2, h3 {
-        color: #3b82f6 !important;
+    h3 {
+        color: #f1f5f9 !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Banner de Bienvenida para Fariana
+# 3. Encabezado de la broma con el nuevo título solicitado
 st.markdown("""
-    <div class="main-card">
-        <h1 class="titulo-principal">🧠 OPERATIVO EXPOSICIÓN: ¡FARIANA SACA 20!</h1>
-        <p class="sub-titulo">Guía interactiva y express para dominar el cuello anterior sin morir en el intento</p>
+    <div class="main-panel">
+        <h1 class="titulo">🌈 TEST PARA DESCUBRIR POR QUÉ IPIA ES TAN GAY 🌈</h1>
+        <p style='color: #94a3b8; font-size: 15px; margin-top: 10px;'>Análisis interactivo definitivo para el caso de Sebastián Ipia</p>
     </div>
 """, unsafe_allow_html=True)
 
-# Consejo corregido según lo que me pediste
-st.info("💡 **Un recordatorio para Fariana:** Si en plena exposición se te olvida algo por los nervios, no te preocupes. Respira profundo durante tres segundos, piensa con calma y retoma la idea. ¡Tú puedes con esto!")
+st.info("ℹ️ **Aviso del Sistema:** Este cuestionario recopila datos en tiempo real para determinar el origen exacto de las conductas alegres de Ipia. Responde con la verdad.")
 
-# 4. Tema 1: Músculos Infrahioideos
-st.markdown("## 🏢 El Edificio del Cuello: Músculos Infrahioideos")
-st.markdown("""
-<div class="bloque-explicacion">
-    <b>¿Qué son en cristiano?</b> Son 4 pares de músculos delgados que están <b>debajo del hueso hioides</b>. 
-    Su trabajo es bajar el hioides y la laringe cuando tragamos comida o cuando hablamos. Para que no se te olviden, están organizados en dos pisos (planos musculares).
-</div>
-""", unsafe_allow_html=True)
+# Inicializar estados de la memoria de Streamlit para controlar los botones y respuestas
+if "procesado" not in st.session_state:
+    st.session_state.procesado = False
+if "resultado_actual" not in st.session_state:
+    st.session_state.resultado_actual = ""
 
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown("### 🚪 Primer Piso (Plano Superficial)")
-    st.write("Los que se ven a primera vista al quitar la piel:")
-    
-    st.markdown("""
-    <div class="musculo-card">
-        <div class="musculo-nombre">1. Esternocleidohioideo</div>
-        <p style='font-size: 14px; color: #e2e8f0; margin-top:5px;'>
-            El nombre es un trabalenguas, pero su ruta es fácil: Nace en el <b>esternón</b> y la clavícula, y sube derechito en línea recta hasta insertarse en el <b>hioides</b>. Es el guardaespaldas principal del frente.
-        </p>
-    </div>
-    <div class="musculo-card">
-        <div class="musculo-nombre">2. Omohioideo</div>
-        <p style='font-size: 14px; color: #e2e8f0; margin-top:5px;'>
-            Este es el 'viajero rumbero' porque tiene <b>dos vientres musculares</b> unidos por un tendón en el medio. Hace el viaje largo: viene en diagonal desde el <b>omóplato</b> (atrás en la espalda) cruzando todo el cuello hasta llegar al hioides.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col2:
-    st.markdown("### 🚪 Planta Baja (Plano Profundo)")
-    st.write("Los que están escondidos abajo protegiendo los órganos:")
-    
-    st.markdown("""
-    <div class="musculo-card">
-        <div class="musculo-nombre">3. Esternotiroideo</div>
-        <p style='font-size: 14px; color: #e2e8f0; margin-top:5px;'>
-            Empieza abajo en el <b>esternón</b> pero le dio flojera y se cansó a mitad de camino, plantándose únicamente en el <b>cartílago tiroides</b>. ¡Este no llega al hioides!
-        </p>
-    </div>
-    <div class="musculo-card">
-        <div class="musculo-nombre">4. Tirohioideo</div>
-        <p style='font-size: 14px; color: #e2e8f0; margin-top:5px;'>
-            Es el relevo del flojo. Arranca justo donde el anterior se rindió (en el <b>cartílago tiroides</b>) y sube el tramo final que faltaba hasta el hueso <b>hioides</b>. Básicamente es el ascensor de conexión.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+# Lista de resultados aleatorios exagerados
+resultados_locos =
