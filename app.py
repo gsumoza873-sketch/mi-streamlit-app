@@ -1,172 +1,152 @@
 import streamlit as st
 
-# 1. Configuración de la página
+# 1. Configuración de la página del Mundial
 st.set_page_config(
-    page_title="Guía Musical",
-    page_icon="🎹",
+    page_title="Predicciones Mundial 2026",
+    page_icon="⚽",
     layout="centered"
 )
 
-# 2. Inyección de estilos CSS ultra seguros
-st.markdown("<style>.stApp { background-color: #0b0f19; color: #f1f5f9; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.chat-ia { background-color: #1e1b4b; border-left: 4px solid #a855f7; padding: 18px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.25); }</style>", unsafe_allow_html=True)
-st.markdown("<style>.pantalla-led { background: linear-gradient(145deg, #020617, #0f172a); border: 2px solid #3b82f6; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 25px; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); font-family: 'Courier New', monospace; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.led-titulo { font-size: 11px; color: #60a5fa; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.led-principal { font-size: 24px; font-weight: bold; color: #34d399; text-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }</style>", unsafe_allow_html=True)
-st.markdown("<style>.led-sub { font-size: 13px; color: #94a3b8; margin-top: 5px; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.piano-container { display: flex; justify-content: center; background-color: #1e293b; padding: 35px 15px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); margin-bottom: 25px; position: relative; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.tecla-blanca { width: 52px; height: 190px; background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 90%, #e2e8f0 100%); border: 1px solid #cbd5e1; border-radius: 0 0 6px 6px; cursor: pointer; z-index: 1; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15px; position: relative; transition: all 0.1s ease; user-select: none; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.tecla-negra { width: 32px; height: 115px; background: linear-gradient(to bottom, #1e293b 0%, #0f172a 80%, #000000 100%); border: 1px solid #475569; border-radius: 0 0 4px 4px; cursor: pointer; margin-left: -16px; margin-right: -16px; z-index: 2; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; position: relative; transition: all 0.1s ease; user-select: none; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.tecla-blanca.activa { background: linear-gradient(to bottom, #38bdf8 0%, #0ea5e9 80%, #0284c7 100%) !important; box-shadow: 0 0 15px rgba(14, 165, 233, 0.7), inset 0 -8px 0 #0369a1; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.tecla-blanca.activa .nota-label { color: #ffffff !important; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.tecla-negra.activa { background: linear-gradient(to bottom, #f43f5e 0%, #e11d48 80%, #be123c 100%) !important; box-shadow: 0 0 15px rgba(225, 29, 72, 0.7), inset 0 -6px 0 #9f1239; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.tecla-negra.activa .nota-label { color: #ffffff !important; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.nota-label { font-family: 'Segoe UI', sans-serif; font-weight: bold; font-size: 12px; color: #64748b; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.tecla-negra .nota-label { color: #94a3b8; font-size: 10px; }</style>", unsafe_allow_html=True)
+# 2. Estilos CSS temáticos para el Mundial (Colores oscuros y detalles de fútbol)
+st.markdown("<style>.stApp { background-color: #060d17; color: #f1f5f9; }</style>", unsafe_allow_html=True)
+st.markdown("<style>.card-partido { background: linear-gradient(145deg, #0f172a, #1e293b); border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #1e40af; box-shadow: 0 4px 10px rgba(30, 64, 175, 0.2); }</style>", unsafe_allow_html=True)
+st.markdown("<style>.badge-prob { background-color: #1e3a8a; color: #60a5fa; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }</style>", unsafe_allow_html=True)
+st.markdown("<style>.resultado-ok { background-color: #064e3b; border-left: 4px solid #10b981; padding: 10px; border-radius: 6px; margin-top: 10px; }</style>", unsafe_allow_html=True)
 
-# 3. Título Principal
-st.markdown("<h1 style='text-align: center; color: #a855f7; margin-bottom: 5px;'>🎹 Guía Musical</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748b; margin-bottom: 25px;'>Escribe una canción y la IA te enseñará a tocarla paso a paso en el teclado.</p>", unsafe_allow_html=True)
+# 3. Encabezado de la app
+st.markdown("<h1 style='text-align: center; color: #3b82f6; margin-bottom: 5px;'>🏆 Simulador Mundial 2026</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8; margin-bottom: 30px;'>Planifica partidos por continente, analiza probabilidades de la IA y deja tus predicciones en vivo.</p>", unsafe_allow_html=True)
 
-# 4. Diccionario base de acordes
-diccionario_acordes = {
-    "C": {"notas": ["C4", "E4", "G4"], "nombre": "Do Mayor (DO - MI - SOL)"},
-    "Cm": {"notas": ["C4", "Db4", "G4"], "nombre": "Do Menor (DO - RE# - SOL)"},
-    "D": {"notas": ["D4", "Gb4", "A4"], "nombre": "Re Mayor (RE - FA# - LA)"},
-    "Dm": {"notas": ["D4", "F4", "A4"], "nombre": "Re Menor (RE - FA - LA)"},
-    "E": {"notas": ["E4", "Ab4", "B4"], "nombre": "Mi Mayor (MI - SOL# - SI)"},
-    "Em": {"notas": ["E4", "F4", "B4"], "nombre": "Mi Menor (MI - SOL - SI)"},
-    "F": {"notas": ["F4", "A4", "C5"], "nombre": "Fa Mayor (FA - LA - DO)"},
-    "Fm": {"notas": ["F4", "Ab4", "C5"], "nombre": "Fa Menor (FA - SOL# - DO)"},
-    "G": {"notas": ["G4", "B4", "D5"], "nombre": "Sol Mayor (SOL - SI - RE)"},
-    "Gm": {"notas": ["G4", "Bb4", "D5"], "nombre": "Sol Menor (SOL - LA# - RE)"},
-    "A": {"notas": ["A4", "Db5", "E5"], "nombre": "La Mayor (LA - DO# - MI)"},
-    "Am": {"notas": ["A4", "C5", "E5"], "nombre": "La Menor (LA - DO - MI)"},
-    "B": {"notas": ["B4", "Eb5", "Gb5"], "nombre": "Si Mayor (SI - RE# - FA#)"},
-    "Bm": {"notas": ["B4", "D5", "Gb5"], "nombre": "Si Menor (SI - RE - FA#)"}
+# 4. Inicializar la memoria de predicciones si no existe
+if "mis_predicciones" not in st.session_state:
+    st.session_state.mis_predicciones = {}
+
+# 5. Base de datos fija de partidos clave por Continente/Confederación
+# Incluye probabilidades de victoria calculadas por rendimiento histórico
+partidos_mundial = {
+    "🌍 África / Europa": {
+        "local": "Marruecos",
+        "visitante": "Brasil",
+        "prob_local": 28,
+        "prob_empate": 22,
+        "prob_visitante": 50,
+        "id": "mar_bra"
+    },
+    "🌎 Sudamérica (CONMEBOL)": {
+        "local": "Colombia",
+        "visitante": "Argentina",
+        "prob_local": 35,
+        "prob_empate": 30,
+        "prob_visitante": 45,
+        "id": "col_arg"
+    },
+    "🌎 Norteamérica (CONCACAF)": {
+        "local": "México",
+        "visitante": "Estados Unidos",
+        "prob_local": 42,
+        "prob_empate": 28,
+        "prob_visitante": 30,
+        "id": "mex_usa"
+    },
+    "🌏 Asia / Europa": {
+        "local": "Japón",
+        "visitante": "España",
+        "prob_local": 25,
+        "prob_empate": 25,
+        "prob_visitante": 50,
+        "id": "jap_esp"
+    }
 }
 
-# 5. Inicialización de Variables de Memoria Permanente (Session State)
-if "cancion_guardada" not in st.session_state:
-    st.session_state.cancion_guardada = ""
-if "paso_actual" not in st.session_state:
-    st.session_state.paso_actual = 0
-
-# 6. Caja de Entrada de Texto
-st.markdown("### 🔍 ¿Qué canción quieres aprender a tocar hoy?")
-cancion_buscada = st.text_input(
-    "Introduce el nombre del tema y presiona ENTER:",
-    placeholder="Ej: Lamento Boliviano, Despacito, De Música Ligera...",
-    key="input_cancion"
+# 6. Selector de continentes interactivo
+st.markdown("### 🗺️ Selecciona el Continente / Zona del Partido")
+continente_elegido = st.selectbox(
+    "Elige una zona geográfica para desplegar los partidos agendados:",
+    options=list(partidos_mundial.keys())
 )
 
-# Si el usuario escribe algo nuevo, actualizamos la memoria y reiniciamos el paso a cero
-if cancion_buscada and cancion_buscada != st.session_state.cancion_guardada:
-    st.session_state.cancion_guardada = cancion_buscada
-    st.session_state.paso_actual = 0
+# 7. Cargar datos del partido seleccionado
+datos_partido = partidos_mundial[continente_elegido]
+loc = datos_partido["local"]
+vis = datos_partido["visitante"]
+p_id = datos_partido["id"]
 
-# 7. Procesar la canción que está guardada en memoria
-notas_a_iluminar = []
-msg_led_principal = "ESPERANDO PETICIÓN"
-msg_led_sub = "Escribe una canción arriba para activar el tutor de IA."
+# 8. Render de la tarjeta del partido con barra de probabilidades de la IA
+st.markdown(f"""
+<div class="card-partido">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="color: #94a3b8; font-size: 13px; font-weight: bold;">Fase de Grupos • Programación Oficial</span>
+        <span class="badge-prob">Análisis de Probabilidad IA</span>
+    </div>
+    <h3 style="text-align: center; margin: 15px 0; color: #ffffff; font-size: 22px;">⚽ {loc} vs {vis} ⚽</h3>
+    <p style="margin-bottom: 5px; font-size: 14px; color: #cbd5e1; text-align: center;">📈 <b>Probabilidades de victoria:</b></p>
+    <div style="display: flex; justify-content: space-around; text-align: center; background-color: #0b1329; padding: 10px; border-radius: 8px;">
+        <div><b style="color: #60a5fa;">{loc}:</b> {datos_partido['prob_local']}%</div>
+        <div><b style="color: #94a3b8;">Empate:</b> {datos_partido['prob_empate']}%</div>
+        <div><b style="color: #f43f5e;">{vis}:</b> {datos_partido['prob_visitante']}%</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-if st.session_state.cancion_guardada:
-    texto = st.session_state.cancion_guardada.lower()
+# 9. Zona Interactiva de Predicciones del Usuario
+st.markdown("### 🔮 Tu Panel de Predicción")
+st.write(f"Introduce abajo el marcador exacto que crees que va a quedar en el partido de **{loc} vs {vis}**:")
+
+col_loc, col_vs, col_vis = st.columns([2, 1, 2])
+
+# Recuperar valores guardados si el usuario ya había predicho este partido
+goles_loc_default = st.session_state.mis_predicciones.get(f"{p_id}_l", 0)
+goles_vis_default = st.session_state.mis_predicciones.get(f"{p_id}_v", 0)
+
+with col_loc:
+    goles_local = st.number_input(f"Goles de {loc}:", min_value=0, max_value=20, value=goles_loc_default, step=1, key=f"num_l_{p_id}")
+
+with col_vs:
+    st.markdown("<h3 style='text-align: center; margin-top: 25px; color: #64748b;'>VS</h3>", unsafe_allow_html=True)
+
+with col_vis:
+    goles_visita = st.number_input(f"Goles de {vis}:", min_value=0, max_value=20, value=goles_vis_default, step=1, key=f"num_v_{p_id}")
+
+# Botón para guardar la predicción de forma permanente
+if st.button("💾 Guardar mi predicción en el boleto"):
+    st.session_state.mis_predicciones[f"{p_id}_l"] = goles_local
+    st.session_state.mis_predicciones[f"{p_id}_v"] = goles_visita
+    st.success(f"¡Predicción guardada con éxito para el partido de {loc} vs {vis}!")
+
+# 10. Mostrar el ticket o resumen de la predicción en pantalla si existe
+if f"{p_id}_l" in st.session_state.mis_predicciones:
+    pred_l = st.session_state.mis_predicciones[f"{p_id}_l"]
+    pred_v = st.session_state.mis_predicciones[f"{p_id}_v"]
     
-    # CANCIÓN 1: Lamento Boliviano
-    if "lamento" in texto or "boliviano" in texto:
-        titulo_real = "Lamento Boliviano (Enanitos Verdes)"
-        consejo_ia = "🎸 ¡Clásico del rock en español! Esta canción tiene una progresión circular nostálgica que se repite durante casi todo el tema."
-        pasos_cancion = [
-            {"acorde": "Em", "instruccion": "Paso 1: Arranca con Mi Menor (Em). Da la atmósfera triste al inicio del verso."},
-            {"acorde": "Bm", "instruccion": "Paso 2: Pasa a Si Menor (Bm). Sostiene la tensión melódica."},
-            {"acorde": "Am", "instruccion": "Paso 3: Baja a La Menor (Am). El punto más suave antes de resolver."},
-            {"acorde": "Em", "instruccion": "Paso 4: Regresa a Mi Menor (Em) para cerrar el ciclo armónico."}
-        ]
-    # CANCIÓN 2: De Música Ligera
-    elif "musica ligera" in texto or "soda" in texto:
-        titulo_real = "De Música Ligera (Soda Stereo)"
-        consejo_ia = "⚡ ¡Un himno total! Compuesto con 4 acordes llenos de fuerza. La clave aquí es el ritmo enérgico y constante."
-        pasos_cancion = [
-            {"acorde": "Bm", "instruccion": "Paso 1: Empieza con Si Menor (Bm). Es el famoso acorde con el que arranca el riff."},
-            {"acorde": "G", "instruccion": "Paso 2: Salta a Sol Mayor (G). Aporta el brillo pop."},
-            {"acorde": "D", "instruccion": "Paso 3: Sigue con Re Mayor (D). Sostiene la fuerza de la base."},
-            {"acorde": "A", "instruccion": "Paso 4: Termina el ciclo en La Mayor (A) antes de volver a empezar."}
-        ]
-    # CANCIÓN 3: Despacito
-    elif "despacito" in texto or "fonsi" in texto:
-        titulo_real = "Despacito (Luis Fonsi)"
-        consejo_ia = "🌴 El patrón rey del pop latino moderno. Esta combinación de acordes garantiza que cualquier canción suene pegajosa."
-        pasos_cancion = [
-            {"acorde": "Bm", "instruccion": "Paso 1: Comienza en Si Menor (Bm). Marca el inicio del compás urbano."},
-            {"acorde": "G", "instruccion": "Paso 2: Pasa a Sol Mayor (G). Le da la apertura fiestera."},
-            {"acorde": "D", "instruccion": "Paso 3: Cambia a Re Mayor (D). Proporciona estabilidad armónica."},
-            {"acorde": "A", "instruccion": "Paso 4: Cierra en La Mayor (A). Empuja el ritmo hacia el siguiente ciclo."}
-        ]
-    # CUALQUIER OTRA CANCIÓN
+    # Determinar quién gana según el usuario para poner un texto dinámico
+    if pred_l > pred_v:
+        ganador_texto = f"Tu predicción dicta que **gana {loc}** por diferencia de goles."
+    elif pred_v > pred_l:
+        ganador_texto = f"Tu predicción dicta que **gana {vis}** por diferencia de goles."
     else:
-        titulo_real = f"{st.session_state.cancion_guardada.title()}"
-        consejo_ia = "🤖 ¡Patrón armónico inteligente detectado! Diseñé una guía optimizada usando la progresión universal armónica más efectiva."
-        pasos_cancion = [
-            {"acorde": "Am", "instruccion": "Paso 1: Inicia marcando La Menor (Am) para establecer la base triste."},
-            {"acorde": "F", "instruccion": "Paso 2: Cambia fluidamente a Fa Mayor (F) para abrir el espectro visual."},
-            {"acorde": "C", "instruccion": "Paso 3: Muévete a Do Mayor (C) entregando brillo y resolución."},
-            {"acorde": "G", "instruccion": "Paso 4: Termina con Sol Mayor (G) creando la tensión de retorno."}
-        ]
+        ganador_texto = "Tu predicción dicta un **empate cerrado** en el marcador."
 
-    # Renderizar el cuadro informativo de la IA
-    st.markdown(f"<div class='chat-ia'><span style='color: #c084fc; font-weight: bold; font-size: 16px;'>🤖 Tutor Musical IA dice:</span><br><p style='margin-top: 5px; font-size: 15px; color: #e2e8f0;'><b>Canción activa:</b> {titulo_real}</p><p style='font-size: 14px; color: #cbd5e1;'>{consejo_ia}</p></div>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="resultado-ok">
+        <span style="color: #34d399; font-weight: bold; font-size: 15px;">📝 Tu Boleto de Predicción Activo:</span><br>
+        <p style="margin: 5px 0 0 0; font-size: 14.5px; color: #e2e8f0;">
+            Has pronosticado un resultado final de: <b>{loc} {pred_l} - {pred_v} {vis}</b>.<br>
+            <i>{ganador_texto}</i>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # 8. Controles de navegación de pasos (Modificado para mantener estado seguro)
-    st.markdown("### 🧭 Guía de Ejecución Paso a Paso")
-    col_prev, col_num, col_next = st.columns([1, 2, 1])
-    
-    with col_prev:
-        if st.button("⬅️ Anterior"):
-            st.session_state.paso_actual = (st.session_state.paso_actual - 1) % len(pasos_cancion)
-            st.rerun()  # Forzar refresco con el nuevo paso guardado
-            
-    with col_next:
-        if st.button("Siguiente ➡️"):
-            st.session_state.paso_actual = (st.session_state.paso_actual + 1) % len(pasos_cancion)
-            st.rerun()  # Forzar refresco con el nuevo paso guardado
-            
-    with col_num:
-        st.markdown(f"<p style='text-align: center; font-size: 16px; font-weight: bold; margin-top: 5px; color: #a855f7;'>Paso {st.session_state.paso_actual + 1} de {len(pasos_cancion)}</p>", unsafe_allow_html=True)
-
-    # Cargar datos del paso actual según la canción en memoria
-    info_paso = pasos_cancion[st.session_state.paso_actual]
-    acorde_nodo = info_paso["acorde"]
-    
-    notas_a_iluminar = diccionario_acordes[acorde_nodo]["notas"]
-    msg_led_principal = f"TOCA: {diccionario_acordes[acorde_nodo]['nombre']}"
-    msg_led_sub = info_paso["instruccion"]
-
-# 9. RENDER DE PANTALLA LED
-st.markdown(f"<div class='pantalla-led'><div class='led-titulo'>Monitor de Aprendizaje Guiado</div><div class='led-principal'>{msg_led_principal}</div><div class='led-sub'>{msg_led_sub}</div></div>", unsafe_allow_html=True)
-
-# 10. Render del Piano Gráfico
-teclas = [
-    {"nota": "C4", "tipo": "blanca", "label": "DO"}, {"nota": "Db4", "tipo": "negra", "label": "Do#"},
-    {"nota": "D4", "tipo": "blanca", "label": "RE"}, {"nota": "Eb4", "tipo": "negra", "label": "Re#"},
-    {"nota": "E4", "tipo": "blanca", "label": "MI"}, {"nota": "F4", "tipo": "blanca", "label": "FA"},
-    {"nota": "Gb4", "tipo": "negra", "label": "Fa#"}, {"nota": "G4", "tipo": "blanca", "label": "SOL"},
-    {"nota": "Ab4", "tipo": "negra", "label": "Sol#"}, {"nota": "A4", "tipo": "blanca", "label": "LA"},
-    {"nota": "Bb4", "tipo": "negra", "label": "La#"}, {"nota": "B4", "tipo": "blanca", "label": "SI"},
-    {"nota": "C5", "tipo": "blanca", "label": "DO+"}, {"nota": "Db5", "tipo": "negra", "label": "Do#+"},
-    {"nota": "D5", "tipo": "blanca", "label": "RE+"}, {"nota": "Eb5", "tipo": "negra", "label": "Re#+"},
-    {"nota": "E5", "tipo": "blanca", "label": "MI+"}
-]
-
-html_piano = '<div class="piano-container">'
-for t in teclas:
-    es_activa = "activa" if t["nota"] in notas_a_iluminar else ""
-    html_piano += f'<div class="tecla-{t["tipo"]} {es_activa}"><span class="nota-label">{t["label"]}</span></div>'
-html_piano += '</div>'
-
-st.markdown(html_piano, unsafe_allow_html=True)
-
-# 11. Pie de página con tu firma
+# Panel inferior interactivo de resumen completo
 st.write("---")
-st.caption("⚡ AI Learning Music Engine v5.2 • Sistema de Guía Teórica Dinámica • Hecho por Gabriel.s")
+with st.expander("📊 Ver todas mis predicciones del Mundial acumuladas"):
+    if len(st.session_state.mis_predicciones) == 0:
+        st.info("Aún no has guardado ninguna predicción en este navegador.")
+    else:
+        for cont, info in partidos_mundial.items():
+            pid = info["id"]
+            if f"{pid}_l" in st.session_state.mis_predicciones:
+                st.write(f"• **{info['local']}** {st.session_state.mis_predicciones[f'{pid}_l']} vs {st.session_state.mis_predicciones[f'{pid}_v']} **{info['visitante']}** ({cont})")
+
+# Pie de página con tu firma intacta
+st.caption("⚡ World Cup Predictor Engine 2026 • Base de Datos por Continente • Hecho por Gabriel.s")
     
