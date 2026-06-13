@@ -2,7 +2,7 @@ import streamlit as st
 
 # 1. Configuración de la App
 st.set_page_config(
-    page_title="Simulator de World Cup",
+    page_title="Simulator the World Cup",
     page_icon="🏆",
     layout="centered"
 )
@@ -12,9 +12,9 @@ st.markdown("<style>.stApp { background-color: #060d17; color: #f1f5f9; }</style
 st.markdown("<style>.card-grupo { background: linear-gradient(145deg, #0f172a, #1e293b); border-radius: 12px; padding: 20px; border: 1px solid #1e40af; margin-bottom: 25px; }</style>", unsafe_allow_html=True)
 st.markdown("<style>.card-eliminatoria { background: linear-gradient(145deg, #1e1b4b, #312e81); border-radius: 12px; padding: 15px; border: 1px solid #7c3aed; margin-bottom: 15px; }</style>", unsafe_allow_html=True)
 
-# Título solicitado: Simulator de World Cup
-st.markdown("<h1 style='text-align: center; color: #3b82f6;'>🏆 Simulator de World Cup</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #94a3b8;'>Define los integrantes de cada grupo de forma real y simula todo el torneo hasta la final.</p>", unsafe_allow_html=True)
+# Título Corregido Exacto: Simulator the World Cup
+st.markdown("<h1 style='text-align: center; color: #3b82f6;'>🏆 Simulator the World Cup</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8;'>Simulador Dinámico: Configura las selecciones reales y calcula toda la Copa del Mundo.</p>", unsafe_allow_html=True)
 
 # Secciones principales de la App
 seccion_principal = st.radio("Selecciona la etapa del torneo a gestionar:", ["Fase de Grupos", "Fases Finales (Eliminación Directa)"])
@@ -25,7 +25,7 @@ if "config_grupos" not in st.session_state:
         f"Grupo {letra}": [f"Equipo 1 {letra}", f"Equipo 2 {letra}", f"Equipo 3 {letra}", f"Equipo 4 {letra}"]
         for letra in ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
     }
-    # Respetar las únicas sedes confirmadas por FIFA
+    # Sedes confirmadas por la organización
     st.session_state.config_grupos["Grupo A"][0] = "México"
     st.session_state.config_grupos["Grupo B"][0] = "Canadá"
     st.session_state.config_grupos["Grupo D"][0] = "Estados Unidos"
@@ -38,9 +38,9 @@ nombres_grupos = list(st.session_state.config_grupos.keys())
 # --- BLOQUE 1: FASE DE GRUPOS ---
 if seccion_principal == "Fase de Grupos":
     
-    # Panel superior para ingresar los países reales
+    # Panel superior para ingresar los países reales en los inputs
     with st.expander("⚙️ Panel de Configuración: Digita las Selecciones Reales"):
-        st.write("Escribe los nombres de los clasificados de cada grupo para actualizar el simulador:")
+        st.write("Escribe las selecciones de cada grupo para actualizar los partidos automáticamente:")
         grupo_sel = st.selectbox("Selecciona el grupo a rellenar:", nombres_grupos)
         eq_actuales = st.session_state.config_grupos[grupo_sel]
         
@@ -59,7 +59,7 @@ if seccion_principal == "Fase de Grupos":
         with pestanas[i]:
             lista_equipos = st.session_state.config_grupos[nombre_grupo]
             
-            # Calendario dinámico basado en las elecciones del usuario
+            # Fixture dinámico basado en las selecciones escritas
             partidos = [
                 {"p_id": f"{nombre_grupo}_1", "loc": lista_equipos[0], "vis": lista_equipos[1], "jornada": "Jornada 1"},
                 {"p_id": f"{nombre_grupo}_2", "loc": lista_equipos[2], "vis": lista_equipos[3], "jornada": "Jornada 1"},
@@ -69,7 +69,7 @@ if seccion_principal == "Fase de Grupos":
                 {"p_id": f"{nombre_grupo}_6", "loc": lista_equipos[1], "vis": lista_equipos[2], "jornada": "Jornada 3"}
             ]
             
-            st.markdown(f"## 📅 fixture de Partidos: {nombre_grupo}")
+            st.markdown(f"## 📅 Fixture de Partidos: {nombre_grupo}")
             st.markdown("<div class='card-grupo'>", unsafe_allow_html=True)
             
             jornada_actual = ""
@@ -202,7 +202,7 @@ else:
             st.info("Define un ganador en el marcador para coronar al Campeón del Mundo.")
         st.markdown("</div>", unsafe_allow_html=True)
 
-# 3. Pie de página con tu firma reglamentaria intacta
+# 3. Pie de página con tu firma exacta e intacta
 st.write("---")
 st.caption("⚡ AI Learning Music Engine v5.2 • Sistema de Guía Teórica Dinámica • Hecho por Gabriel.s")
             
