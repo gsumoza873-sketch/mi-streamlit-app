@@ -1,201 +1,173 @@
 import streamlit as st
-import time
-import random
 
-# 1. Configuración de la página (Estilo Portal de Prensa)
+# 1. Configuración de la página
 st.set_page_config(
-    page_title="Diario G - Crónica Escolar",
-    page_icon="📰",
+    page_title="Piano Virtual & Guía de Acordes",
+    page_icon="🎹",
     layout="centered"
 )
 
-# 2. Estilos CSS para simular la Columna de Opinión Periodística (Diario G)
+# 2. Estilos CSS para diseñar el teclado del piano (Teclas blancas y negras)
 st.markdown("""
     <style>
     .stApp {
-        background-color: #f8fafc;
-        color: #1e293b;
+        background-color: #0f172a;
+        color: #f8fafc;
     }
-    .header-periodico {
-        text-align: center;
-        border-bottom: 3px double #1e293b;
-        padding-bottom: 15px;
-        margin-bottom: 25px;
-    }
-    .nombre-diario {
-        font-family: 'Times New Roman', Times, serif;
-        font-size: 52px;
-        font-weight: bold;
-        color: #0f172a;
-        letter-spacing: 2px;
-        margin-bottom: 0px;
-    }
-    .meta-info {
-        font-family: 'Courier New', monospace;
-        font-size: 13px;
-        color: #64748b;
+    .piano-container {
         display: flex;
-        justify-content: space-between;
-        border-top: 1px solid #cbd5e1;
-        padding-top: 5px;
-        margin-top: 5px;
-    }
-    .titular-principal {
-        font-family: 'Georgia', serif;
-        font-size: 30px;
-        font-weight: bold;
-        color: #1e1b4b;
-        line-height: 1.3;
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
-    .autor-columna {
-        font-family: 'Georgia', serif;
-        font-size: 15px;
-        font-weight: bold;
-        color: #f43f5e;
-        margin-bottom: 5px;
-    }
-    .subtitulo-articulo {
-        font-family: 'Georgia', serif;
-        font-size: 16px;
-        font-style: italic;
-        color: #475569;
+        justify-content: center;
+        background-color: #1e293b;
+        padding: 30px 10px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         margin-bottom: 25px;
+        position: relative;
     }
-    .cuerpo-texto {
-        font-family: 'Georgia', serif;
-        font-size: 16px;
-        line-height: 1.6;
-        text-align: justify;
-        color: #334155;
+    /* Estilo de Teclas Blancas */
+    .tecla-blanca {
+        width: 50px;
+        height: 180px;
+        background-color: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 0 0 5px 5px;
+        cursor: pointer;
+        z-index: 1;
+        transition: background-color 0.1s;
     }
-    .subtitulo-seccion {
-        font-family: 'Georgia', serif;
-        color: #0f172a !important;
-        border-bottom: 2px solid #6366f1;
-        padding-bottom: 5px;
-        margin-top: 25px;
+    .tecla-blanca:active {
+        background-color: #e2e8f0;
     }
-    .resultado-editorial {
-        background-color: #eff6ff;
-        border-left: 5px solid #2563eb;
-        padding: 15px;
-        border-radius: 4px;
-        margin-top: 20px;
-        font-family: 'Georgia', serif;
-        font-style: italic;
+    /* Estilo de Teclas Negras */
+    .tecla-negra {
+        width: 30px;
+        height: 110px;
+        background-color: #000000;
+        border: 1px solid #334155;
+        border-radius: 0 0 4px 4px;
+        cursor: pointer;
+        margin-left: -15px;
+        margin-right: -15px;
+        z-index: 2;
+        transition: background-color 0.1s;
+    }
+    .tecla-negra:active {
+        background-color: #1e293b;
+    }
+    /* Iluminación de teclas cuando pertenecen al acorde seleccionado */
+    .tecla-blanca.activa {
+        background-gradient: none;
+        background-color: #38bdf8 !important;
+        box-shadow: inset 0 -10px 0 #0284c7;
+    }
+    .tecla-negra.activa {
+        background-color: #f43f5e !important;
+        box-shadow: inset 0 -8px 0 #be123c;
+    }
+    .nota-label {
+        position: relative;
+        top: 140px;
+        text-align: center;
+        width: 100%;
+        color: #64748b;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        font-size: 12px;
+        user-select: none;
+    }
+    .tecla-negra .nota-label {
+        top: 75px;
+        color: #94a3b8;
+        font-size: 10px;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Cabecera del Portal Informativo - DIARIO G
-st.markdown("""
-    <div class="header-periodico">
-        <div class="nombre-diario">DIARIO G</div>
-        <div class="meta-info">
-            <span>Sección: Opinión y Convivencia Escolar</span>
-            <span>Columna del Salón</span>
-            <span>Estatus: Artículo de Opinión de los Panas</span>
-        </div>
-    </div>
-""", unsafe_allow_html=True)
+# 3. Título del software
+st.markdown("<h1 style='text-align: center; color: #38bdf8;'>🎹 Piano Virtual Interactivo</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8;'>Selecciona un acorde para aprender a tocarlo o haz clic en las teclas para escuchar su sonido real.</p>", unsafe_allow_html=True)
 
-# 4. Titular, Autor y Subtítulo
-st.markdown("""
-    <div class="titular-principal">Convivir con el misterio de Ipia: Una mirada desde el pupitre de al lado</div>
-    <div class="autor-columna">Por: Un compañero de clase y amigo cercano</div>
-    <div class="subtitulo-articulo">Crónica sincera sobre cómo es aguantarse el desorden diario de Sebastián, su estatura de llavero y esos gestos que nos hacen dudar a todos en el salón.</div>
-""", unsafe_allow_html=True)
+# 4. Diccionario de Acordes (Mapeo de qué notas se iluminan)
+# 'C' es Do, 'D' es Re, 'E' es Mi, 'F' es Fa, 'G' es Sol, 'A' es La, 'B' es Si. El '#' son las negras.
+acordes = {
+    "Ninguno (Modo Libre)": [],
+    "Do Mayor (C)": ["C4", "E4", "G4"],
+    "Do Menor (Cm)": ["C4", "Db4", "G4"],
+    "Re Mayor (D)": ["D4", "Gb4", "A4"],
+    "Re Menor (Dm)": ["D4", "F4", "A4"],
+    "Mi Mayor (E)": ["E4", "Ab4", "B4"],
+    "Mi Menor (Em)": ["E4", "F4", "B4"],
+    "Fa Mayor (F)": ["F4", "A4", "C5"],
+    "Fa Menor (Fm)": ["F4", "Ab4", "C5"],
+    "Sol Mayor (G)": ["G4", "B4", "D5"],
+    "Sol Menor (Gm)": ["G4", "Bb4", "D5"],
+    "La Mayor (A)": ["A4", "Db5", "E5"],
+    "La Menor (Am)": ["A4", "C5", "E5"],
+    "Si Mayor (B)": ["B4", "Eb5", "Gb5"],
+    "Si Menor (Bm)": ["B4", "D5", "Gb5"]
+}
 
-# 5. Cuerpo del Artículo
-st.markdown("""
-    <div class="cuerpo-texto">
-        <p>Compartir el salón de clases con <b>Sebastián Ipia</b> es una experiencia que desafía las leyes de la lógica y la paciencia. Como amigo suyo y compañero que se la pasa sentado a pocos metros, he tenido el privilegio —y a veces el sufrimiento— de analizar de cerca los tres grandes misterios que componen a este personaje. No es un secreto para nadie en el colegio que tenerlo cerca implica estar en una montaña rusa de risas, dudas y un visaje constante que ya es imposible de ignorar.</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# Sección 1: Estatura
-st.markdown("<h3 class=\"subtitulo-seccion\">📏 Verlo hacia abajo: El misterio de su estatura</h3>", unsafe_allow_html=True)
-st.markdown("""
-    <div class="cuerpo-texto">
-        <p>El primer tema que debatimos a diario es su formato compacto. A veces me pregunto si Sebastián no creció más porque le dio pereza o si el pupitre le queda grande a propósito. Uno lo ve llegar temprano, caminando rápido con sus tenis blancos impecables cuidando de no pisar el más mínimo charco, y parece un bafle mediano moviéndose por los pasillos. Su centro de gravedad bajo es una ventaja para esconderse detrás de los compañeros altos cuando el profesor empieza a pedir las tareas que él obviamente no trajo, pero ver el esfuerzo que hace para alcanzar los estantes del salón ya es parte de nuestra rutina cómica.</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# Sección 2: La Recocha
-st.markdown("<h3 class=\"subtitulo-seccion\">🤡 La recocha infinita como escudo</h3>", unsafe_allow_html=True)
-st.markdown("""
-    <div class="cuerpo-texto">
-        <p>Otra realidad innegable es su incapacidad absoluta para mantenerse serio. Es imposible tener una conversación seria con este man; si el profesor está explicando el tema más complejo del examen, Ipia sale con un apunte sin sentido, hace una mueca o monta un show para hacer reír a la pipol. Nosotros, como sus amigos, sabemos que esa recocha perpetua y esas ganas de llamar la atención son su armadura para compensar los centímetros de altura que le faltaron. Básicamente, si no puede destacar por lo alto, destaca por el desorden que arma en cinco minutos.</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# Sección 3: Los Visajes Delicados
-st.markdown("<h3 class=\"subtitulo-seccion\">🌈 La energía sospechosa que se le sale</h3>", unsafe_allow_html=True)
-st.markdown("""
-    <div class="cuerpo-texto">
-        <p>Por último, está el tema del que todos hablamos a escondidas: sus conductas sospechosas. Ipia intenta dárselas de muy parado en el salón, usando palabras pesadas y diciéndole '¿Qué dice, mi pez?' a todo el mundo para fingir rudeza. Pero los que nos sentamos con él sabemos la firme. Ese quiebre de muñeca automático que le da cuando se emociona hablando, la forma tan sutil en la que analiza la contextura física de los demás manes en el gimnasio, o el hecho de que se sepa completas las canciones de Karol G y La Rosalía y las tararee en voz baja en mitad de clase, nos deja claro que a nuestro amigo se le moja la canoa de una manera monumental. Ningún pantalón ancho va a tapar la delicadeza con la que pestañea cuando está distraído.</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# 6. MÓDULO INTERACTIVO (Buzón de firmas del salón)
-st.write("---")
-st.markdown("<h3 style='font-family: Georgia, serif; text-align: center;'>✍️ Respaldar la Columna (Testimonios del Salón)</h3>", unsafe_allow_html=True)
-st.write("Como compañero de clase o testigo de los visajes de Ipia, deja aquí tu aporte anónimo para validar esta investigación estudiantil:")
-
-# Inicialización de variables en session_state
-if "procesado" not in st.session_state:
-    st.session_state.procesado = False
-if "resultado_actual" not in st.session_state:
-    st.session_state.resultado_actual = ""
-
-# Casilla libre
-aporte_usuario = st.text_area(
-    "Tu testimonio o anécdota sobre Sebastián:",
-    placeholder="Ej: Yo confirmo lo de los tenis blancos, ayer caminaba empinado para verse de la misma altura que el profe...",
-    key="input_aporte"
+# Selector de acordes en la interfaz
+acorde_seleccionado = st.selectbox(
+    "🔎 ¿Qué acorde quieres visualizar en el teclado?", 
+    options=list(acordes.keys())
 )
+notas_a_iluminar = acordes[acorde_seleccionado]
 
-# Resultados periodísticos irónicos
-conclusiones_prensa = [
-    "📰 REPORTE DEL DELEGADO DE CURSO: Tras recopilar tu testimonio, el comité del salón confirma que Ipia mide lo mismo que un bolso escolar y bota más plumas que una almohada vieja. El caso queda archivado como 'Recontra confirmado'.",
-    "📰 OBSERVACIÓN DEL PUESTO DE ATRÁS: Se añade la evidencia al expediente. La ciencia del salón demuestra que entre más bajito es el estudiante, mayor es su necesidad de bailar los temas de Karol G haciendo poses raras frente al tablero.",
-    "📰 VERDICTO DEL GRUPO DE EXPOSICIÓN: Testigos confirman que el camuflaje rudo de Sebastián falló. Su recocha ya no puede ocultar que camina en puntitas y que se le quiebra la muñeca solita al recibir un papel.",
-    "📰 INFORME GENERAL DEL RECREO: Los datos enviados colaron el sistema por exceso de sospecha. Veredicto final de los panas: Es chiquito, desordenado y se le nota a leguas lo pato.",
-    "📰 ACTA DE CONVIVENCIA NO OFICIAL: El análisis de tu aporte confirma de manera unánime que a nuestro amigo se le va la canoa de medio lado de forma irreversible, por más que hable grueso."
+# 5. Estructura de las teclas (Nota, Tipo, Archivo de Audio Remoto)
+# Usamos el repositorio abierto de Keithwhor que tiene los audios reales de un piano de cola organizado por octavas
+base_url = "https://raw.githubusercontent.com/keithwhor/audiosynth/master/samples/piano/"
+teclas = [
+    {"nota": "C4", "tipo": "blanca", "file": "4c.mp3", "label": "DO"},
+    {"nota": "Db4", "tipo": "negra", "file": "4cs.mp3", "label": "Do#"},
+    {"nota": "D4", "tipo": "blanca", "file": "4d.mp3", "label": "RE"},
+    {"nota": "Eb4", "tipo": "negra", "file": "4ds.mp3", "label": "Re#"},
+    {"nota": "E4", "tipo": "blanca", "file": "4e.mp3", "label": "MI"},
+    {"nota": "F4", "tipo": "blanca", "file": "4f.mp3", "label": "FA"},
+    {"nota": "Gb4", "tipo": "negra", "file": "4fs.mp3", "label": "Fa#"},
+    {"nota": "G4", "tipo": "blanca", "file": "4g.mp3", "label": "SOL"},
+    {"nota": "Bb4", "tipo": "negra", "file": "4as.mp3", "label": "Sol#"},
+    {"nota": "A4", "tipo": "blanca", "file": "4a.mp3", "label": "LA"},
+    {"nota": "Ab4", "tipo": "negra", "file": "4gs.mp3", "label": "La#"}, # Alias práctico para acordes
+    {"nota": "B4", "tipo": "blanca", "file": "4b.mp3", "label": "SI"},
+    {"nota": "C5", "tipo": "blanca", "file": "5c.mp3", "label": "DO+"},
+    {"nota": "Db5", "tipo": "negra", "file": "5cs.mp3", "label": "Do#+"},
+    {"nota": "D5", "tipo": "blanca", "file": "5d.mp3", "label": "RE+"},
+    {"nota": "Eb5", "tipo": "negra", "file": "5ds.mp3", "label": "Re#+"},
+    {"nota": "E5", "tipo": "blanca", "file": "5e.mp3", "label": "MI+"}
 ]
 
-if st.button("📝 REGISTRAR MI TESTIMONIO EN LA COLUMNA", use_container_width=True):
-    if not aporte_usuario:
-        st.warning("⚠️ Escribe algo en el buzón para poder añadir tu firma al informe del salón.")
-    else:
-        # Animación de procesamiento
-        with st.spinner("Compartiendo testimonio con el grupo..."):
-            time.sleep(1.2)
-        with st.spinner("Analizando evidencias..."):
-            time.sleep(1.0)
-        with st.spinner("Guardando en el archivo anónimo del salón..."):
-            time.sleep(0.8)
-        
-        # Guardar conclusión y limpiar
-        st.session_state.resultado_actual = random.choice(conclusiones_prensa)
-        st.session_state.procesado = True
-        st.rerun()
+# 6. Construcción del HTML del Piano con Javascript inyectado para reproducir audio al hacer clic
+html_piano = '<div class="piano-container">'
 
-# Despliegue de los resultados
-if st.session_state.procesado:
-    st.markdown(f"""
-        <div class="resultado-editorial">
-            <strong>📊 NOTA ADICIONAL DEL COMITÉ DE COMPAÑEROS:</strong><br><br>
-            {st.session_state.resultado_actual}
-        </div>
-    """, unsafe_allow_html=True)
+for t in teclas:
+    # Comprobar si la nota actual forma parte del acorde seleccionado para meterle la clase "activa"
+    es_activa = "activa" if t["nota"] in notas_a_iluminar else ""
+    url_audio = f"{base_url}{t['file']}"
     
-    if st.button("🔄 Registrar un nuevo testimonio"):
-        st.session_state.procesado = False
-        st.session_state.resultado_actual = ""
-        st.rerun()
+    # Inyectamos una función JS simple: crear un objeto de Audio con la URL y darle .play() al dar click
+    html_piano += f"""
+    <div class="tecla-{t['tipo']} {es_activa}" onclick="new Audio('{url_audio}').play();">
+        <div class="nota-label">{t['label']}</div>
+    </div>
+    """
 
+html_piano += '</div>'
+
+# Renderizar el piano HTML en la aplicación de Streamlit
+st.markdown(html_piano, unsafe_allow_html=True)
+
+# 7. Cuadro informativo de teoría musical rápida debajo del piano
 st.write("---")
-st.caption("📰 Diario G • Columna Estudiantil Independiente • Contenido para lectura exclusiva de los panas • Prohibido mostrárselo a Ipia 🤫")
+with st.expander("🎓 Teoría musical rápida para el bloque seleccionado"):
+    if acorde_seleccionado == "Ninguno (Modo Libre)":
+        st.write("💡 ¡Estás en modo libre! Toca cualquier tecla para escuchar su sonido. Las teclas blancas representan las notas naturales y las negras las alteraciones (sostenidos/bemoles).")
+    else:
+        st.write(f"🎼 **Análisis del {acorde_seleccionado}:**")
+        st.write(f"- **Notas que lo componen:** {', '.join(notas_a_iluminar)}")
+        if "Menor" in acorde_seleccionado:
+            st.write("- **Características:** Los acordes menores tienen una sonoridad más nostálgica, melancólica o seria. Se construyen con una tercera menor desde la nota raíz.")
+        else:
+            st.write("- **Características:** Los acordes mayores tienen un color alegre, brillante y abierto. Son la base fundamental de la mayoría de canciones populares.")
+
+st.caption("🎹 Desarrollado en Streamlit usando Audio-Synthesizer Engine • Sube el volumen de tus audífonos o parlantes.")
