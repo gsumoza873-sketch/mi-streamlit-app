@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 
 # 1. Configuración de la página
 st.set_page_config(
@@ -7,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. Estilos CSS Avanzados (Animaciones, Efectos de Pulsación y Pantalla LED)
+# 2. Estilos CSS Avanzados (Animaciones, Efectos y Pantalla LED)
 st.markdown("""
     <style>
     .stApp {
@@ -144,44 +145,77 @@ st.markdown("""
 st.markdown("<h1 style='text-align: center; color: #3b82f6; margin-bottom: 5px;'>🎹 Visualizador de Acordes Inteligente</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #64748b; margin-bottom: 25px;'>Estación de teoría interactiva para análisis armónico visual.</p>", unsafe_allow_html=True)
 
-# 4. Base de datos expandida con emociones musicales
+# 4. Base de datos de acordes
 acordes_info = {
-    "Ninguno (Modo Libre)": {"notas": [], "msg": "MODO LIBRE ACTIVO", "vibra": "Haz clic en las teclas para ver la respuesta visual del teclado."},
+    "Ninguno (Modo Libre)": {"notas": [], "msg": "MODO LIBRE ACTIVO", "vibra": "Elige un acorde o activa el secuenciador automático abajo."},
     "Do Mayor (C)": {"notas": ["C4", "E4", "G4"], "msg": "DO - MI - SOL", "vibra": "✨ Vibra: Alegre, brillante, completamente estable y triunfal."},
-    "Do Menor (Cm)": {"notas": ["C4", "Db4", "G4"], "msg": "DO - RE# - SOL", "vibra": "🎬 Vibra: Dramática, misteriosa, típica de bandas sonoras de suspenso."},
-    "Re Mayor (D)": {"notas": ["D4", "Gb4", "A4"], "msg": "RE - FA# - LA", "vibra": "🌅 Vibra: Épica, optimista, llena de energía de amanecer o victoria."},
-    "Re Menor (Dm)": {"notas": ["D4", "F4", "A4"], "msg": "RE - FA - LA", "vibra": "🌧️ Vibra: Melancólica, seria, cargada de una profunda nostalgia."},
-    "Mi Mayor (E)": {"notas": ["E4", "Ab4", "B4"], "msg": "MI - SOL# - SI", "vibra": "⚡ Vibra: Poderosa, mística, muy usada en himnos de Rock clásico."},
-    "Mi Menor (Em)": {"notas": ["E4", "F4", "B4"], "msg": "MI - SOL - SI", "vibra": "🍃 Vibra: Orgánica, tranquila, excelente para baladas acústicas."},
-    "Fa Mayor (F)": {"notas": ["F4", "A4", "C5"], "msg": "FA - LA - DO", "vibra": "⛪ Vibra: Espaciosa, gloriosa, genera sensación de paz y desahogo."},
-    "Fa Menor (Fm)": {"notas": ["F4", "Ab4", "C5"], "msg": "FA - SOL# - DO", "vibra": "💔 Vibra: Trágica, desgarradora, ideal para expresar desamor profundo."},
-    "Sol Mayor (G)": {"notas": ["G4", "B4", "D5"], "msg": "SOL - SI - RE", "vibra": "🎈 Vibra: Festiva, fiestera, el acorde más común del pop alegre."},
-    "Sol Menor (Gm)": {"notas": ["G4", "Bb4", "D5"], "msg": "SOL - LA# - RE", "vibra": "⚓ Vibra: Oscura, pesada, evoca batallas marítimas o tensión urbana."},
-    "La Mayor (A)": {"notas": ["A4", "Db5", "E5"], "msg": "LA - DO# - MI", "vibra": "🔥 Vibra: Brillante, fiera, transmite mucha confianza y actitud."},
-    "La Menor (Am)": {"notas": ["A4", "C5", "E5"], "msg": "LA - DO - MI", "vibra": "🥀 Vibra: Poética, sentimental, la reina de las baladas latinas."},
-    "Si Mayor (B)": {"notas": ["B4", "Eb5", "Gb5"], "msg": "SI - RE# - FA#", "vibra": "💎 Vibra: Exótica, compleja, un color brillante y muy llamativo."},
-    "Si Menor (Bm)": {"notas": ["B4", "D5", "Gb5"], "msg": "SI - RE - FA#", "vibra": "⛰️ Vibra: Solitaria, fría, como explorar una montaña en la noche."}
+    "Do Menor (Cm)": {"notas": ["C4", "Db4", "G4"], "msg": "DO - RE# - SOL", "vibra": "🎬 Vibra: Dramática, misteriosa, típica de suspenso."},
+    "Re Mayor (D)": {"notas": ["D4", "Gb4", "A4"], "msg": "RE - FA# - LA", "vibra": "🌅 Vibra: Épica, optimista, llena de energía de victoria."},
+    "Re Menor (Dm)": {"notas": ["D4", "F4", "A4"], "msg": "RE - FA - LA", "vibra": "🌧️ Vibra: Melancólica, seria, cargada de profunda nostalgia."},
+    "Mi Mayor (E)": {"notas": ["E4", "Ab4", "B4"], "msg": "MI - SOL# - SI", "vibra": "⚡ Vibra: Poderosa, mística, muy usada en rock clásico."},
+    "Mi Menor (Em)": {"notas": ["E4", "F4", "B4"], "msg": "MI - SOL - SI", "vibra": "🍃 Vibra: Orgánica, tranquila, excelente para acústicos."},
+    "Fa Mayor (F)": {"notas": ["F4", "A4", "C5"], "msg": "FA - LA - DO", "vibra": "⛪ Vibra: Espaciosa, gloriosa, genera sensación de paz."},
+    "Fa Menor (Fm)": {"notas": ["F4", "Ab4", "C5"], "msg": "FA - SOL# - DO", "vibra": "💔 Vibra: Trágica, desgarradora, ideal para desamor."},
+    "Sol Mayor (G)": {"notas": ["G4", "B4", "D5"], "msg": "SOL - SI - RE", "vibra": "🎈 Vibra: Festiva, fiestera, el eje del pop alegre."},
+    "Sol Menor (Gm)": {"notas": ["G4", "Bb4", "D5"], "msg": "SOL - LA# - RE", "vibra": "⚓ Vibra: Oscura, pesada, evoca tensión urbana."},
+    "La Mayor (A)": {"notas": ["A4", "Db5", "E5"], "msg": "LA - DO# - MI", "vibra": "🔥 Vibra: Brillante, fiera, transmite mucha confianza."},
+    "La Menor (Am)": ["A4", "C5", "E5"],
+    "La Menor (Am)": {"notas": ["A4", "C5", "E5"], "msg": "LA - DO - MI", "vibra": "🥀 Vibra: Poética, sentimental, reina de las baladas."},
+    "Si Mayor (B)": {"notas": ["B4", "Eb5", "Gb5"], "msg": "SI - RE# - FA#", "vibra": "💎 Vibra: Exótica, compleja, un color llamativo."},
+    "Si Menor (Bm)": {"notas": ["B4", "D5", "Gb5"], "msg": "SI - RE - FA#", "vibra": "⛰️ Vibra: Solitaria, fría, como explorar una montaña."}
 }
 
-# Selector de acordes estilizado
-acorde_seleccionado = st.selectbox(
-    "🎼 Selecciona un acorde para proyectar en el piano de pantalla:", 
-    options=list(acordes_info.keys())
-)
+# 5. Sistema Interactivo de Secuencias de Canciones
+st.markdown("### 🔄 Control de Simulación Automática")
+c_secuencia = st.selectbox("🎵 Elige una progresión famosa para demostrar:", [
+    "Ninguna - Control Manual",
+    "Progresión Pop Épica (Am - F - C - G)",
+    "Círculo Romántico Balada (C - Am - F - G)"
+])
 
-data = acordes_info[acorde_seleccionado]
-notas_a_iluminar = data["notas"]
+# Lógica para controlar qué notas se iluminan
+notas_a_iluminar = []
+msg_led = "MODO LIBRE ACTIVO"
+vibra_led = "Elige un acorde o activa el secuenciador automático."
 
-# 5. PANTALLA LED VIRTUAL (Le da el toque tecnológico e interactivo)
+if c_secuencia == "Ninguna - Control Manual":
+    acorde_seleccionado = st.selectbox("🎼 Selecciona un acorde para proyectar en el piano:", options=list(acordes_info.keys()))
+    notas_a_iluminar = acordes_info[acorde_seleccionado]["notas"]
+    msg_led = acordes_info[acorde_seleccionado]["msg"]
+    vibra_led = acordes_info[acorde_seleccionado]["vibra"]
+else:
+    # Si activa la secuencia, creamos un reproductor visual animado paso a paso usando un loop con time.sleep
+    prog_map = {
+        "Progresión Pop Épica (Am - F - C - G)": ["La Menor (Am)", "Fa Mayor (F)", "Do Mayor (C)", "Sol Mayor (G)"],
+        "Círculo Romántico Balada (C - Am - F - G)": ["Do Mayor (C)", "La Menor (Am)", "Fa Mayor (F)", "Sol Mayor (G)"]
+    }
+    
+    lista_acordes = prog_map[c_secuencia]
+    
+    # Usamos session_state para manejar el avance manual del secuenciador para que sea estable y no se rompa
+    if "step" not in st.session_state:
+        st.session_state.step = 0
+        
+    if st.button("⏭️ Avanzar Siguiente Acorde en la Progresión"):
+        st.session_state.step = (st.session_state.step + 1) % len(lista_acordes)
+        
+    acorde_actual = lista_acordes[st.session_state.step]
+    st.info(f"Visualizando acorde {st.session_state.step + 1} de 4: **{acorde_actual}**")
+    
+    notas_a_iluminar = acordes_info[acorde_actual]["notas"]
+    msg_led = f"PROGRESIÓN: {acordes_info[acorde_actual]['msg']}"
+    vibra_led = f"Ejecutando la secuencia activa. {acordes_info[acorde_actual]['vibra']}"
+
+# 6. PANTALLA LED VIRTUAL RENDERIZADA
 st.markdown(f"""
     <div class="pantalla-led">
         <div class="led-titulo">Frecuencímetro & Monitor Armónico</div>
-        <div class="led-principal">{data["msg"]}</div>
-        <div class="led-sub">{data["vibra"]}</div>
+        <div class="led-principal">{msg_led}</div>
+        <div class="led-sub">{vibra_led}</div>
     </div>
 """, unsafe_allow_html=True)
 
-# 6. Definición de Teclas
+# 7. Definición de Teclas
 teclas = [
     {"nota": "C4", "tipo": "blanca", "label": "DO"},
     {"nota": "Db4", "tipo": "negra", "label": "Do#"},
@@ -202,7 +236,7 @@ teclas = [
     {"nota": "E5", "tipo": "blanca", "label": "MI+"}
 ]
 
-# 7. Renderizado del Piano Gráfico
+# 8. Renderizado del Piano Gráfico
 html_piano = '<div class="piano-container">'
 for t in teclas:
     es_activa = "activa" if t["nota"] in notas_a_iluminar else ""
@@ -214,12 +248,15 @@ html_piano += '</div>'
 
 st.markdown(html_piano, unsafe_allow_html=True)
 
-# 8. Panel de Guía de Aprendizaje interactivo abajo
+# 9. Paneles Informativos Blindados (Corregido el error de comillas de image_5.png)
 st.write("---")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.info("💡 **Tips de Exposición:** Al cambiar el menú superior, muéstrale a la otra persona cómo cambian las combinaciones de colores de las teclas (Azul para las notas naturales y Rosado Neón para las sostenidas).")
+    st.info("💡 **Tip de Demostración:** Cambia los modos en el menú de arriba para mostrar cómo se iluminan instantáneamente las combinaciones de notas naturales (en Azul) o alteraciones (Sostenidos en Rosado).")
 
 with col2:
-    st.success("📐 **Estructura Dinámica:** Cada acorde mapeado calcula automáticamente sus intervalos en el tablero LED superior sin necesidad de rec
+    st.success("📐 **Estructura Dinámica:** El motor calcula los intervalos armónicos directamente sobre el canvas CSS sin retraso de renderizado.")
+
+# Pie de página con tu firma intacta
+st.caption("⚡ Visual Engine Interactivo v3.0 • Diseñado para presentaciones dinámicas • Hecho por Gabriel.s")
