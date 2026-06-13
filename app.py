@@ -12,23 +12,29 @@ st.markdown("<style>.stApp { background-color: #060d17; color: #f1f5f9; }</style
 st.markdown("<style>.card-grupo { background: linear-gradient(145deg, #0f172a, #1e293b); border-radius: 12px; padding: 20px; border: 1px solid #1e40af; margin-bottom: 25px; }</style>", unsafe_allow_html=True)
 st.markdown("<style>.card-eliminatoria { background: linear-gradient(145deg, #1e1b4b, #312e81); border-radius: 12px; padding: 15px; border: 1px solid #7c3aed; margin-bottom: 15px; }</style>", unsafe_allow_html=True)
 
-# Título Corregido Exacto: Simulator the World Cup
+# Título de la App actualizado: Simulator the World Cup
 st.markdown("<h1 style='text-align: center; color: #3b82f6;'>🏆 Simulator the World Cup</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #94a3b8;'>Simulador Dinámico: Configura las selecciones reales y calcula toda la Copa del Mundo.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8;'>Simula los partidos de cada grupo con las selecciones reales y calcula la fase final hasta la copa.</p>", unsafe_allow_html=True)
 
 # Secciones principales de la App
 seccion_principal = st.radio("Selecciona la etapa del torneo a gestionar:", ["Fase de Grupos", "Fases Finales (Eliminación Directa)"])
 
-# 2. Inicialización de los 12 grupos editables (Evita datos falsos fijos)
+# 2. Base de datos fija con los 12 grupos oficiales establecidos
 if "config_grupos" not in st.session_state:
     st.session_state.config_grupos = {
-        f"Grupo {letra}": [f"Equipo 1 {letra}", f"Equipo 2 {letra}", f"Equipo 3 {letra}", f"Equipo 4 {letra}"]
-        for letra in ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
+        "Grupo A": ["México", "Sudáfrica", "Corea del Sur", "República Checa"],
+        "Grupo B": ["Canadá", "Bosnia-Herzegovina", "Catar", "Suiza"],
+        "Grupo C": ["Brasil", "Marruecos", "Haití", "Escocia"],
+        "Grupo D": ["Estados Unidos", "Paraguay", "Australia", "Turquía"],
+        "Grupo E": ["Alemania", "Curazao", "Costa de Marfil", "Ecuador"],
+        "Grupo F": ["Países Bajos", "Japón", "Suecia", "Túnez"],
+        "Grupo G": ["Bélgica", "Egipto", "Irán", "Nueva Zelanda"],
+        "Grupo H": ["España", "Cabo Verde", "Arabia Saudita", "Uruguay"],
+        "Grupo I": ["Francia", "Senegal", "Irak", "Noruega"],
+        "Grupo J": ["Argentina", "Argelia", "Austria", "Jordania"],
+        "Grupo K": ["Portugal", "RD Congo", "Uzbekistán", "Colombia"],
+        "Grupo L": ["Inglaterra", "Croacia", "Ghana", "Panamá"]
     }
-    # Sedes confirmadas por la organización
-    st.session_state.config_grupos["Grupo A"][0] = "México"
-    st.session_state.config_grupos["Grupo B"][0] = "Canadá"
-    st.session_state.config_grupos["Grupo D"][0] = "Estados Unidos"
 
 if "goles_simulados" not in st.session_state: st.session_state.goles_simulados = {}
 if "fase_elim" not in st.session_state: st.session_state.fase_elim = {}
@@ -37,29 +43,12 @@ nombres_grupos = list(st.session_state.config_grupos.keys())
 
 # --- BLOQUE 1: FASE DE GRUPOS ---
 if seccion_principal == "Fase de Grupos":
-    
-    # Panel superior para ingresar los países reales en los inputs
-    with st.expander("⚙️ Panel de Configuración: Digita las Selecciones Reales"):
-        st.write("Escribe las selecciones de cada grupo para actualizar los partidos automáticamente:")
-        grupo_sel = st.selectbox("Selecciona el grupo a rellenar:", nombres_grupos)
-        eq_actuales = st.session_state.config_grupos[grupo_sel]
-        
-        col_ed1, col_ed2 = st.columns(2)
-        with col_ed1:
-            n_eq1 = st.text_input("Selección 1:", value=eq_actuales[0], key=f"edit_{grupo_sel}_1")
-            n_eq2 = st.text_input("Selección 2:", value=eq_actuales[1], key=f"edit_{grupo_sel}_2")
-        with col_ed2:
-            n_eq3 = st.text_input("Selección 3:", value=eq_actuales[2], key=f"edit_{grupo_sel}_3")
-            n_eq4 = st.text_input("Selección 4:", value=eq_actuales[3], key=f"edit_{grupo_sel}_4")
-        
-        st.session_state.config_grupos[grupo_sel] = [n_eq1, n_eq2, n_eq3, n_eq4]
-
     pestanas = st.tabs(nombres_grupos)
     for i, nombre_grupo in enumerate(nombres_grupos):
         with pestanas[i]:
             lista_equipos = st.session_state.config_grupos[nombre_grupo]
             
-            # Fixture dinámico basado en las selecciones escritas
+            # Calendario de partidos por cada grupo
             partidos = [
                 {"p_id": f"{nombre_grupo}_1", "loc": lista_equipos[0], "vis": lista_equipos[1], "jornada": "Jornada 1"},
                 {"p_id": f"{nombre_grupo}_2", "loc": lista_equipos[2], "vis": lista_equipos[3], "jornada": "Jornada 1"},
@@ -202,7 +191,7 @@ else:
             st.info("Define un ganador en el marcador para coronar al Campeón del Mundo.")
         st.markdown("</div>", unsafe_allow_html=True)
 
-# 3. Pie de página con tu firma exacta e intacta
+# 3. Pie de página con tu firma reglamentaria intacta
 st.write("---")
 st.caption("⚡ AI Learning Music Engine v5.2 • Sistema de Guía Teórica Dinámica • Hecho por Gabriel.s")
-            
+        
