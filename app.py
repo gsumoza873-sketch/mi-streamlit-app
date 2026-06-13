@@ -7,7 +7,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. Estilos CSS para diseñar el teclado del piano (Teclas blancas y negras)
+# 2. Estilos CSS para diseñar el teclado del piano
 st.markdown("""
     <style>
     .stApp {
@@ -23,6 +23,7 @@ st.markdown("""
         box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         margin-bottom: 25px;
         position: relative;
+        overflow-x: auto; /* Para que en móvil se pueda hacer scroll si es necesario */
     }
     /* Estilo de Teclas Blancas */
     .tecla-blanca {
@@ -34,6 +35,11 @@ st.markdown("""
         cursor: pointer;
         z-index: 1;
         transition: background-color 0.1s;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 10px;
+        position: relative;
     }
     .tecla-blanca:active {
         background-color: #e2e8f0;
@@ -50,13 +56,17 @@ st.markdown("""
         margin-right: -15px;
         z-index: 2;
         transition: background-color 0.1s;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 10px;
+        position: relative;
     }
     .tecla-negra:active {
         background-color: #1e293b;
     }
-    /* Iluminación de teclas cuando pertenecen al acorde seleccionado */
+    /* Iluminación de teclas activa por acorde seleccionado */
     .tecla-blanca.activa {
-        background-gradient: none;
         background-color: #38bdf8 !important;
         box-shadow: inset 0 -10px 0 #0284c7;
     }
@@ -65,18 +75,13 @@ st.markdown("""
         box-shadow: inset 0 -8px 0 #be123c;
     }
     .nota-label {
-        position: relative;
-        top: 140px;
-        text-align: center;
-        width: 100%;
-        color: #64748b;
         font-family: Arial, sans-serif;
         font-weight: bold;
         font-size: 12px;
         user-select: none;
+        color: #64748b;
     }
     .tecla-negra .nota-label {
-        top: 75px;
         color: #94a3b8;
         font-size: 10px;
     }
@@ -85,10 +90,9 @@ st.markdown("""
 
 # 3. Título del software
 st.markdown("<h1 style='text-align: center; color: #38bdf8;'>🎹 Piano Virtual Interactivo</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #94a3b8;'>Selecciona un acorde para aprender a tocarlo o haz clic en las teclas para escuchar su sonido real.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8;'>Selecciona un acorde para aprender a tocarlo o haz clic en las teclas.</p>", unsafe_allow_html=True)
 
-# 4. Diccionario de Acordes (Mapeo de qué notas se iluminan)
-# 'C' es Do, 'D' es Re, 'E' es Mi, 'F' es Fa, 'G' es Sol, 'A' es La, 'B' es Si. El '#' son las negras.
+# 4. Diccionario de Acordes
 acordes = {
     "Ninguno (Modo Libre)": [],
     "Do Mayor (C)": ["C4", "E4", "G4"],
@@ -107,15 +111,14 @@ acordes = {
     "Si Menor (Bm)": ["B4", "D5", "Gb5"]
 }
 
-# Selector de acordes en la interfaz
+# Selector de acordes
 acorde_seleccionado = st.selectbox(
-    "🔎 ¿Qué acorde quieres visualizar en el teclado?", 
+    "🔎 ¿Qué acorde quieres visualizar?", 
     options=list(acordes.keys())
 )
 notas_a_iluminar = acordes[acorde_seleccionado]
 
-# 5. Estructura de las teclas (Nota, Tipo, Archivo de Audio Remoto)
-# Usamos el repositorio abierto de Keithwhor que tiene los audios reales de un piano de cola organizado por octavas
+# 5. Estructura de las teclas (corregida)
 base_url = "https://raw.githubusercontent.com/keithwhor/audiosynth/master/samples/piano/"
 teclas = [
     {"nota": "C4", "tipo": "blanca", "file": "4c.mp3", "label": "DO"},
@@ -126,9 +129,9 @@ teclas = [
     {"nota": "F4", "tipo": "blanca", "file": "4f.mp3", "label": "FA"},
     {"nota": "Gb4", "tipo": "negra", "file": "4fs.mp3", "label": "Fa#"},
     {"nota": "G4", "tipo": "blanca", "file": "4g.mp3", "label": "SOL"},
-    {"nota": "Bb4", "tipo": "negra", "file": "4as.mp3", "label": "Sol#"},
+    {"nota": "Ab4", "tipo": "negra", "file": "4gs.mp3", "label": "Sol#"},
     {"nota": "A4", "tipo": "blanca", "file": "4a.mp3", "label": "LA"},
-    {"nota": "Ab4", "tipo": "negra", "file": "4gs.mp3", "label": "La#"}, # Alias práctico para acordes
+    {"nota": "Bb4", "tipo": "negra", "file": "4as.mp3", "label": "La#"},
     {"nota": "B4", "tipo": "blanca", "file": "4b.mp3", "label": "SI"},
     {"nota": "C5", "tipo": "blanca", "file": "5c.mp3", "label": "DO+"},
     {"nota": "Db5", "tipo": "negra", "file": "5cs.mp3", "label": "Do#+"},
@@ -137,37 +140,33 @@ teclas = [
     {"nota": "E5", "tipo": "blanca", "file": "5e.mp3", "label": "MI+"}
 ]
 
-# 6. Construcción del HTML del Piano con Javascript inyectado para reproducir audio al hacer clic
+# 6. Construcción del HTML del Piano con Javascript (Sintaxis Corregida)
 html_piano = '<div class="piano-container">'
 
 for t in teclas:
-    # Comprobar si la nota actual forma parte del acorde seleccionado para meterle la clase "activa"
+    # Arreglo el espacio que causaba el error de sintaxis en image_3.png
     es_activa = "activa" if t["nota"] in notas_a_iluminar else ""
     url_audio = f"{base_url}{t['file']}"
     
-    # Inyectamos una función JS simple: crear un objeto de Audio con la URL y darle .play() al dar click
+    # Inyección JS limpia: onclick="...play();". Se usa un Audio por tecla para permitir polifonía
     html_piano += f"""
-    <div class="tecla-{t['tipo']} {es_activa}" onclick="new Audio('{url_audio}').play();">
-        <div class="nota-label">{t['label']}</div>
-    </div>
-    """
+    <div class="tecla-{t['tipo']} {es_activa}" onclick="var snd = new Audio('{url_audio}'); snd.play();">
+        <span class="nota-label">{t['label']}</span>
+    </div>"""
 
 html_piano += '</div>'
 
-# Renderizar el piano HTML en la aplicación de Streamlit
+# Renderizar el piano HTML
 st.markdown(html_piano, unsafe_allow_html=True)
 
-# 7. Cuadro informativo de teoría musical rápida debajo del piano
+# 7. Cuadro informativo
 st.write("---")
-with st.expander("🎓 Teoría musical rápida para el bloque seleccionado"):
+with st.expander("🎓 Teoría musical rápida"):
     if acorde_seleccionado == "Ninguno (Modo Libre)":
-        st.write("💡 ¡Estás en modo libre! Toca cualquier tecla para escuchar su sonido. Las teclas blancas representan las notas naturales y las negras las alteraciones (sostenidos/bemoles).")
+        st.write("💡 ¡Estás en modo libre! Toca cualquier tecla para escuchar su sonido. Las blancas son notas naturales y las negras alteraciones.")
     else:
         st.write(f"🎼 **Análisis del {acorde_seleccionado}:**")
         st.write(f"- **Notas que lo componen:** {', '.join(notas_a_iluminar)}")
-        if "Menor" in acorde_seleccionado:
-            st.write("- **Características:** Los acordes menores tienen una sonoridad más nostálgica, melancólica o seria. Se construyen con una tercera menor desde la nota raíz.")
-        else:
-            st.write("- **Características:** Los acordes mayores tienen un color alegre, brillante y abierto. Son la base fundamental de la mayoría de canciones populares.")
+        st.write("- **Características:** Esta combinación de notas crea el acorde que visualizas en azul o rojo.")
 
-st.caption("🎹 Desarrollado en Streamlit usando Audio-Synthesizer Engine • Sube el volumen de tus audífonos o parlantes.")
+st.caption("🎹 Audio-Synthesizer Engine • Sube el volumen.")
