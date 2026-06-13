@@ -2,12 +2,12 @@ import streamlit as st
 
 # 1. Configuración de la página
 st.set_page_config(
-    page_title="Piano Virtual & Guía de Acordes",
+    page_title="Piano Virtual Pro",
     page_icon="🎹",
     layout="centered"
 )
 
-# 2. Estilos CSS para diseñar el teclado del piano (Teclas blancas y negras)
+# 2. Estilos CSS e Inyección de JavaScript Avanzado con Desbloqueo de Audio
 st.markdown("""
     <style>
     .stApp {
@@ -23,6 +23,7 @@ st.markdown("""
         box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         margin-bottom: 25px;
         position: relative;
+        touch-action: manipulation; /* Optimiza el toque en celulares */
     }
     /* Estilo de Teclas Blancas */
     .tecla-blanca {
@@ -39,6 +40,8 @@ st.markdown("""
         justify-content: center;
         padding-bottom: 10px;
         position: relative;
+        -webkit-user-select: none;
+        user-select: none;
     }
     .tecla-blanca:active {
         background-color: #e2e8f0;
@@ -60,6 +63,8 @@ st.markdown("""
         justify-content: center;
         padding-bottom: 10px;
         position: relative;
+        -webkit-user-select: none;
+        user-select: none;
     }
     .tecla-negra:active {
         background-color: #1e293b;
@@ -87,44 +92,57 @@ st.markdown("""
     </style>
 
     <script>
-    // Sintetizador Nativo en Javascript para evitar bloqueos de audio
+    // Mantenemos una única instancia del contexto de audio global
+    var audioCtx = null;
+
     function playNote(frequency) {
         try {
-            // Inicializar el contexto de audio del navegador
-            var AudioContext = window.AudioContext || window.webkitAudioContext;
-            var ctx = new AudioContext();
+            // 1. Inicializar el contexto si es la primera vez que se interactúa
+            if (!audioCtx) {
+                var AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+
+            // 2. DESBLOQUEADOR CRÍTICO: Si el navegador suspendió el audio, lo despertamos a la fuerza
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
             
-            // Crear el oscilador (generador de onda) y la ganancia (volumen)
-            var osc = ctx.createOscillator();
-            var gainNode = ctx.createGain();
+            // 3. Crear el nodo oscilador y el nodo de volumen
+            var osc = audioCtx.createOscillator();
+            var gainNode = audioCtx.createGain();
             
-            // Configurar tipo de onda suave para que suene agradable (tipo piano/órgano)
+            // Tipo de onda triangular (suena parecido a una flauta/piano eléctrico suave)
             osc.type = 'triangle'; 
-            osc.frequency.value = frequency;
+            osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
             
-            // Configurar envolvente de volumen (ataque rápido y desvanecimiento progresivo)
-            gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+            // Configurar envolvente de sonido limpia para evitar chasquidos (clics metálicos)
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            // Ataque rápido (fade-in en 0.02 segundos)
+            gainNode.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.02);
+            // Caída progresiva (fade-out en 0.8 segundos)
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
             
-            // Conectar componentes
+            // Conexiones de los cables virtuales de audio
             osc.connect(gainNode);
-            gainNode.connect(ctx.destination);
+            gainNode.connect(audioCtx.destination);
             
-            // Reproducir y detener automáticamente
-            osc.start();
-            osc.stop(ctx.currentTime + 1.2);
+            // Arrancar y apagar el oscilador
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.8);
+            
         } catch(e) {
-            console.error("Error al reproducir audio:", e);
+            console.error("Fallo en el motor de audio web:", e);
         }
     }
     </script>
 """, unsafe_allow_html=True)
 
-# 3. Título del software
+# 3. Título de la App
 st.markdown("<h1 style='text-align: center; color: #38bdf8;'>🎹 Piano Virtual Interactivo</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #94a3b8;'>Selecciona un acorde para aprender a tocarlo o haz clic en las teclas para escuchar el sonido sintético real.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8;'>Toca las teclas para activar y escuchar el sonido directo en tu dispositivo.</p>", unsafe_allow_html=True)
 
-# 4. Diccionario de Acordes (Mapeo de notas)
+# 4. Diccionario de Acordes
 acordes = {
     "Ninguno (Modo Libre)": [],
     "Do Mayor (C)": ["C4", "E4", "G4"],
@@ -143,14 +161,10 @@ acordes = {
     "Si Menor (Bm)": ["B4", "D5", "Gb5"]
 }
 
-# Selector de acordes
-acorde_seleccionado = st.selectbox(
-    "🔎 ¿Qué acorde quieres visualizar?", 
-    options=list(acordes.keys())
-)
+acorde_seleccionado = st.selectbox("🔎 ¿Qué acorde quieres visualizar?", options=list(acordes.keys()))
 notas_a_iluminar = acordes[acorde_seleccionado]
 
-# 5. Estructura de las teclas con sus frecuencias exactas en Hertz (Hz)
+# 5. Notas y frecuencias exactas
 teclas = [
     {"nota": "C4", "tipo": "blanca", "hz": 261.63, "label": "DO"},
     {"nota": "Db4", "tipo": "negra", "hz": 277.18, "label": "Do#"},
@@ -171,30 +185,20 @@ teclas = [
     {"nota": "E5", "tipo": "blanca", "hz": 659.25, "label": "MI+"}
 ]
 
-# 6. Construcción del HTML del Piano llamando a la función JS local
+# 6. Renderizado del Piano
 html_piano = '<div class="piano-container">'
-
 for t in teclas:
     es_activa = "activa" if t["nota"] in notas_a_iluminar else ""
-    # Llamamos a playNote pasando la frecuencia en Hertz directamente
     html_piano += f"""
     <div class="tecla-{t['tipo']} {es_activa}" onclick="playNote({t['hz']});">
         <span class="nota-label">{t['label']}</span>
     </div>"""
-
 html_piano += '</div>'
 
-# Renderizar el piano HTML
 st.markdown(html_piano, unsafe_allow_html=True)
 
-# 7. Cuadro informativo de teoría musical rápida
-st.write("---")
-with st.expander("🎓 Teoría musical rápida"):
-    if acorde_seleccionado == "Ninguno (Modo Libre)":
-        st.write("💡 ¡Estás en modo libre! El sistema genera las ondas sonoras directamente en tu navegador usando la Web Audio API nativa.")
-    else:
-        st.write(f"🎼 **Análisis del {acorde_seleccionado}:**")
-        st.write(f"- **Notas que lo componen:** {', '.join(notas_a_iluminar)}")
-        st.write("- **Características:** Esta combinación de frecuencias genera el acorde iluminado en el tablero.")
+# 7. Nota importante de usabilidad para el usuario
+st.warning("🔊 **Nota del Sistema:** Si estás en un iPhone o Android, asegúrate de que el celular **no esté en modo silencio/vibración**, ya que muchos sistemas operativos bloquean los osciladores web si el interruptor físico de silencio está activo.")
 
-st.caption("🎹 Web Audio API Engine • Sistema Autónomo Antivolúmenes Bloqueados.")
+# Pie de página con tu firma
+st.caption("🎹 Motor Web Audio API con Autodesbloqueo de Contexto Activo • Hecho por Gabriel.s")
