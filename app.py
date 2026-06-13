@@ -147,5 +147,62 @@ else:
             c3_l = st.text_input("Equipo Local C3:", "Inglaterra", key="c3l")
             c3_v = st.text_input("Equipo Visitante C3:", "España", key="c3v")
             gc3_l = st.number_input(f"Goles {c3_l}:", min_value=0, value=0, key="gc3l")
-            gc3_v = st.number_input(f
+            gc3_v = st.number_input(f"Goles {c3_v}:", min_value=0, value=0, key="gc3v")
+            st.session_state.fase_elim["ganador_c3"] = c3_l if gc3_l >= gc3_v else c3_v
+            st.markdown("</div>", unsafe_allow_html=True)
+            
+            st.markdown("<div class='card-eliminatoria'><b>Cuartos 4</b>", unsafe_allow_html=True)
+            c4_l = st.text_input("Equipo Local C4:", "Colombia", key="c4l")
+            c4_v = st.text_input("Equipo Visitante C4:", "Alemania", key="c4v")
+            gc4_l = st.number_input(f"Goles {c4_l}:", min_value=0, value=0, key="gc4l")
+            gc4_v = st.number_input(f"Goles {c4_v}:", min_value=0, value=0, key="gc4v")
+            st.session_state.fase_elim["ganador_c4"] = c4_l if gc4_l >= gc4_v else c4_v
+            st.markdown("</div>", unsafe_allow_html=True)
+
+    with pestana_semi:
+        st.markdown("### Llaves de Semifinales")
+        sem1_l = st.session_state.fase_elim.get("ganador_c1", "Ganador C1")
+        sem1_v = st.session_state.fase_elim.get("ganador_c2", "Ganador C2")
+        sem2_l = st.session_state.fase_elim.get("ganador_c3", "Ganador C3")
+        sem2_v = st.session_state.fase_elim.get("ganador_c4", "Ganador C4")
+        
+        col_s1, col_s2 = st.columns(2)
+        with col_s1:
+            st.markdown("<div class='card-eliminatoria'><b>Semifinal 1</b>", unsafe_allow_html=True)
+            st.write(f"Match: {sem1_l} vs {sem1_v}")
+            gs1_l = st.number_input(f"Goles {sem1_l}:", min_value=0, value=0, key="gs1l")
+            gs1_v = st.number_input(f"Goles {sem1_v}:", min_value=0, value=0, key="gs1v")
+            st.session_state.fase_elim["finalista_1"] = sem1_l if gs1_l >= gs1_v else sem1_v
+            st.markdown("</div>", unsafe_allow_html=True)
+        with col_s2:
+            st.markdown("<div class='card-eliminatoria'><b>Semifinal 2</b>", unsafe_allow_html=True)
+            st.write(f"Match: {sem2_l} vs {sem2_v}")
+            gs2_l = st.number_input(f"Goles {sem2_l}:", min_value=0, value=0, key="gs2l")
+            gs2_v = st.number_input(f"Goles {sem2_v}:", min_value=0, value=0, key="gs2v")
+            st.session_state.fase_elim["finalista_2"] = sem2_l if gs2_l >= gs2_v else sem2_v
+            st.markdown("</div>", unsafe_allow_html=True)
+
+    with pestana_final:
+        st.markdown("### 👑 Partido de la Gran Final")
+        fin_l = st.session_state.fase_elim.get("finalista_1", "Finalista 1")
+        fin_v = st.session_state.fase_elim.get("finalista_2", "Finalista 2")
+        
+        st.markdown("<div class='card-grupo' style='text-align: center;'>", unsafe_allow_html=True)
+        st.markdown(f"<h2>⚽ {fin_l} vs {fin_v} ⚽</h2>", unsafe_allow_html=True)
+        
+        col_fl, col_fv = st.columns(2)
+        with col_fl: gf_l = st.number_input(f"Goles de {fin_l}:", min_value=0, value=0, key="gfl")
+        with col_fv: gf_v = st.number_input(f"Goles de {fin_v}:", min_value=0, value=0, key="gfv")
+        
+        if gf_l != gf_v or (gf_l == 0 and gf_v == 0 and fin_l != "Finalista 1"):
+            campeon = fin_l if gf_l > gf_v else fin_v
+            if fin_l != "Finalista 1":
+                st.markdown(f"<h1 style='text-align: center; color: #34d399; margin-top: 20px;'>🎉 ¡{campeon.upper()} CAMPEÓN DEL MUNDO! 🎉</h1>", unsafe_allow_html=True)
+        else:
+            st.info("Define un ganador en el marcador para coronar al Campeón del Mundo.")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+# 3. Pie de página con tu firma reglamentaria intacta
+st.write("---")
+st.caption("⚡ AI Learning Music Engine v5.2 • Sistema de Guía Teórica Dinámica • Hecho por Gabriel.s")
             
