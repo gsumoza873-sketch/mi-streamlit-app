@@ -1,13 +1,13 @@
 import streamlit as st
 
-# 1. Configuración de la página
+# 1. Configuración de la página (Actualizado a Guía Musical)
 st.set_page_config(
-    page_title="Tutor Musical Inteligente IA",
+    page_title="Guía Musical",
     page_icon="🎹",
     layout="centered"
 )
 
-# 2. Inyección de estilos CSS de forma ultra segura (Línea por línea para evitar cortes)
+# 2. Inyección de estilos CSS de forma ultra segura
 st.markdown("<style>.stApp { background-color: #0b0f19; color: #f1f5f9; }</style>", unsafe_allow_html=True)
 st.markdown("<style>.chat-ia { background-color: #1e1b4b; border-left: 4px solid #a855f7; padding: 18px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.25); }</style>", unsafe_allow_html=True)
 st.markdown("<style>.pantalla-led { background: linear-gradient(145deg, #020617, #0f172a); border: 2px solid #3b82f6; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 25px; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); font-family: 'Courier New', monospace; }</style>", unsafe_allow_html=True)
@@ -24,8 +24,8 @@ st.markdown("<style>.tecla-negra.activa .nota-label { color: #ffffff !important;
 st.markdown("<style>.nota-label { font-family: 'Segoe UI', sans-serif; font-weight: bold; font-size: 12px; color: #64748b; }</style>", unsafe_allow_html=True)
 st.markdown("<style>.tecla-negra .nota-label { color: #94a3b8; font-size: 10px; }</style>", unsafe_allow_html=True)
 
-# 3. Título Principal
-st.markdown("<h1 style='text-align: center; color: #a855f7; margin-bottom: 5px;'>🤖 IA Guía Musical Interactiva</h1>", unsafe_allow_html=True)
+# 3. Título Principal (Actualizado a Guía Musical)
+st.markdown("<h1 style='text-align: center; color: #a855f7; margin-bottom: 5px;'>🎹 Guía Musical</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #64748b; margin-bottom: 25px;'>Escribe una canción y la IA te enseñará a tocarla paso a paso en el teclado.</p>", unsafe_allow_html=True)
 
 # 4. Base de datos de acordes
