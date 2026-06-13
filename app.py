@@ -12,9 +12,9 @@ st.markdown("<style>.stApp { background-color: #060d17; color: #f1f5f9; }</style
 st.markdown("<style>.card-grupo { background: linear-gradient(145deg, #0f172a, #1e293b); border-radius: 12px; padding: 20px; border: 1px solid #1e40af; margin-bottom: 25px; }</style>", unsafe_allow_html=True)
 st.markdown("<style>.card-eliminatoria { background: linear-gradient(145deg, #1e1b4b, #312e81); border-radius: 12px; padding: 15px; border: 1px solid #7c3aed; margin-bottom: 15px; }</style>", unsafe_allow_html=True)
 
-# Título de la App actualizado: Simulator the World Cup
+# Título de la App: Simulator the World Cup
 st.markdown("<h1 style='text-align: center; color: #3b82f6;'>🏆 Simulator the World Cup</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #94a3b8;'>Simula los partidos de cada grupo con las selecciones reales y calcula la fase final hasta la copa.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8;'>Simulador Real: Los clasificados de los grupos avanzan automáticamente a las llaves de eliminación.</p>", unsafe_allow_html=True)
 
 # Secciones principales de la App
 seccion_principal = st.radio("Selecciona la etapa del torneo a gestionar:", ["Fase de Grupos", "Fases Finales (Eliminación Directa)"])
@@ -38,6 +38,7 @@ if "config_grupos" not in st.session_state:
 
 if "goles_simulados" not in st.session_state: st.session_state.goles_simulados = {}
 if "fase_elim" not in st.session_state: st.session_state.fase_elim = {}
+if "clasificados_reales" not in st.session_state: st.session_state.clasificados_reales = {}
 
 nombres_grupos = list(st.session_state.config_grupos.keys())
 
@@ -48,7 +49,6 @@ if seccion_principal == "Fase de Grupos":
         with pestanas[i]:
             lista_equipos = st.session_state.config_grupos[nombre_grupo]
             
-            # Calendario de partidos por cada grupo
             partidos = [
                 {"p_id": f"{nombre_grupo}_1", "loc": lista_equipos[0], "vis": lista_equipos[1], "jornada": "Jornada 1"},
                 {"p_id": f"{nombre_grupo}_2", "loc": lista_equipos[2], "vis": lista_equipos[3], "jornada": "Jornada 1"},
@@ -98,6 +98,10 @@ if seccion_principal == "Fase de Grupos":
             for eq in tabla_calculada: tabla_calculada[eq]["DG"] = tabla_calculada[eq]["GF"] - tabla_calculada[eq]["GC"]
             tabla_ordenada = sorted(tabla_calculada.items(), key=lambda x: (x[1]["PTS"], x[1]["DG"], x[1]["GF"]), reverse=True)
             
+            # Guardamos el 1° y 2° lugar reales en el session_state para las eliminatorias
+            st.session_state.clasificados_reales[f"{nombre_grupo}_1"] = tabla_ordenada[0][0]
+            st.session_state.clasificados_reales[f"{nombre_grupo}_2"] = tabla_ordenada[1][0]
+            
             st.markdown("### 📋 Tabla de Posiciones en Tiempo Real")
             md_tabla = "| Pos | Selección | PJ | PTS | GF | GC | DG |\n| :---: | :--- | :---: | :---: | :---: | :---: | :---: |\n"
             for pos, (equipo, stats) in enumerate(tabla_ordenada):
@@ -108,8 +112,21 @@ if seccion_principal == "Fase de Grupos":
 # --- BLOQUE 2: FASES ELIMINATORIAS ---
 else:
     st.markdown("## ⚔️ Llaves de Eliminación Directa")
-    st.write("Gestiona la fase final introduciendo los ganadores desde Cuartos de Final hasta la definición del torneo:")
+    st.write("Las llaves se generan con los líderes reales calculados en la fase de grupos:")
     
+    # Recuperación segura de los ganadores reales desde el estado del torneo
+    c1_l_def = st.session_state.clasificados_reales.get("Grupo A_1", "1° Grupo A")
+    c1_v_def = st.session_state.clasificados_reales.get("Grupo B_2", "2° Grupo B")
+    
+    c2_l_def = st.session_state.clasificados_reales.get("Grupo C_1", "1° Grupo C")
+    c2_v_def = st.session_state.clasificados_reales.get("Grupo D_2", "2° Grupo D")
+    
+    c3_l_def = st.session_state.clasificados_reales.get("Grupo E_1", "1° Grupo E")
+    c3_v_def = st.session_state.clasificados_reales.get("Grupo F_2", "2° Grupo F")
+    
+    c4_l_def = st.session_state.clasificados_reales.get("Grupo G_1", "1° Grupo G")
+    c4_v_def = st.session_state.clasificados_reales.get("Grupo H_2", "2° Grupo H")
+
     pestana_cuartos, pestana_semi, pestana_final = st.tabs(["📊 Cuartos de Final", "🤝 Semifinales", "👑 Gran Final"])
     
     with pestana_cuartos:
@@ -117,35 +134,31 @@ else:
         col1, col2 = st.columns(2)
         with col1:
             st.markdown("<div class='card-eliminatoria'><b>Cuartos 1</b>", unsafe_allow_html=True)
-            c1_l = st.text_input("Equipo Local C1:", "México", key="c1l")
-            c1_v = st.text_input("Equipo Visitante C1:", "Brasil", key="c1v")
-            gc1_l = st.number_input(f"Goles {c1_l}:", min_value=0, value=0, key="gc1l")
-            gc1_v = st.number_input(f"Goles {c1_v}:", min_value=0, value=0, key="gc1v")
-            st.session_state.fase_elim["ganador_c1"] = c1_l if gc1_l >= gc1_v else c1_v
+            st.write(f"⚔️ **{c1_l_def}** vs **{c1_v_def}**")
+            gc1_l = st.number_input(f"Goles {c1_l_def}:", min_value=0, value=0, key="gc1l_r")
+            gc1_v = st.number_input(f"Goles {c1_v_def}:", min_value=0, value=0, key="gc1v_r")
+            st.session_state.fase_elim["ganador_c1"] = c1_l_def if gc1_l >= gc1_v else c1_v_def
             st.markdown("</div>", unsafe_allow_html=True)
             
             st.markdown("<div class='card-eliminatoria'><b>Cuartos 2</b>", unsafe_allow_html=True)
-            c2_l = st.text_input("Equipo Local C2:", "Argentina", key="c2l")
-            c2_v = st.text_input("Equipo Visitante C2:", "Francia", key="c2v")
-            gc2_l = st.number_input(f"Goles {c2_l}:", min_value=0, value=0, key="gc2l")
-            gc2_v = st.number_input(f"Goles {c2_v}:", min_value=0, value=0, key="gc2v")
-            st.session_state.fase_elim["ganador_c2"] = c2_l if gc2_l >= gc2_v else c2_v
+            st.write(f"⚔️ **{c2_l_def}** vs **{c2_v_def}**")
+            gc2_l = st.number_input(f"Goles {c2_l_def}:", min_value=0, value=0, key="gc2l_r")
+            gc2_v = st.number_input(f"Goles {c2_v_def}:", min_value=0, value=0, key="gc2v_r")
+            st.session_state.fase_elim["ganador_c2"] = c2_l_def if gc2_l >= gc2_v else c2_v_def
             st.markdown("</div>", unsafe_allow_html=True)
         with col2:
             st.markdown("<div class='card-eliminatoria'><b>Cuartos 3</b>", unsafe_allow_html=True)
-            c3_l = st.text_input("Equipo Local C3:", "Inglaterra", key="c3l")
-            c3_v = st.text_input("Equipo Visitante C3:", "España", key="c3v")
-            gc3_l = st.number_input(f"Goles {c3_l}:", min_value=0, value=0, key="gc3l")
-            gc3_v = st.number_input(f"Goles {c3_v}:", min_value=0, value=0, key="gc3v")
-            st.session_state.fase_elim["ganador_c3"] = c3_l if gc3_l >= gc3_v else c3_v
+            st.write(f"⚔️ **{c3_l_def}** vs **{c3_v_def}**")
+            gc3_l = st.number_input(f"Goles {c3_l_def}:", min_value=0, value=0, key="gc3l_r")
+            gc3_v = st.number_input(f"Goles {c3_v_def}:", min_value=0, value=0, key="gc3v_r")
+            st.session_state.fase_elim["ganador_c3"] = c3_l_def if gc3_l >= gc3_v else c3_v_def
             st.markdown("</div>", unsafe_allow_html=True)
             
             st.markdown("<div class='card-eliminatoria'><b>Cuartos 4</b>", unsafe_allow_html=True)
-            c4_l = st.text_input("Equipo Local C4:", "Colombia", key="c4l")
-            c4_v = st.text_input("Equipo Visitante C4:", "Alemania", key="c4v")
-            gc4_l = st.number_input(f"Goles {c4_l}:", min_value=0, value=0, key="gc4l")
-            gc4_v = st.number_input(f"Goles {c4_v}:", min_value=0, value=0, key="gc4v")
-            st.session_state.fase_elim["ganador_c4"] = c4_l if gc4_l >= gc4_v else c4_v
+            st.write(f"⚔️ **{c4_l_def}** vs **{c4_v_def}**")
+            gc4_l = st.number_input(f"Goles {c4_l_def}:", min_value=0, value=0, key="gc4l_r")
+            gc4_v = st.number_input(f"Goles {c4_v_def}:", min_value=0, value=0, key="gc4v_r")
+            st.session_state.fase_elim["ganador_c4"] = c4_l_def if gc4_l >= gc4_v else c4_v_def
             st.markdown("</div>", unsafe_allow_html=True)
 
     with pestana_semi:
@@ -158,16 +171,16 @@ else:
         col_s1, col_s2 = st.columns(2)
         with col_s1:
             st.markdown("<div class='card-eliminatoria'><b>Semifinal 1</b>", unsafe_allow_html=True)
-            st.write(f"Match: {sem1_l} vs {sem1_v}")
-            gs1_l = st.number_input(f"Goles {sem1_l}:", min_value=0, value=0, key="gs1l")
-            gs1_v = st.number_input(f"Goles {sem1_v}:", min_value=0, value=0, key="gs1v")
+            st.write(f"🔥 {sem1_l} vs {sem1_v}")
+            gs1_l = st.number_input(f"Goles {sem1_l}:", min_value=0, value=0, key="gs1l_r")
+            gs1_v = st.number_input(f"Goles {sem1_v}:", min_value=0, value=0, key="gs1v_r")
             st.session_state.fase_elim["finalista_1"] = sem1_l if gs1_l >= gs1_v else sem1_v
             st.markdown("</div>", unsafe_allow_html=True)
         with col_s2:
             st.markdown("<div class='card-eliminatoria'><b>Semifinal 2</b>", unsafe_allow_html=True)
-            st.write(f"Match: {sem2_l} vs {sem2_v}")
-            gs2_l = st.number_input(f"Goles {sem2_l}:", min_value=0, value=0, key="gs2l")
-            gs2_v = st.number_input(f"Goles {sem2_v}:", min_value=0, value=0, key="gs2v")
+            st.write(f"🔥 {sem2_l} vs {sem2_v}")
+            gs2_l = st.number_input(f"Goles {sem2_l}:", min_value=0, value=0, key="gs2l_r")
+            gs2_v = st.number_input(f"Goles {sem2_v}:", min_value=0, value=0, key="gs2v_r")
             st.session_state.fase_elim["finalista_2"] = sem2_l if gs2_l >= gs2_v else sem2_v
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -180,8 +193,8 @@ else:
         st.markdown(f"<h2>⚽ {fin_l} vs {fin_v} ⚽</h2>", unsafe_allow_html=True)
         
         col_fl, col_fv = st.columns(2)
-        with col_fl: gf_l = st.number_input(f"Goles de {fin_l}:", min_value=0, value=0, key="gfl")
-        with col_fv: gf_v = st.number_input(f"Goles de {fin_v}:", min_value=0, value=0, key="gfv")
+        with col_fl: gf_l = st.number_input(f"Goles de {fin_l}:", min_value=0, value=0, key="gfl_r")
+        with col_fv: gf_v = st.number_input(f"Goles de {fin_v}:", min_value=0, value=0, key="gfv_r")
         
         if gf_l != gf_v or (gf_l == 0 and gf_v == 0 and fin_l != "Finalista 1"):
             campeon = fin_l if gf_l > gf_v else fin_v
@@ -191,7 +204,7 @@ else:
             st.info("Define un ganador en el marcador para coronar al Campeón del Mundo.")
         st.markdown("</div>", unsafe_allow_html=True)
 
-# 3. Pie de página con tu firma reglamentaria intacta
+# 3. Pie de página reglamentario
 st.write("---")
 st.caption("⚡ AI Learning Music Engine v5.2 • Sistema de Guía Teórica Dinámica • Hecho por Gabriel.s")
         
