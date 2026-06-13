@@ -7,7 +7,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. Estilos CSS para diseñar el teclado del piano
+# 2. Estilos CSS para diseñar el teclado del piano (Teclas blancas y negras)
 st.markdown("""
     <style>
     .stApp {
@@ -23,7 +23,6 @@ st.markdown("""
         box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         margin-bottom: 25px;
         position: relative;
-        overflow-x: auto; /* Para que en móvil se pueda hacer scroll si es necesario */
     }
     /* Estilo de Teclas Blancas */
     .tecla-blanca {
@@ -86,13 +85,46 @@ st.markdown("""
         font-size: 10px;
     }
     </style>
+
+    <script>
+    // Sintetizador Nativo en Javascript para evitar bloqueos de audio
+    function playNote(frequency) {
+        try {
+            // Inicializar el contexto de audio del navegador
+            var AudioContext = window.AudioContext || window.webkitAudioContext;
+            var ctx = new AudioContext();
+            
+            // Crear el oscilador (generador de onda) y la ganancia (volumen)
+            var osc = ctx.createOscillator();
+            var gainNode = ctx.createGain();
+            
+            // Configurar tipo de onda suave para que suene agradable (tipo piano/órgano)
+            osc.type = 'triangle'; 
+            osc.frequency.value = frequency;
+            
+            // Configurar envolvente de volumen (ataque rápido y desvanecimiento progresivo)
+            gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+            
+            // Conectar componentes
+            osc.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+            // Reproducir y detener automáticamente
+            osc.start();
+            osc.stop(ctx.currentTime + 1.2);
+        } catch(e) {
+            console.error("Error al reproducir audio:", e);
+        }
+    }
+    </script>
 """, unsafe_allow_html=True)
 
 # 3. Título del software
 st.markdown("<h1 style='text-align: center; color: #38bdf8;'>🎹 Piano Virtual Interactivo</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #94a3b8;'>Selecciona un acorde para aprender a tocarlo o haz clic en las teclas.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8;'>Selecciona un acorde para aprender a tocarlo o haz clic en las teclas para escuchar el sonido sintético real.</p>", unsafe_allow_html=True)
 
-# 4. Diccionario de Acordes
+# 4. Diccionario de Acordes (Mapeo de notas)
 acordes = {
     "Ninguno (Modo Libre)": [],
     "Do Mayor (C)": ["C4", "E4", "G4"],
@@ -118,39 +150,35 @@ acorde_seleccionado = st.selectbox(
 )
 notas_a_iluminar = acordes[acorde_seleccionado]
 
-# 5. Estructura de las teclas (corregida)
-base_url = "https://raw.githubusercontent.com/keithwhor/audiosynth/master/samples/piano/"
+# 5. Estructura de las teclas con sus frecuencias exactas en Hertz (Hz)
 teclas = [
-    {"nota": "C4", "tipo": "blanca", "file": "4c.mp3", "label": "DO"},
-    {"nota": "Db4", "tipo": "negra", "file": "4cs.mp3", "label": "Do#"},
-    {"nota": "D4", "tipo": "blanca", "file": "4d.mp3", "label": "RE"},
-    {"nota": "Eb4", "tipo": "negra", "file": "4ds.mp3", "label": "Re#"},
-    {"nota": "E4", "tipo": "blanca", "file": "4e.mp3", "label": "MI"},
-    {"nota": "F4", "tipo": "blanca", "file": "4f.mp3", "label": "FA"},
-    {"nota": "Gb4", "tipo": "negra", "file": "4fs.mp3", "label": "Fa#"},
-    {"nota": "G4", "tipo": "blanca", "file": "4g.mp3", "label": "SOL"},
-    {"nota": "Ab4", "tipo": "negra", "file": "4gs.mp3", "label": "Sol#"},
-    {"nota": "A4", "tipo": "blanca", "file": "4a.mp3", "label": "LA"},
-    {"nota": "Bb4", "tipo": "negra", "file": "4as.mp3", "label": "La#"},
-    {"nota": "B4", "tipo": "blanca", "file": "4b.mp3", "label": "SI"},
-    {"nota": "C5", "tipo": "blanca", "file": "5c.mp3", "label": "DO+"},
-    {"nota": "Db5", "tipo": "negra", "file": "5cs.mp3", "label": "Do#+"},
-    {"nota": "D5", "tipo": "blanca", "file": "5d.mp3", "label": "RE+"},
-    {"nota": "Eb5", "tipo": "negra", "file": "5ds.mp3", "label": "Re#+"},
-    {"nota": "E5", "tipo": "blanca", "file": "5e.mp3", "label": "MI+"}
+    {"nota": "C4", "tipo": "blanca", "hz": 261.63, "label": "DO"},
+    {"nota": "Db4", "tipo": "negra", "hz": 277.18, "label": "Do#"},
+    {"nota": "D4", "tipo": "blanca", "hz": 293.66, "label": "RE"},
+    {"nota": "Eb4", "tipo": "negra", "hz": 311.13, "label": "Re#"},
+    {"nota": "E4", "tipo": "blanca", "hz": 329.63, "label": "MI"},
+    {"nota": "F4", "tipo": "blanca", "hz": 349.23, "label": "FA"},
+    {"nota": "Gb4", "tipo": "negra", "hz": 369.99, "label": "Fa#"},
+    {"nota": "G4", "tipo": "blanca", "hz": 392.00, "label": "SOL"},
+    {"nota": "Ab4", "tipo": "negra", "hz": 415.30, "label": "Sol#"},
+    {"nota": "A4", "tipo": "blanca", "hz": 440.00, "label": "LA"},
+    {"nota": "Bb4", "tipo": "negra", "hz": 466.16, "label": "La#"},
+    {"nota": "B4", "tipo": "blanca", "hz": 493.88, "label": "SI"},
+    {"nota": "C5", "tipo": "blanca", "hz": 523.25, "label": "DO+"},
+    {"nota": "Db5", "tipo": "negra", "hz": 554.37, "label": "Do#+"},
+    {"nota": "D5", "tipo": "blanca", "hz": 587.33, "label": "RE+"},
+    {"nota": "Eb5", "tipo": "negra", "hz": 622.25, "label": "Re#+"},
+    {"nota": "E5", "tipo": "blanca", "hz": 659.25, "label": "MI+"}
 ]
 
-# 6. Construcción del HTML del Piano con Javascript (Sintaxis Corregida)
+# 6. Construcción del HTML del Piano llamando a la función JS local
 html_piano = '<div class="piano-container">'
 
 for t in teclas:
-    # Arreglo el espacio que causaba el error de sintaxis en image_3.png
     es_activa = "activa" if t["nota"] in notas_a_iluminar else ""
-    url_audio = f"{base_url}{t['file']}"
-    
-    # Inyección JS limpia: onclick="...play();". Se usa un Audio por tecla para permitir polifonía
+    # Llamamos a playNote pasando la frecuencia en Hertz directamente
     html_piano += f"""
-    <div class="tecla-{t['tipo']} {es_activa}" onclick="var snd = new Audio('{url_audio}'); snd.play();">
+    <div class="tecla-{t['tipo']} {es_activa}" onclick="playNote({t['hz']});">
         <span class="nota-label">{t['label']}</span>
     </div>"""
 
@@ -159,14 +187,14 @@ html_piano += '</div>'
 # Renderizar el piano HTML
 st.markdown(html_piano, unsafe_allow_html=True)
 
-# 7. Cuadro informativo
+# 7. Cuadro informativo de teoría musical rápida
 st.write("---")
 with st.expander("🎓 Teoría musical rápida"):
     if acorde_seleccionado == "Ninguno (Modo Libre)":
-        st.write("💡 ¡Estás en modo libre! Toca cualquier tecla para escuchar su sonido. Las blancas son notas naturales y las negras alteraciones.")
+        st.write("💡 ¡Estás en modo libre! El sistema genera las ondas sonoras directamente en tu navegador usando la Web Audio API nativa.")
     else:
         st.write(f"🎼 **Análisis del {acorde_seleccionado}:**")
         st.write(f"- **Notas que lo componen:** {', '.join(notas_a_iluminar)}")
-        st.write("- **Características:** Esta combinación de notas crea el acorde que visualizas en azul o rojo.")
+        st.write("- **Características:** Esta combinación de frecuencias genera el acorde iluminado en el tablero.")
 
-st.caption("🎹 Audio-Synthesizer Engine • Sube el volumen.")
+st.caption("🎹 Web Audio API Engine • Sistema Autónomo Antivolúmenes Bloqueados.")
