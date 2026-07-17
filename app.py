@@ -1,210 +1,95 @@
 import streamlit as st
+import random
+import time
 
-# 1. Configuración de la App
+# 1. Configuración de la pantalla
 st.set_page_config(
-    page_title="Simulator the World Cup",
-    page_icon="🏆",
+    page_title="Penalty Shootout Pro",
+    page_icon="⚽",
     layout="centered"
 )
 
-# Estilos visuales oscuros estilo plataforma deportiva
-st.markdown("<style>.stApp { background-color: #060d17; color: #f1f5f9; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.card-grupo { background: linear-gradient(145deg, #0f172a, #1e293b); border-radius: 12px; padding: 20px; border: 1px solid #1e40af; margin-bottom: 25px; }</style>", unsafe_allow_html=True)
-st.markdown("<style>.card-eliminatoria { background: linear-gradient(145deg, #1e1b4b, #312e81); border-radius: 12px; padding: 15px; border: 1px solid #7c3aed; margin-bottom: 15px; }</style>", unsafe_allow_html=True)
+# Estilos oscuros deportivos
+st.markdown("<style>.stApp { background-color: #050b14; color: #f1f5f9; }</style>", unsafe_allow_html=True)
+st.markdown("<style>.marcador { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 15px; padding: 15px; text-align: center; border: 1px solid #3b82f6; margin-bottom: 20px; }</style>", unsafe_allow_html=True)
 
-# Título de la App: Simulator the World Cup
-st.markdown("<h1 style='text-align: center; color: #3b82f6;'>🏆 Simulator the World Cup</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #94a3b8;'>Simulador Real: Los clasificados de los grupos avanzan automáticamente a las llaves de eliminación.</p>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #3b82f6;'>⚽ Penalty Shootout Pro</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8;'>Enfréntate al arquero controlado por la IA. ¡Elige tu dirección y dispara!</p>", unsafe_allow_html=True)
 
-# Secciones principales de la App
-seccion_principal = st.radio("Selecciona la etapa del torneo a gestionar:", ["Fase de Grupos", "Fases Finales (Eliminación Directa)"])
+# 2. Inicializar variables del juego en memoria
+if "goles" not in st.session_state: st.session_state.goles = 0
+if "atajadas" not in st.session_state: st.session_state.atajadas = 0
+if "tiros" not in st.session_state: st.session_state.tiros = 0
+if "historial" not in st.session_state: st.session_state.historial = []
 
-# 2. Base de datos fija con los 12 grupos oficiales establecidos
-if "config_grupos" not in st.session_state:
-    st.session_state.config_grupos = {
-        "Grupo A": ["México", "Sudáfrica", "Corea del Sur", "República Checa"],
-        "Grupo B": ["Canadá", "Bosnia-Herzegovina", "Catar", "Suiza"],
-        "Grupo C": ["Brasil", "Marruecos", "Haití", "Escocia"],
-        "Grupo D": ["Estados Unidos", "Paraguay", "Australia", "Turquía"],
-        "Grupo E": ["Alemania", "Curazao", "Costa de Marfil", "Ecuador"],
-        "Grupo F": ["Países Bajos", "Japón", "Suecia", "Túnez"],
-        "Grupo G": ["Bélgica", "Egipto", "Irán", "Nueva Zelanda"],
-        "Grupo H": ["España", "Cabo Verde", "Arabia Saudita", "Uruguay"],
-        "Grupo I": ["Francia", "Senegal", "Irak", "Noruega"],
-        "Grupo J": ["Argentina", "Argelia", "Austria", "Jordania"],
-        "Grupo K": ["Portugal", "RD Congo", "Uzbekistán", "Colombia"],
-        "Grupo L": ["Inglaterra", "Croacia", "Ghana", "Panamá"]
-    }
+# Reiniciar juego
+def reiniciar():
+    st.session_state.goles = 0
+    st.session_state.atajadas = 0
+    st.session_state.tiros = 0
+    st.session_state.historial = []
 
-if "goles_simulados" not in st.session_state: st.session_state.goles_simulados = {}
-if "fase_elim" not in st.session_state: st.session_state.fase_elim = {}
-if "clasificados_reales" not in st.session_state: st.session_state.clasificados_reales = {}
+# 3. Marcador en pantalla
+st.markdown(
+    f"""
+    <div class='marcador'>
+        <span style='font-size: 24px; font-weight: bold;'>🏆 MARCADOR</span><br>
+        <span style='font-size: 40px; color: #4ade80;'>{st.session_state.goles} Goles</span> 
+        <span style='font-size: 30px; color: #64748b;'> vs </span> 
+        <span style='font-size: 40px; color: #f87171;'>{st.session_state.atajadas} Atajadas</span><br>
+        <span style='color: #94a3b8;'>Intentos totales: {st.session_state.tiros}</span>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
 
-nombres_grupos = list(st.session_state.config_grupos.keys())
+# 4. Mecánica de juego: Elección del disparo
+st.markdown("### 🎯 ¿Hacia dónde vas a patear?")
+col1, col2, col3 = st.columns(3)
 
-# --- BLOQUE 1: FASE DE GRUPOS ---
-if seccion_principal == "Fase de Grupos":
-    pestanas = st.tabs(nombres_grupos)
-    for i, nombre_grupo in enumerate(nombres_grupos):
-        with pestanas[i]:
-            lista_equipos = st.session_state.config_grupos[nombre_grupo]
-            
-            partidos = [
-                {"p_id": f"{nombre_grupo}_1", "loc": lista_equipos[0], "vis": lista_equipos[1], "jornada": "Jornada 1"},
-                {"p_id": f"{nombre_grupo}_2", "loc": lista_equipos[2], "vis": lista_equipos[3], "jornada": "Jornada 1"},
-                {"p_id": f"{nombre_grupo}_3", "loc": lista_equipos[0], "vis": lista_equipos[2], "jornada": "Jornada 2"},
-                {"p_id": f"{nombre_grupo}_4", "loc": lista_equipos[3], "vis": lista_equipos[1], "jornada": "Jornada 2"},
-                {"p_id": f"{nombre_grupo}_5", "loc": lista_equipos[3], "vis": lista_equipos[0], "jornada": "Jornada 3"},
-                {"p_id": f"{nombre_grupo}_6", "loc": lista_equipos[1], "vis": lista_equipos[2], "jornada": "Jornada 3"}
-            ]
-            
-            st.markdown(f"## 📅 Fixture de Partidos: {nombre_grupo}")
-            st.markdown("<div class='card-grupo'>", unsafe_allow_html=True)
-            
-            jornada_actual = ""
-            for idx, partido in enumerate(partidos):
-                pid = partido["p_id"]
-                if partido["jornada"] != jornada_actual:
-                    jornada_actual = partido["jornada"]
-                    st.markdown(f"<p style='color: #60a5fa; font-weight: bold; margin-top: 10px;'>🔹 {jornada_actual}</p>", unsafe_allow_html=True)
-                
-                col_l, col_vs, col_v = st.columns([3, 1, 3])
-                key_l, key_v = f"goles_l_{pid}", f"goles_v_{pid}"
-                
-                with col_l: goles_l = st.number_input(f"{partido['loc']}", min_value=0, max_value=15, value=st.session_state.goles_simulados.get(key_l, 0), step=1, key=f"in_{key_l}")
-                with col_vs: st.markdown("<p style='text-align: center; margin-top: 30px; color: #64748b;'>VS</p>", unsafe_allow_html=True)
-                with col_v: goles_v = st.number_input(f"{partido['vis']}", min_value=0, max_value=15, value=st.session_state.goles_simulados.get(key_v, 0), step=1, key=f"in_{key_v}")
-                
-                st.session_state.goles_simulados[key_l] = goles_l
-                st.session_state.goles_simulados[key_v] = goles_v
-                if idx < len(partidos) - 1: st.markdown("<hr style='border-color: #1e293b; margin: 10px 0;' />", unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
-            
-            # Tabla de Posiciones Matemática Proporcional
-            tabla_calculada = {equipo: {"PJ": 0, "PTS": 0, "GF": 0, "GC": 0, "DG": 0} for equipo in lista_equipos}
-            for partido in partidos:
-                pid = partido["p_id"]
-                gl = st.session_state.goles_simulados.get(f"goles_l_{pid}", 0)
-                gv = st.session_state.goles_simulados.get(f"goles_v_{pid}", 0)
-                loc, vis = partido["loc"], partido["vis"]
-                
-                tabla_calculada[loc]["PJ"] += 1; tabla_calculada[vis]["PJ"] += 1
-                tabla_calculada[loc]["GF"] += gl; tabla_calculada[loc]["GC"] += gv
-                tabla_calculada[vis]["GF"] += gv; tabla_calculada[vis]["GC"] += gl
-                if gl > gv: tabla_calculada[loc]["PTS"] += 3
-                elif gv > gl: tabla_calculada[vis]["PTS"] += 3
-                else: tabla_calculada[loc]["PTS"] += 1; tabla_calculada[vis]["PTS"] += 1
-            
-            for eq in tabla_calculada: tabla_calculada[eq]["DG"] = tabla_calculada[eq]["GF"] - tabla_calculada[eq]["GC"]
-            tabla_ordenada = sorted(tabla_calculada.items(), key=lambda x: (x[1]["PTS"], x[1]["DG"], x[1]["GF"]), reverse=True)
-            
-            # Guardamos el 1° y 2° lugar reales en el session_state para las eliminatorias
-            st.session_state.clasificados_reales[f"{nombre_grupo}_1"] = tabla_ordenada[0][0]
-            st.session_state.clasificados_reales[f"{nombre_grupo}_2"] = tabla_ordenada[1][0]
-            
-            st.markdown("### 📋 Tabla de Posiciones en Tiempo Real")
-            md_tabla = "| Pos | Selección | PJ | PTS | GF | GC | DG |\n| :---: | :--- | :---: | :---: | :---: | :---: | :---: |\n"
-            for pos, (equipo, stats) in enumerate(tabla_ordenada):
-                med = "🥇" if pos == 0 else "🥈" if pos == 1 else "🥉" if pos == 2 else "❌"
-                md_tabla += f"| {med} {pos+1} | **{equipo}** | {stats['PJ']} | **{stats['PTS']}** | {stats['GF']} | {stats['GC']} | {stats['DG']} |\n"
-            st.markdown(md_tabla)
+direccion_disparo = None
 
-# --- BLOQUE 2: FASES ELIMINATORIAS ---
-else:
-    st.markdown("## ⚔️ Llaves de Eliminación Directa")
-    st.write("Las llaves se generan con los líderes reales calculados en la fase de grupos:")
+with col1:
+    if st.button("⬅️ Izquierda", use_container_width=True):
+        direccion_disparo = "Izquierda"
+with col2:
+    if st.button("⬆️ Centro", use_container_width=True):
+        direccion_disparo = "Centro"
+with col3:
+    if st.button("➡️ Derecha", use_container_width=True):
+        direccion_disparo = "Derecha"
+
+# 5. Lógica del arquero (IA) cuando disparas
+if direccion_disparo:
+    st.session_state.tiros += 1
+    opciones_arquero = ["Izquierda", "Centro", "Derecha"]
+    # El arquero tiene 80% de probabilidad de lanzarse bien o mal
+    direccion_arquero = random.choice(opciones_arquero)
     
-    # Recuperación segura de los ganadores reales desde el estado del torneo
-    c1_l_def = st.session_state.clasificados_reales.get("Grupo A_1", "1° Grupo A")
-    c1_v_def = st.session_state.clasificados_reales.get("Grupo B_2", "2° Grupo B")
+    st.write(f"🏃‍♂️ Pateas hacia la **{direccion_disparo}**...")
+    with st.spinner("¡El arquero se lanza!..."):
+        time.sleep(0.8)  # Pequeño delay para darle drama
     
-    c2_l_def = st.session_state.clasificados_reales.get("Grupo C_1", "1° Grupo C")
-    c2_v_def = st.session_state.clasificados_reales.get("Grupo D_2", "2° Grupo D")
+    if direccion_disparo == direccion_arquero:
+        st.error(f"🧤 ¡ATAJADA! El arquero se lanzó a la {direccion_arquero} y te lo tapó.")
+        st.session_state.atajadas += 1
+        st.session_state.historial.insert(0, "❌ Atajado")
+    else:
+        st.success(f"🔥 ¡GOOOOL! El arquero se tiró a la {direccion_arquero} y el balón entró.")
+        st.session_state.goles += 1
+        st.session_state.historial.insert(0, "⚽ Gol")
+
+# 6. Barra lateral con Historial y Reset
+with st.sidebar:
+    st.markdown("### ⚙️ Opciones")
+    if st.button("Resetear Partida", on_click=reiniciar):
+        st.rerun()
     
-    c3_l_def = st.session_state.clasificados_reales.get("Grupo E_1", "1° Grupo E")
-    c3_v_def = st.session_state.clasificados_reales.get("Grupo F_2", "2° Grupo F")
-    
-    c4_l_def = st.session_state.clasificados_reales.get("Grupo G_1", "1° Grupo G")
-    c4_v_def = st.session_state.clasificados_reales.get("Grupo H_2", "2° Grupo H")
+    st.markdown("---")
+    st.markdown("### 📜 Últimos Tiros")
+    for tiro in st.session_state.historial[:5]:
+        st.write(tiro)
 
-    pestana_cuartos, pestana_semi, pestana_final = st.tabs(["📊 Cuartos de Final", "🤝 Semifinales", "👑 Gran Final"])
-    
-    with pestana_cuartos:
-        st.markdown("### Llaves de Cuartos de Final")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("<div class='card-eliminatoria'><b>Cuartos 1</b>", unsafe_allow_html=True)
-            st.write(f"⚔️ **{c1_l_def}** vs **{c1_v_def}**")
-            gc1_l = st.number_input(f"Goles {c1_l_def}:", min_value=0, value=0, key="gc1l_r")
-            gc1_v = st.number_input(f"Goles {c1_v_def}:", min_value=0, value=0, key="gc1v_r")
-            st.session_state.fase_elim["ganador_c1"] = c1_l_def if gc1_l >= gc1_v else c1_v_def
-            st.markdown("</div>", unsafe_allow_html=True)
-            
-            st.markdown("<div class='card-eliminatoria'><b>Cuartos 2</b>", unsafe_allow_html=True)
-            st.write(f"⚔️ **{c2_l_def}** vs **{c2_v_def}**")
-            gc2_l = st.number_input(f"Goles {c2_l_def}:", min_value=0, value=0, key="gc2l_r")
-            gc2_v = st.number_input(f"Goles {c2_v_def}:", min_value=0, value=0, key="gc2v_r")
-            st.session_state.fase_elim["ganador_c2"] = c2_l_def if gc2_l >= gc2_v else c2_v_def
-            st.markdown("</div>", unsafe_allow_html=True)
-        with col2:
-            st.markdown("<div class='card-eliminatoria'><b>Cuartos 3</b>", unsafe_allow_html=True)
-            st.write(f"⚔️ **{c3_l_def}** vs **{c3_v_def}**")
-            gc3_l = st.number_input(f"Goles {c3_l_def}:", min_value=0, value=0, key="gc3l_r")
-            gc3_v = st.number_input(f"Goles {c3_v_def}:", min_value=0, value=0, key="gc3v_r")
-            st.session_state.fase_elim["ganador_c3"] = c3_l_def if gc3_l >= gc3_v else c3_v_def
-            st.markdown("</div>", unsafe_allow_html=True)
-            
-            st.markdown("<div class='card-eliminatoria'><b>Cuartos 4</b>", unsafe_allow_html=True)
-            st.write(f"⚔️ **{c4_l_def}** vs **{c4_v_def}**")
-            gc4_l = st.number_input(f"Goles {c4_l_def}:", min_value=0, value=0, key="gc4l_r")
-            gc4_v = st.number_input(f"Goles {c4_v_def}:", min_value=0, value=0, key="gc4v_r")
-            st.session_state.fase_elim["ganador_c4"] = c4_l_def if gc4_l >= gc4_v else c4_v_def
-            st.markdown("</div>", unsafe_allow_html=True)
-
-    with pestana_semi:
-        st.markdown("### Llaves de Semifinales")
-        sem1_l = st.session_state.fase_elim.get("ganador_c1", "Ganador C1")
-        sem1_v = st.session_state.fase_elim.get("ganador_c2", "Ganador C2")
-        sem2_l = st.session_state.fase_elim.get("ganador_c3", "Ganador C3")
-        sem2_v = st.session_state.fase_elim.get("ganador_c4", "Ganador C4")
-        
-        col_s1, col_s2 = st.columns(2)
-        with col_s1:
-            st.markdown("<div class='card-eliminatoria'><b>Semifinal 1</b>", unsafe_allow_html=True)
-            st.write(f"🔥 {sem1_l} vs {sem1_v}")
-            gs1_l = st.number_input(f"Goles {sem1_l}:", min_value=0, value=0, key="gs1l_r")
-            gs1_v = st.number_input(f"Goles {sem1_v}:", min_value=0, value=0, key="gs1v_r")
-            st.session_state.fase_elim["finalista_1"] = sem1_l if gs1_l >= gs1_v else sem1_v
-            st.markdown("</div>", unsafe_allow_html=True)
-        with col_s2:
-            st.markdown("<div class='card-eliminatoria'><b>Semifinal 2</b>", unsafe_allow_html=True)
-            st.write(f"🔥 {sem2_l} vs {sem2_v}")
-            gs2_l = st.number_input(f"Goles {sem2_l}:", min_value=0, value=0, key="gs2l_r")
-            gs2_v = st.number_input(f"Goles {sem2_v}:", min_value=0, value=0, key="gs2v_r")
-            st.session_state.fase_elim["finalista_2"] = sem2_l if gs2_l >= gs2_v else sem2_v
-            st.markdown("</div>", unsafe_allow_html=True)
-
-    with pestana_final:
-        st.markdown("### 👑 Partido de la Gran Final")
-        fin_l = st.session_state.fase_elim.get("finalista_1", "Finalista 1")
-        fin_v = st.session_state.fase_elim.get("finalista_2", "Finalista 2")
-        
-        st.markdown("<div class='card-grupo' style='text-align: center;'>", unsafe_allow_html=True)
-        st.markdown(f"<h2>⚽ {fin_l} vs {fin_v} ⚽</h2>", unsafe_allow_html=True)
-        
-        col_fl, col_fv = st.columns(2)
-        with col_fl: gf_l = st.number_input(f"Goles de {fin_l}:", min_value=0, value=0, key="gfl_r")
-        with col_fv: gf_v = st.number_input(f"Goles de {fin_v}:", min_value=0, value=0, key="gfv_r")
-        
-        if gf_l != gf_v or (gf_l == 0 and gf_v == 0 and fin_l != "Finalista 1"):
-            campeon = fin_l if gf_l > gf_v else fin_v
-            if fin_l != "Finalista 1":
-                st.markdown(f"<h1 style='text-align: center; color: #34d399; margin-top: 20px;'>🎉 ¡{campeon.upper()} CAMPEÓN DEL MUNDO! 🎉</h1>", unsafe_allow_html=True)
-        else:
-            st.info("Define un ganador en el marcador para coronar al Campeón del Mundo.")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-# 3. Pie de página reglamentario
+# Pie de página con tu firma
 st.write("---")
 st.caption("⚡ AI Learning Music Engine v5.2 • Sistema de Guía Teórica Dinámica • Hecho por Gabriel.s")
-        
