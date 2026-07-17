@@ -1,6 +1,6 @@
 import streamlit as st
-import os
-from datetime import datetime
+import pandas as pd
+from streamlit_gsheets import GSheetsConnection
 
 # 1. Configuración de la App
 st.set_page_config(
@@ -13,23 +13,41 @@ st.set_page_config(
 st.markdown("<style>.stApp { background-color: #060d17; color: #f1f5f9; }</style>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center; color: #3b82f6;'>🏆 Penalty Shootout Pro</h1>", unsafe_allow_html=True)
 
-# Nombre del archivo local donde se guardarán los puntajes de tus amigos de verdad
-ARCHIVO_PUNTAJES = "puntuaciones.txt"
+# URL de tu Google Sheet (Debe estar compartida como "Cualquier persona con el enlace puede EDITAR")
+URL_HOJA = "https://docs.google.com/spreadsheets/d/1OWjj8Rig4ENu2IhiuljqZtBRg3xq0np01qRFxO_Tehg/edit?usp=sharing"
 
-# Funciones para leer y escribir puntajes de forma local (sin Google Sheets)
+# Conexión con Google Sheets
+conn = st.connection("gsheets", type=GSheetsConnection)
+
+# Función segura para leer las puntuaciones reales
 def cargar_puntuaciones():
-    puntuaciones = []
-    if os.path.exists(ARCHIVO_PUNTAJES):
-        with open(ARCHIVO_PUNTAJES, "r", encoding="utf-8") as f:
-            for linea in f:
-                parts = linea.strip().split(",")
-                if len(parts) == 2:
-                    puntuaciones.append({"nombre": parts[0], "goles": int(parts[1])})
-    return puntuaciones
+    try:
+        # Lee la hoja de cálculo
+        df = conn.read(spreadsheet=URL_HOJA, ttl="0s") # ttl=0s evita que use memoria caché y siempre lea los datos reales
+        # Si la hoja está vacía o no tiene las columnas correctas
+        if df.empty or "Nombre" not in df.columns or "Goles" not in df.columns:
+            return pd.DataFrame(columns=["Nombre", "Goles"])
+        return df
+    except Exception:
+        return pd.DataFrame(columns=["Nombre", "Goles"])
 
+# Función para añadir el nuevo puntaje a Google Sheets
 def guardar_puntuacion(nombre, goles):
-    with open(ARCHIVO_PUNTAJES, "a", encoding="utf-8") as f:
-        f.write(f"{nombre},{goles}\n")
+    try:
+        # 1. Descargamos la tabla actual
+        df_actual = cargar_puntuaciones()
+        
+        # 2. Creamos la nueva fila con tu amigo
+        nueva_fila = pd.DataFrame([{"Nombre": str(nombre), "Goles": int(goles)}])
+        
+        # 3. Juntamos los datos viejos con el nuevo jugador
+        df_actualized = pd.concat([df_actual, nueva_fila], ignore_index=True)
+        
+        # 4. Lo subimos de vuelta a Google Sheets
+        conn.update(spreadsheet=URL_HOJA, data=df_actualized)
+        st.cache_data.clear() # Limpiamos la caché de Streamlit para que muestre el cambio de inmediato
+    except Exception as e:
+        st.error(f"Error al guardar en Google Sheets: {e}")
 
 # 2. Control de Estado del Jugador en la sesión
 if "jugador" not in st.session_state:
@@ -42,9 +60,9 @@ if "goles_finales" not in st.session_state:
 # --- PANTALLA DE REGISTRO ---
 if not st.session_state.jugador:
     st.markdown("### 📝 Regístrate para Jugar")
-    st.write("Ingresa tu nombre o apodo para iniciar tu tanda de 10 penaltis y competir en el ranking:")
+    st.write("Ingresa tu nombre para iniciar tu tanda de 10 penaltis y guardar tu récord:")
     
-    nombre_input = st.text_input("Tu Nombre / Nickname:", placeholder="Ej. Gabriel_10", max_chars=15)
+    nombre_input = st.text_input("Tu Nombre:", placeholder="Ej. Gabriel", max_chars=15)
     
     if st.button("Empezar Desafío ⚽"):
         if nombre_input.strip():
@@ -54,7 +72,7 @@ if not st.session_state.jugador:
             st.query_params.clear()
             st.rerun()
         else:
-            st.warning("Por favor, ingresa un nombre válido para registrar tu puntuación.")
+            st.warning("Por favor, ingresa tu nombre para poder registrar tu puntuación.")
 
 # --- PANTALLA DE JUEGO ---
 else:
@@ -69,17 +87,17 @@ else:
         st.session_state.goles_finales = goles_guardar
         st.session_state.partida_terminada = True
         
-        # Guardar automáticamente en el archivo local de la app
+        # Guardar automáticamente en Google Sheets
         guardar_puntuacion(st.session_state.jugador, goles_guardar)
         st.balloons()
 
-    # Si la tanda terminó, mostramos el resultado y permitimos volver a jugar
+    # Si la tanda terminó, mostramos el resultado
     if st.session_state.partida_terminada:
         st.markdown(f"""
         <div style='background-color: #1e1b4b; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #7c3aed;'>
             <h2 style='color: #a78bfa;'>🏁 ¡Tanda Finalizada!</h2>
             <p style='font-size: 24px;'>Anotaste <b>{st.session_state.goles_finales}</b> de 10 penaltis.</p>
-            <p style='color: #4ade80; font-weight: bold;'>¡Tu puntuación ha sido registrada en la tabla de abajo! 🎉</p>
+            <p style='color: #4ade80; font-weight: bold;'>¡Tu puntuación ha sido registrada en Google Sheets! 🎉</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -209,22 +227,22 @@ else:
         """
         st.components.v1.html(juego_html, height=440)
 
-# --- 🏆 TABLA DE POSICIONES EN TIEMPO REAL ---
+# --- 🏆 TABLA DE POSICIONES DESDE GOOGLE SHEETS ---
 st.markdown("---")
 st.markdown("## 🏆 Tabla de Puntuaciones (Líderes)")
 
-lista_amigos = cargar_puntuaciones()
+df_puntuaciones = cargar_puntuaciones()
 
-if lista_amigos:
+if not df_puntuaciones.empty:
     # Ordenamos de mayor a menor cantidad de goles
-    lista_amigos = sorted(lista_amigos, key=lambda x: x["goles"], reverse=True)
+    df_ordenado = df_puntuaciones.sort_values(by="Goles", ascending=False)
     
     # Mostrar cada uno en el formato limpio solicitado
-    for jugador in lista_amigos:
-        st.markdown(f"• **{jugador['nombre']}** {jugador['goles']} de 10")
+    for index, fila in df_ordenado.iterrows():
+        st.markdown(f"• **{fila['Nombre']}** {fila['Goles']} de 10")
 else:
     st.info("Aún no hay puntuaciones registradas. ¡Inicia una tanda y sé el primero!")
 
 # Pie de página
 st.write("---")
-st.caption("⚡ AI Learning Music Engine v5.2 • Hecho por Gabriel.s")
+st.caption("⚡ AI Learning Music Engine v5.3 • Hecho por Gabriel.s")
