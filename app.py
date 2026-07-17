@@ -1,6 +1,5 @@
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
-import pandas as pd
+import os
 from datetime import datetime
 
 # 1. Configuración de la App
@@ -14,11 +13,23 @@ st.set_page_config(
 st.markdown("<style>.stApp { background-color: #060d17; color: #f1f5f9; }</style>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center; color: #3b82f6;'>🏆 Penalty Shootout Pro</h1>", unsafe_allow_html=True)
 
-# Conexión a la base de datos de Google Sheets
-try:
-    conn = st.connection("gsheets", type=GSheetsConnection)
-except Exception:
-    conn = None
+# Nombre del archivo local donde se guardarán los puntajes de tus amigos de verdad
+ARCHIVO_PUNTAJES = "puntuaciones.txt"
+
+# Funciones para leer y escribir puntajes de forma local (sin Google Sheets)
+def cargar_puntuaciones():
+    puntuaciones = []
+    if os.path.exists(ARCHIVO_PUNTAJES):
+        with open(ARCHIVO_PUNTAJES, "r", encoding="utf-8") as f:
+            for linea in f:
+                parts = linea.strip().split(",")
+                if len(parts) == 2:
+                    puntuaciones.append({"nombre": parts[0], "goles": int(parts[1])})
+    return puntuaciones
+
+def guardar_puntuacion(nombre, goles):
+    with open(ARCHIVO_PUNTAJES, "a", encoding="utf-8") as f:
+        f.write(f"{nombre},{goles}\n")
 
 # 2. Control de Estado del Jugador en la sesión
 if "jugador" not in st.session_state:
@@ -40,7 +51,6 @@ if not st.session_state.jugador:
             st.session_state.jugador = nombre_input.strip()
             st.session_state.partida_terminada = False
             st.session_state.goles_finales = 0
-            # Limpiar parámetros de URL viejos al empezar
             st.query_params.clear()
             st.rerun()
         else:
@@ -48,7 +58,6 @@ if not st.session_state.jugador:
 
 # --- PANTALLA DE JUEGO ---
 else:
-    # Verificamos si JavaScript nos acaba de enviar el puntaje final por la URL
     goles_params = st.query_params.get("goles_final", None)
     
     if goles_params is not None and not st.session_state.partida_terminada:
@@ -60,36 +69,17 @@ else:
         st.session_state.goles_finales = goles_guardar
         st.session_state.partida_terminada = True
         
-        # Guardar automáticamente en Google Sheets
-        if conn:
-            try:
-                try:
-                    df_actual = conn.read(ttl="0s")
-                except Exception:
-                    df_actual = pd.DataFrame(columns=["Nombre", "Goles", "Fecha"])
-                
-                if df_actual is None or df_actual.empty:
-                    df_actual = pd.DataFrame(columns=["Nombre", "Goles", "Fecha"])
+        # Guardar automáticamente en el archivo local de la app
+        guardar_puntuacion(st.session_state.jugador, goles_guardar)
+        st.balloons()
 
-                nueva_fila = pd.DataFrame([{
-                    "Nombre": st.session_state.jugador,
-                    "Goles": goles_guardar,
-                    "Fecha": datetime.now().strftime("%Y-%m-%d %H:%M")
-                }])
-                
-                df_actualizado = pd.concat([df_actual, nueva_fila], ignore_index=True)
-                conn.update(data=df_actualizado)
-                st.balloons()
-            except Exception as e:
-                st.error("No se pudo guardar en la base de datos. Revisa tus Secrets de Streamlit.")
-
-    # Si la tanda terminó, bloqueamos el juego y ofrecemos reiniciar
+    # Si la tanda terminó, mostramos el resultado y permitimos volver a jugar
     if st.session_state.partida_terminada:
         st.markdown(f"""
         <div style='background-color: #1e1b4b; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #7c3aed;'>
             <h2 style='color: #a78bfa;'>🏁 ¡Tanda Finalizada!</h2>
             <p style='font-size: 24px;'>Anotaste <b>{st.session_state.goles_finales}</b> de 10 penaltis.</p>
-            <p style='color: #4ade80; font-weight: bold;'>¡Tu puntuación ha sido guardada con éxito en la base de datos! 🎉</p>
+            <p style='color: #4ade80; font-weight: bold;'>¡Tu puntuación ha sido registrada en la tabla de abajo! 🎉</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -100,11 +90,10 @@ else:
             st.query_params.clear()
             st.rerun()
             
-    # Si sigue jugando, renderizamos el estadio dinámico
+    # Si sigue jugando, cargamos el estadio interactivo
     else:
         st.markdown(f"👤 Jugador: **{st.session_state.jugador}** | 🎯 Objetivo: **10 tiros máximos**")
         
-        # Todo el juego corre rápido en JS para evitar congelamientos
         juego_html = """
         <!DOCTYPE html>
         <html lang="es">
@@ -192,11 +181,9 @@ else:
                             res.innerHTML = "<span style='color: #4ade80;'>🔥 ¡GOOOLAZO!</span>";
                         }
 
-                        // Actualizar textos en caliente sin recargar
                         document.getElementById('goles-count').innerText = goles;
                         document.getElementById('tiros-count').innerText = tiros;
 
-                        // Reiniciar posiciones para el siguiente tiro
                         setTimeout(() => {
                             if (tiros < 10) {
                                 balon.style.bottom = '30px';
@@ -207,8 +194,7 @@ else:
                                 res.innerHTML = "¡Apunta otra vez y dispara!";
                                 bloqueado = false;
                             } else {
-                                // Tanda terminada: Enviar el resultado final de golpe a Streamlit
-                                res.innerHTML = "<span style='color: #7c3aed;'>⏱️ Guardando tu puntuación...</span>";
+                                res.innerHTML = "<span style='color: #7c3aed;'>⏱️ Registrando tu puntuación...</span>";
                                 const url = new URL(window.parent.location.href);
                                 url.searchParams.set("goles_final", goles);
                                 window.parent.location.href = url.toString();
@@ -223,29 +209,22 @@ else:
         """
         st.components.v1.html(juego_html, height=440)
 
-# --- TABLA DE CLASIFICACIÓN (RANKING TOP 10) ---
+# --- 🏆 TABLA DE POSICIONES EN TIEMPO REAL ---
 st.markdown("---")
-st.markdown("## 🏆 Tabla de Líderes (TOP 10)")
+st.markdown("## 🏆 Tabla de Puntuaciones (Líderes)")
 
-if conn:
-    try:
-        df = conn.read(ttl="0s")
-        if df is not None and not df.empty:
-            df_leaderboard = df.sort_values(by="Goles", ascending=False).head(10).reset_index(drop=True)
-            
-            tabla_html = "| Puesto | 👤 Jugador | ⚽ Goles de 10 | 📅 Fecha |\n| :---: | :--- | :---: | :---: |\n"
-            for index, row in df_leaderboard.iterrows():
-                medalla = "🥇" if index == 0 else "🥈" if index == 1 else "🥉" if index == 2 else "🏃‍♂️"
-                tabla_html += f"| {medalla} {index+1} | **{row['Nombre']}** | **{row['Goles']}** / 10 | {row['Fecha']} |\n"
-            
-            st.markdown(tabla_html)
-        else:
-            st.info("Aún no hay puntuaciones registradas. ¡Sé el primero!")
-    except Exception:
-        st.warning("Conectando con la base de datos de líderes... (Revisa que tu Sheet esté configurado)")
+lista_amigos = cargar_puntuaciones()
+
+if lista_amigos:
+    # Ordenamos de mayor a menor cantidad de goles
+    lista_amigos = sorted(lista_amigos, key=lambda x: x["goles"], reverse=True)
+    
+    # Mostrar cada uno en el formato limpio solicitado
+    for jugador in lista_amigos:
+        st.markdown(f"• **{jugador['nombre']}** {jugador['goles']} de 10")
 else:
-    st.info("Configura las credenciales de Google Sheets para activar el ranking en línea.")
+    st.info("Aún no hay puntuaciones registradas. ¡Inicia una tanda y sé el primero!")
 
 # Pie de página
 st.write("---")
-st.caption("⚡ AI Learning Music Engine v5.2 • Sistema de Guía Teórica Dinámica • Hecho por Gabriel.s")
+st.caption("⚡ AI Learning Music Engine v5.2 • Hecho por Gabriel.s")
