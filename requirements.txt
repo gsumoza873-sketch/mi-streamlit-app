@@ -1,2 +1,5 @@
 streamlit
 supabase
+st-theme
+gspread
+st-gsheets-connection
