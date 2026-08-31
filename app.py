@@ -113,7 +113,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 .category-tag {
     display: inline-block;
     background: var(--vinotinto);
-    color: white;
+    color: white !important;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.78em;
@@ -124,7 +124,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 .difficulty-tag {
     display: inline-block;
     background: var(--azul);
-    color: white;
+    color: white !important;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.78em;
