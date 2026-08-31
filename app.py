@@ -33,6 +33,24 @@ st.markdown("""
     background: linear-gradient(180deg, #fffdf5 0%, #ffffff 100%);
 }
 
+/* Forzar texto oscuro en todo el contenido para que no se vuelva invisible
+   si el navegador/celular del usuario está en modo oscuro */
+.stApp p, .stApp li, .stApp span, .stApp label,
+.stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5,
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h4,
+.stRadio label p, .stRadio label span,
+.stCaption, [data-testid="stCaptionContainer"] {
+    color: #262626 !important;
+}
+
+.stButton>button, .stButton>button * {
+    color: white !important;
+}
+
 .header-banner {
     background: linear-gradient(90deg, var(--amarillo) 0%, var(--azul) 50%, var(--rojo) 100%);
     padding: 28px 20px;
@@ -43,17 +61,21 @@ st.markdown("""
 }
 
 .header-banner h1 {
-    color: white;
+    color: white !important;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     margin: 0;
     font-size: 2.1em;
 }
 
 .header-banner p {
-    color: white;
+    color: white !important;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
     margin-top: 6px;
     font-size: 1.05em;
+}
+
+.result-box h1, .result-box h2, .result-box p {
+    color: white !important;
 }
 
 .question-card {
