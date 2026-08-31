@@ -110,10 +110,10 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
     margin-bottom: 16px;
 }
 
-.category-tag {
+.stApp span.category-tag {
     display: inline-block;
     background: var(--vinotinto);
-    color: white !important;
+    color: #ffffff !important;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.78em;
@@ -121,10 +121,10 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
     margin-bottom: 10px;
 }
 
-.difficulty-tag {
+.stApp span.difficulty-tag {
     display: inline-block;
     background: var(--azul);
-    color: white !important;
+    color: #ffffff !important;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.78em;
