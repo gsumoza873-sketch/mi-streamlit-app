@@ -71,6 +71,26 @@ st.markdown("""
     color: white !important;
 }
 
+.stApp p.firma-top {
+    text-align: center;
+    color: var(--vinotinto) !important;
+    font-size: 0.85em;
+    font-weight: bold;
+    margin-top: -10px;
+    margin-bottom: 18px;
+    opacity: 0.85;
+}
+
+.stApp p.firma-bottom {
+    text-align: center;
+    color: var(--vinotinto) !important;
+    font-size: 0.85em;
+    font-weight: bold;
+    margin-top: 30px;
+    padding-top: 14px;
+    border-top: 1px solid #e5cfd6;
+}
+
 .header-banner {
     background: linear-gradient(90deg, var(--amarillo) 0%, var(--azul) 50%, var(--rojo) 100%);
     padding: 28px 20px;
@@ -332,6 +352,8 @@ st.markdown("""
 if not mostrar_imagen_si_existe("venezuela_banner.jpg"):
     pass  # si agregas la imagen 'images/venezuela_banner.jpg' se mostrará aquí automáticamente
 
+st.markdown('<p class="firma-top">Trivia creada por Gabriel.S</p>', unsafe_allow_html=True)
+
 # =========================================================
 # ETAPA 1: REGISTRO
 # =========================================================
@@ -480,3 +502,8 @@ elif st.session_state.etapa == "finalizado":
             for clave in list(st.session_state.keys()):
                 del st.session_state[clave]
             st.rerun()
+
+# =========================================================
+# PIE DE PÁGINA (visible en todas las etapas)
+# =========================================================
+st.markdown('<p class="firma-bottom">Trivia creada por Gabriel.S</p>', unsafe_allow_html=True)
