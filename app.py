@@ -30,7 +30,27 @@ st.markdown("""
 }
 
 .stApp {
-    background: linear-gradient(180deg, #fffdf5 0%, #ffffff 100%);
+    background: linear-gradient(160deg, #FFF6D9 0%, #FDEFE9 35%, #EAF0FB 70%, #FFF6D9 100%);
+}
+
+/* Franja tricolor decorativa fija en la parte superior */
+.stApp::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--amarillo) 0%, var(--amarillo) 33%, var(--azul) 33%, var(--azul) 66%, var(--rojo) 66%, var(--rojo) 100%);
+    z-index: 999;
+}
+
+/* Barra de progreso con los colores del tema */
+[data-testid="stProgress"] div[role="progressbar"] {
+    background-color: var(--vinotinto) !important;
+}
+[data-testid="stProgress"] > div > div {
+    background-color: #f0d9d9 !important;
 }
 
 /* Forzar texto oscuro en todo el contenido para que no se vuelva invisible
@@ -78,18 +98,32 @@ st.markdown("""
     color: white !important;
 }
 
-.question-card {
-    background: white;
-    border: 2px solid var(--vinotinto);
-    border-radius: 14px;
-    padding: 22px;
-    margin-bottom: 16px;
+/* Tarjeta de pregunta: usamos el contenedor nativo con borde de Streamlit
+   (st.container(border=True)) y lo re-estilizamos aquí, porque un <div>
+   abierto/cerrado en st.markdown NO puede envolver widgets reales como st.radio */
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    background: white !important;
+    border: 2px solid var(--vinotinto) !important;
+    border-radius: 14px !important;
     box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    padding: 6px 6px 2px 6px;
+    margin-bottom: 16px;
 }
 
 .category-tag {
     display: inline-block;
     background: var(--vinotinto);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.difficulty-tag {
+    display: inline-block;
+    background: var(--azul);
     color: white;
     padding: 4px 12px;
     border-radius: 20px;
@@ -137,23 +171,47 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================================================
-# BANCO DE PREGUNTAS (20 preguntas)
+# BANCO DE PREGUNTAS (35 preguntas: 15 cultura general VE por dificultad,
+# 5 béisbol, 5 fútbol, 5 Miss Venezuela, 5 cultura general mundial)
 # =========================================================
 PREGUNTAS = [
-    {"categoria": "Cultura General", "pregunta": "¿Cuál es la capital de Venezuela?",
+    # ---------- CULTURA GENERAL VENEZUELA - FÁCIL (5) ----------
+    {"categoria": "Cultura General VE", "dificultad": "Fácil", "pregunta": "¿Cuál es la capital de Venezuela?",
      "opciones": ["Maracaibo", "Caracas", "Valencia", "Barquisimeto"], "correcta": "Caracas"},
-    {"categoria": "Cultura General", "pregunta": "¿Cómo se llama la caída de agua más alta del mundo, ubicada en Venezuela?",
-     "opciones": ["Salto Ángel", "Cataratas del Niágara", "Salto del Chorro", "Cascada Kaieteur"], "correcta": "Salto Ángel"},
-    {"categoria": "Cultura General", "pregunta": "¿Cuál es el plato típico navideño venezolano hecho con masa de maíz envuelta en hojas de plátano?",
-     "opciones": ["Tamal", "Hallaca", "Cachapa", "Arepa"], "correcta": "Hallaca"},
-    {"categoria": "Cultura General", "pregunta": "¿Cuál es la moneda oficial de Venezuela?",
+    {"categoria": "Cultura General VE", "dificultad": "Fácil", "pregunta": "¿Cuál es el idioma oficial de Venezuela?",
+     "opciones": ["Portugués", "Español", "Francés", "Inglés"], "correcta": "Español"},
+    {"categoria": "Cultura General VE", "dificultad": "Fácil", "pregunta": "¿Cuál es la moneda oficial de Venezuela?",
      "opciones": ["Peso", "Sol", "Bolívar", "Colón"], "correcta": "Bolívar"},
-    {"categoria": "Cultura General", "pregunta": "¿Cómo se llama el parque nacional venezolano famoso por sus tepuyes, como el Roraima?",
-     "opciones": ["Canaima", "Morrocoy", "Henri Pittier", "Los Roques"], "correcta": "Canaima"},
-    {"categoria": "Cultura General", "pregunta": "¿Cuál es el nombre del libertador venezolano considerado héroe de la independencia sudamericana?",
-     "opciones": ["José de San Martín", "Simón Bolívar", "Francisco de Miranda", "Antonio José de Sucre"], "correcta": "Simón Bolívar"},
-    {"categoria": "Cultura General", "pregunta": "¿Qué mar bordea la costa norte de Venezuela?",
+    {"categoria": "Cultura General VE", "dificultad": "Fácil", "pregunta": "¿Qué mar bordea la costa norte de Venezuela?",
      "opciones": ["Mar Caribe", "Océano Pacífico", "Mar Mediterráneo", "Mar de los Sargazos"], "correcta": "Mar Caribe"},
+    {"categoria": "Cultura General VE", "dificultad": "Fácil", "pregunta": "¿Cuál es el plato típico navideño venezolano hecho con masa de maíz envuelta en hojas de plátano?",
+     "opciones": ["Tamal", "Hallaca", "Cachapa", "Arepa"], "correcta": "Hallaca"},
+
+    # ---------- CULTURA GENERAL VENEZUELA - INTERMEDIO (5) ----------
+    {"categoria": "Cultura General VE", "dificultad": "Intermedio", "pregunta": "¿Cómo se llama la caída de agua más alta del mundo, ubicada en Venezuela?",
+     "opciones": ["Salto Ángel", "Cataratas del Niágara", "Salto del Chorro", "Cascada Kaieteur"], "correcta": "Salto Ángel"},
+    {"categoria": "Cultura General VE", "dificultad": "Intermedio", "pregunta": "¿Cómo se llama el parque nacional venezolano famoso por sus tepuyes, como el Roraima?",
+     "opciones": ["Canaima", "Morrocoy", "Henri Pittier", "Los Roques"], "correcta": "Canaima"},
+    {"categoria": "Cultura General VE", "dificultad": "Intermedio", "pregunta": "¿Cuál es el nombre del libertador venezolano considerado héroe de la independencia sudamericana?",
+     "opciones": ["José de San Martín", "Simón Bolívar", "Francisco de Miranda", "Antonio José de Sucre"], "correcta": "Simón Bolívar"},
+    {"categoria": "Cultura General VE", "dificultad": "Intermedio", "pregunta": "¿Cuál es el ave nacional de Venezuela?",
+     "opciones": ["El turpial", "El colibrí", "El guacamayo", "El paují"], "correcta": "El turpial"},
+    {"categoria": "Cultura General VE", "dificultad": "Intermedio", "pregunta": "¿Cuál es el árbol nacional de Venezuela?",
+     "opciones": ["El araguaney", "El samán", "El apamate", "El bucare"], "correcta": "El araguaney"},
+
+    # ---------- CULTURA GENERAL VENEZUELA - DIFÍCIL (5) ----------
+    {"categoria": "Cultura General VE", "dificultad": "Difícil", "pregunta": "¿En qué año se firmó el Acta de Independencia de Venezuela?",
+     "opciones": ["1808", "1811", "1821", "1830"], "correcta": "1811"},
+    {"categoria": "Cultura General VE", "dificultad": "Difícil", "pregunta": "¿Quién fue el primer presidente de Venezuela?",
+     "opciones": ["Cristóbal Mendoza", "José Antonio Páez", "Antonio Guzmán Blanco", "Juan Vicente Gómez"], "correcta": "Cristóbal Mendoza"},
+    {"categoria": "Cultura General VE", "dificultad": "Difícil", "pregunta": "¿Cuál es el estado venezolano con mayor extensión territorial?",
+     "opciones": ["Zulia", "Amazonas", "Bolívar", "Apure"], "correcta": "Bolívar"},
+    {"categoria": "Cultura General VE", "dificultad": "Difícil", "pregunta": "¿Qué escritor venezolano es autor de la novela \"Doña Bárbara\"?",
+     "opciones": ["Rómulo Gallegos", "Arturo Uslar Pietri", "Teresa de la Parra", "Andrés Bello"], "correcta": "Rómulo Gallegos"},
+    {"categoria": "Cultura General VE", "dificultad": "Difícil", "pregunta": "¿En qué año fue fundada la ciudad de Caracas?",
+     "opciones": ["1498", "1521", "1567", "1602"], "correcta": "1567"},
+
+    # ---------- BÉISBOL (5) ----------
     {"categoria": "Béisbol", "pregunta": "¿Cómo se le conoce popularmente al béisbol en Venezuela?",
      "opciones": ["El rey del deporte", "El deporte blanco", "La pelota chica", "El juego real"], "correcta": "El rey del deporte"},
     {"categoria": "Béisbol", "pregunta": "¿Cuántos equipos conforman actualmente la Liga Venezolana de Béisbol Profesional (LVBP)?",
@@ -162,12 +220,10 @@ PREGUNTAS = [
      "opciones": ["Miguel Cabrera", "Omar Vizquel", "Bob Abreu", "Víctor Martínez"], "correcta": "Miguel Cabrera"},
     {"categoria": "Béisbol", "pregunta": "¿Cómo se llama el torneo final donde compiten los campeones de las ligas de invierno del Caribe?",
      "opciones": ["Serie Mundial", "Serie del Caribe", "Copa Caribeña", "Clásico del Caribe"], "correcta": "Serie del Caribe"},
-    {"categoria": "Béisbol", "pregunta": "¿Cuál es uno de los equipos más ganadores de la LVBP, con sede en Caracas?",
-     "opciones": ["Tiburones de La Guaira", "Leones del Caracas", "Águilas del Zulia", "Cardenales de Lara"], "correcta": "Leones del Caracas"},
     {"categoria": "Béisbol", "pregunta": "¿En qué posición jugaba históricamente Luis Aparicio, venezolano miembro del Salón de la Fama?",
      "opciones": ["Receptor", "Jardinero central", "Campocorto (shortstop)", "Primera base"], "correcta": "Campocorto (shortstop)"},
-    {"categoria": "Béisbol", "pregunta": "¿Cómo se llama el estadio de béisbol más emblemático de Caracas?",
-     "opciones": ["Estadio Universitario", "Estadio Monumental", "Estadio Metropolitano", "Estadio José Pérez Colmenares"], "correcta": "Estadio Universitario"},
+
+    # ---------- FÚTBOL (5) ----------
     {"categoria": "Fútbol", "pregunta": "¿Cómo se le apoda a la selección de fútbol de Venezuela?",
      "opciones": ["La Tricolor", "La Vinotinto", "Los Llaneros", "La Roja"], "correcta": "La Vinotinto"},
     {"categoria": "Fútbol", "pregunta": "¿En qué año Venezuela fue anfitriona de la Copa América?",
@@ -178,8 +234,30 @@ PREGUNTAS = [
      "opciones": ["Salomón Rondón", "James Rodríguez", "Falcao García", "Luis Suárez"], "correcta": "Salomón Rondón"},
     {"categoria": "Fútbol", "pregunta": "¿A qué confederación de fútbol pertenece Venezuela?",
      "opciones": ["UEFA", "CONCACAF", "CONMEBOL", "CAF"], "correcta": "CONMEBOL"},
-    {"categoria": "Fútbol", "pregunta": "¿Qué color le da el apodo a la selección venezolana de fútbol?",
-     "opciones": ["Azul marino", "Vino tinto / granate", "Verde oliva", "Naranja"], "correcta": "Vino tinto / granate"},
+
+    # ---------- MISS VENEZUELA / MISS UNIVERSO (5) ----------
+    {"categoria": "Miss Venezuela", "pregunta": "¿Cuántas veces ha ganado Venezuela el título de Miss Universo?",
+     "opciones": ["Cinco", "Seis", "Siete", "Nueve"], "correcta": "Siete"},
+    {"categoria": "Miss Venezuela", "pregunta": "¿Quién fue la primera venezolana en ganar el Miss Universo, en 1979?",
+     "opciones": ["Maritza Sayalero", "Irene Sáez", "Bárbara Palacios", "Alicia Machado"], "correcta": "Maritza Sayalero"},
+    {"categoria": "Miss Venezuela", "pregunta": "¿Qué venezolana ganó el Miss Universo en 1996?",
+     "opciones": ["Dayana Mendoza", "Alicia Machado", "Stefanía Fernández", "María Gabriela Isler"], "correcta": "Alicia Machado"},
+    {"categoria": "Miss Venezuela", "pregunta": "¿En qué año ganó Venezuela su corona más reciente de Miss Universo, con María Gabriela Isler?",
+     "opciones": ["2009", "2011", "2013", "2015"], "correcta": "2013"},
+    {"categoria": "Miss Venezuela", "pregunta": "¿Cómo se llama el certamen nacional que elige a la representante de Venezuela para el Miss Universo?",
+     "opciones": ["Miss Venezuela", "Miss Mundo VE", "Reina Vinotinto", "Belleza Nacional"], "correcta": "Miss Venezuela"},
+
+    # ---------- CULTURA GENERAL MUNDIAL (5) ----------
+    {"categoria": "Cultura General Mundial", "pregunta": "¿Cuál es el planeta más grande del sistema solar?",
+     "opciones": ["Saturno", "Júpiter", "Neptuno", "Urano"], "correcta": "Júpiter"},
+    {"categoria": "Cultura General Mundial", "pregunta": "¿En qué continente se encuentra Egipto?",
+     "opciones": ["Asia", "África", "Europa", "Oceanía"], "correcta": "África"},
+    {"categoria": "Cultura General Mundial", "pregunta": "¿Aproximadamente cuántos huesos tiene el cuerpo humano adulto?",
+     "opciones": ["156", "206", "256", "306"], "correcta": "206"},
+    {"categoria": "Cultura General Mundial", "pregunta": "¿Quién pintó la Mona Lisa?",
+     "opciones": ["Pablo Picasso", "Leonardo da Vinci", "Miguel Ángel", "Rafael"], "correcta": "Leonardo da Vinci"},
+    {"categoria": "Cultura General Mundial", "pregunta": "¿Cuál es el océano más grande del mundo?",
+     "opciones": ["Atlántico", "Índico", "Pacífico", "Ártico"], "correcta": "Pacífico"},
 ]
 
 TOTAL_PREGUNTAS = len(PREGUNTAS)
@@ -312,19 +390,21 @@ elif st.session_state.etapa == "jugando":
     st.progress((st.session_state.pregunta_actual) / TOTAL_PREGUNTAS)
     st.caption(f"Pregunta {st.session_state.pregunta_actual + 1} de {TOTAL_PREGUNTAS}")
 
-    st.markdown('<div class="question-card">', unsafe_allow_html=True)
-    st.markdown(f'<span class="category-tag">{pregunta_data["categoria"]}</span>', unsafe_allow_html=True)
-    st.markdown(f"#### {pregunta_data['pregunta']}")
+    with st.container(border=True):
+        etiquetas = f'<span class="category-tag">{pregunta_data["categoria"]}</span>'
+        if "dificultad" in pregunta_data:
+            etiquetas += f' <span class="difficulty-tag">{pregunta_data["dificultad"]}</span>'
+        st.markdown(etiquetas, unsafe_allow_html=True)
+        st.markdown(f"#### {pregunta_data['pregunta']}")
 
-    opciones = pregunta_data["opciones"]
-    seleccion = st.radio(
-        "Selecciona tu respuesta:",
-        opciones,
-        index=None,
-        key=f"radio_{st.session_state.pregunta_actual}",
-        disabled=st.session_state.respondido,
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
+        opciones = pregunta_data["opciones"]
+        seleccion = st.radio(
+            "Selecciona tu respuesta:",
+            opciones,
+            index=None,
+            key=f"radio_{st.session_state.pregunta_actual}",
+            disabled=st.session_state.respondido,
+        )
 
     if not st.session_state.respondido:
         if st.button("✅ Confirmar respuesta", disabled=(seleccion is None)):
