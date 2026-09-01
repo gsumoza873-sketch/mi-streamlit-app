@@ -18,42 +18,43 @@ EDAD_INICIAL = 16
 EDAD_RETIRO_FORZOSO = 36
 EDAD_MIN_RETIRO_VOLUNTARIO = 30
 
-# URL de Instagram para la firma
-INSTAGRAM_URL = "https://www.instagram.com/g2bri3l_sumoza?utm_source=qr"
-
 # =========================================================
 # ESTILOS
 # =========================================================
-st.markdown(f"""
+st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap');
 
-:root {{
+:root {
     --verde: #0E6B3A;
     --verde-oscuro: #0A4D2A;
     --verde-claro: #E8F5EC;
     --dorado: #C9962C;
     --dorado-claro: #FBF0DC;
+    --azul: #1E5FA8;
+    --azul-claro: #E7F0FA;
     --blanco: #FFFFFF;
     --texto: #1A1A1A;
-}}
+}
 
-.stApp {{
+.stApp {
     background:
         radial-gradient(circle at 50% -5%, rgba(255,255,255,0.55) 0%, transparent 32%),
         repeating-linear-gradient(100deg, #CDEEDA 0px, #CDEEDA 70px, #B4E3C4 70px, #B4E3C4 140px);
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-}}
+}
 
-.stApp::before {{
+.stApp::before {
     content: "";
     position: fixed;
     top: 0; left: 0; right: 0;
     height: 6px;
     background: linear-gradient(90deg, var(--verde-oscuro), var(--verde), var(--dorado));
     z-index: 999;
-}}
+}
 
+/* Regla base de texto oscuro con especificidad CERO (gracias a :where),
+   así cualquier clase específica (badges, botones, banners) la gana sin pelear. */
 :where(
     .stApp p, .stApp li, .stApp span, .stApp label,
     .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5,
@@ -64,16 +65,16 @@ st.markdown(f"""
     [data-testid="stMarkdownContainer"] h4,
     .stRadio label p, .stRadio label span,
     .stCaption, [data-testid="stCaptionContainer"]
-) {{
+) {
     color: var(--texto) !important;
-}}
+}
 
-h1, h2, h3, h4 {{
+h1, h2, h3, h4 {
     font-family: 'Poppins', 'Segoe UI', sans-serif !important;
     letter-spacing: -0.02em;
-}}
+}
 
-.header-banner {{
+.header-banner {
     background:
         repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 14px, transparent 14px, transparent 28px),
         linear-gradient(100deg, var(--verde-oscuro), var(--verde));
@@ -82,51 +83,50 @@ h1, h2, h3, h4 {{
     text-align: center;
     margin-bottom: 6px;
     box-shadow: 0 6px 18px rgba(10,77,42,0.25);
-}}
-.header-banner h1 {{ color: #ffffff !important; text-shadow: 2px 2px 6px rgba(0,0,0,0.35); margin: 0; font-size: 2.1em; }}
-.header-banner p {{ color: #EAF7EE !important; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); margin-top: 8px; font-size: 1.02em; }}
+}
+.header-banner h1 { color: #ffffff !important; text-shadow: 2px 2px 6px rgba(0,0,0,0.35); margin: 0; font-size: 2.1em; }
+.header-banner p { color: #EAF7EE !important; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); margin-top: 8px; font-size: 1.02em; }
 
-p.firma {{
+p.firma {
     text-align: center;
     color: var(--verde-oscuro) !important;
-    font-size: 0.85em;
+    font-size: 0.82em;
     font-weight: 600;
-    opacity: 0.9;
+    opacity: 0.8;
     margin-top: 4px;
     margin-bottom: 18px;
-}}
-
-p.firma a {{
+}
+p.firma a {
     color: var(--verde-oscuro) !important;
-    text-decoration: underline;
-    font-weight: 700;
-}}
-
-p.firma a:hover {{
+    text-decoration: none;
+    border-bottom: 1px dashed var(--verde-oscuro);
+}
+p.firma a:hover {
     color: var(--dorado) !important;
-}}
+    border-bottom-color: var(--dorado);
+}
 
-div[data-testid="stVerticalBlockBorderWrapper"] {{
+div[data-testid="stVerticalBlockBorderWrapper"] {
     background: var(--blanco) !important;
     border: 2px solid var(--verde) !important;
     border-radius: 16px !important;
     box-shadow: 0 4px 14px rgba(14,107,58,0.10);
     padding: 10px;
     margin-bottom: 18px;
-}}
+}
 
-span.tag-verde {{
+span.tag-verde {
     display: inline-block; background: var(--verde); color: #ffffff !important;
     padding: 5px 14px; border-radius: 20px; font-size: 0.78em; font-weight: 700;
     letter-spacing: 0.02em; margin-bottom: 10px;
-}}
-span.tag-dorado {{
+}
+span.tag-dorado {
     display: inline-block; background: var(--dorado); color: #ffffff !important;
     padding: 5px 14px; border-radius: 20px; font-size: 0.78em; font-weight: 700;
     letter-spacing: 0.02em; margin-bottom: 10px;
-}}
+}
 
-.stat-box {{
+.stat-box {
     background: linear-gradient(160deg, #ffffff, var(--verde-claro));
     border: 2px solid var(--verde);
     border-radius: 14px;
@@ -134,12 +134,13 @@ span.tag-dorado {{
     text-align: center;
     margin-bottom: 10px;
     box-shadow: 0 3px 10px rgba(14,107,58,0.12);
-}}
-.stat-box .icono {{ font-size: 1.3em; display: block; margin-bottom: 2px; }}
-.stat-box .valor {{ font-family: 'Poppins', sans-serif; font-size: 1.9em; font-weight: 800; color: var(--verde-oscuro) !important; line-height: 1.1; }}
-.stat-box .etiqueta {{ font-size: 0.76em; color: var(--texto) !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }}
+}
+.stat-box .icono { font-size: 1.3em; display: block; margin-bottom: 2px; }
+.stat-box .valor { font-family: 'Poppins', sans-serif; font-size: 1.9em; font-weight: 800; color: var(--verde-oscuro) !important; line-height: 1.1; }
+.stat-box .etiqueta { font-size: 0.76em; color: var(--texto) !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
 
-.jugador-card {{
+/* Tarjeta de jugador estilo "carta" con bandera, posición y OVR destacado */
+.jugador-card {
     background: linear-gradient(120deg, var(--verde-oscuro) 0%, var(--verde) 60%, var(--dorado) 130%);
     border-radius: 20px;
     padding: 20px 22px;
@@ -150,11 +151,11 @@ span.tag-dorado {{
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px;
-}}
-.jugador-card .info h3 {{ color: #ffffff !important; margin: 0 0 2px 0; font-size: 1.3em; }}
-.jugador-card .info p {{ color: #EAF7EE !important; margin: 0; font-size: 0.92em; font-weight: 600; }}
-.jugador-card .bandera {{ font-size: 2.6em; line-height: 1; }}
-.jugador-card .ovr-gema {{
+}
+.jugador-card .info h3 { color: #ffffff !important; margin: 0 0 2px 0; font-size: 1.3em; }
+.jugador-card .info p { color: #EAF7EE !important; margin: 0; font-size: 0.92em; font-weight: 600; }
+.jugador-card .bandera { font-size: 2.6em; line-height: 1; }
+.jugador-card .ovr-gema {
     background: #ffffff;
     color: var(--verde-oscuro) !important;
     border-radius: 50%;
@@ -164,49 +165,87 @@ span.tag-dorado {{
     font-family: 'Poppins', sans-serif;
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     border: 3px solid var(--dorado);
-}}
-.jugador-card .ovr-gema .num {{ font-size: 1.5em; font-weight: 800; color: var(--verde-oscuro) !important; line-height: 1; }}
-.jugador-card .ovr-gema .lbl {{ font-size: 0.55em; font-weight: 700; color: var(--verde) !important; letter-spacing: 0.05em; }}
+}
+.jugador-card .ovr-gema .num { font-size: 1.5em; font-weight: 800; color: var(--verde-oscuro) !important; line-height: 1; }
+.jugador-card .ovr-gema .lbl { font-size: 0.55em; font-weight: 700; color: var(--verde) !important; letter-spacing: 0.05em; }
 
-span.tag-club {{
+/* Consistencia: todos los encabezados dentro de tarjetas usan el verde de marca,
+   no el negro genérico, para que el look se sienta diseñado y no plano */
+div[data-testid="stVerticalBlockBorderWrapper"] h1,
+div[data-testid="stVerticalBlockBorderWrapper"] h2,
+div[data-testid="stVerticalBlockBorderWrapper"] h3,
+div[data-testid="stVerticalBlockBorderWrapper"] h4 {
+    color: var(--verde-oscuro) !important;
+}
+
+/* Indicador de pasos (stepper) para los 3 retos de la temporada */
+.stepper { display: flex; align-items: center; justify-content: center; margin-bottom: 18px; gap: 4px; }
+.stepper .paso {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1em; font-weight: 800; flex-shrink: 0;
+    border: 3px solid #D8E8DE; background: white; color: #B7C9BE !important;
+}
+.stepper .paso.hecho { background: var(--dorado); border-color: var(--dorado); color: white !important; }
+.stepper .paso.activo { background: var(--verde); border-color: var(--verde-oscuro); color: white !important; box-shadow: 0 0 0 4px rgba(14,107,58,0.18); }
+.stepper .linea { width: 34px; height: 3px; background: #D8E8DE; flex-shrink: 0; }
+.stepper .linea.hecha { background: var(--dorado); }
+
+.badge-racha {
+    display: inline-block; background: linear-gradient(90deg, #FF7A18, var(--dorado));
+    color: white !important; padding: 4px 12px; border-radius: 20px;
+    font-size: 0.78em; font-weight: 700; margin-bottom: 8px;
+}
+.badge-valor {
+    display: inline-block; background: var(--azul); color: white !important;
+    padding: 4px 12px; border-radius: 20px; font-size: 0.78em; font-weight: 700; margin-bottom: 8px;
+}
+.narrativa-box {
+    background: var(--azul-claro); border-left: 4px solid var(--azul);
+    border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px 0;
+    font-style: italic;
+}
+.narrativa-box p { color: var(--texto) !important; margin: 0 !important; }
+
+span.tag-club {
     display: inline-block; color: #ffffff !important;
     padding: 5px 14px; border-radius: 20px; font-size: 0.78em; font-weight: 700;
     letter-spacing: 0.02em; margin-bottom: 10px;
-}}
+}
 
-.oferta-card {{
+.oferta-card {
     background: linear-gradient(160deg, #ffffff, var(--dorado-claro));
     border: 2px solid var(--dorado);
     border-radius: 14px;
     padding: 14px;
     margin-bottom: 10px;
-}}
+}
 
-.resultado-box {{
+.resultado-box {
     text-align: center; padding: 26px; border-radius: 18px;
     background: linear-gradient(135deg, var(--verde-oscuro), var(--verde));
     color: white; margin-bottom: 20px;
     box-shadow: 0 6px 18px rgba(10,77,42,0.3);
-}}
-.resultado-box h1, .resultado-box h2, .resultado-box p {{ color: #ffffff !important; }}
+}
+.resultado-box h1, .resultado-box h2, .resultado-box p { color: #ffffff !important; }
 
-.stButton>button {{
+.stButton>button {
     background-color: var(--verde-oscuro);
     color: white; border-radius: 12px; border: none;
     padding: 10px 22px; font-weight: 700; letter-spacing: 0.01em;
     transition: background-color 0.15s ease;
-}}
-.stButton>button:hover {{ background-color: var(--verde); color: white; }}
-.stButton>button, .stButton>button * {{ color: white !important; }}
-.stButton>button:disabled, .stButton>button:disabled * {{ color: #ffffffaa !important; }}
+}
+.stButton>button:hover { background-color: var(--verde); color: white; }
+.stButton>button, .stButton>button * { color: white !important; }
+.stButton>button:disabled, .stButton>button:disabled * { color: #ffffffaa !important; }
 
-.leaderboard-row {{ padding: 11px 16px; border-radius: 12px; margin-bottom: 7px; font-weight: 500; }}
-.rank-1 {{ background: linear-gradient(90deg, #FFE9A8, var(--dorado)); font-weight: 700; }}
-.rank-2 {{ background: #E9ECEA; font-weight: 700; }}
-.rank-3 {{ background: #E3CBAA; font-weight: 700; }}
-.rank-other {{ background: var(--verde-claro); }}
+.leaderboard-row { padding: 11px 16px; border-radius: 12px; margin-bottom: 7px; font-weight: 500; }
+.rank-1 { background: linear-gradient(90deg, #FFE9A8, var(--dorado)); font-weight: 700; }
+.rank-2 { background: #E9ECEA; font-weight: 700; }
+.rank-3 { background: #E3CBAA; font-weight: 700; }
+.rank-other { background: var(--verde-claro); }
 
-hr {{ border-color: var(--verde-claro) !important; }}
+hr { border-color: var(--verde-claro) !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -220,6 +259,7 @@ CLUBES = {
 }
 FUERZA_CLUB = {"grande": 88, "mediano": 74, "pequeño": 58}
 
+# Color propio de cada club, para que la app se sienta distinta según dónde firmes
 COLOR_CLUB = {
     "Real Madrid": "#8A6D00", "Manchester City": "#6CABDD", "Bayern Múnich": "#DC052D",
     "Flamengo": "#C8102E", "Boca Juniors": "#1E3A8A",
@@ -241,6 +281,12 @@ ICONO_ATRIBUTO = {
     "Reflejos": "🧤", "Distribución": "🎯", "Colocación": "🧠",
 }
 
+# =========================================================
+# CONFIGURACIÓN POR POSICIÓN
+# (cada posición tiene sus propios 3 atributos, su propio banco de
+#  preguntas tácticas y su propio vocabulario de jugadas para el reto
+#  de memoria — así un portero nunca entrena ni es evaluado como delantero)
+# =========================================================
 POSICIONES = {
     "Delantero": {
         "atr1_nombre": "Finalización",
@@ -423,9 +469,16 @@ def simular_temporada(stats, club, posicion):
     else:
         partidos = random.randint(4, 10)
 
+    lesionado = random.random() < 0.12
+    partidos_perdidos = 0
+    if lesionado:
+        partidos_perdidos = round(partidos * random.uniform(0.25, 0.55))
+        partidos = max(1, partidos - partidos_perdidos)
+
     resultado = {"partidos": partidos, "goles": 0, "asistencias": 0,
                  "atajadas": 0, "vallas_invictas": 0,
-                 "convocado_seleccion": False, "gana_titulo": False}
+                 "convocado_seleccion": False, "gana_titulo": False,
+                 "lesionado": lesionado, "partidos_perdidos": partidos_perdidos}
 
     if posicion == "Portero":
         for _ in range(partidos):
@@ -458,6 +511,78 @@ def simular_temporada(stats, club, posicion):
         resultado["gana_titulo"] = True
 
     return resultado
+
+
+def calcular_valor_mercado(ovr, edad):
+    pico_edad = 27
+    factor_edad = max(0.35, 1 - abs(edad - pico_edad) * 0.035)
+    valor = (ovr ** 2.1) * factor_edad * 0.045
+    return round(valor, 1)
+
+
+def hay_racha(historial_ovr):
+    if len(historial_ovr) < 3:
+        return False
+    return historial_ovr[-1] > historial_ovr[-2] > historial_ovr[-3]
+
+
+def narrativa_inicio_temporada(temporada, edad, nombre):
+    if temporada == 1:
+        return random.choice([
+            f"Todo empieza aquí. {nombre} deja atrás la cantera con una mochila llena de sueños y muy pocas certezas.",
+            f"Primer día como profesional. {nombre} sabe que nadie regala nada en este deporte.",
+        ])
+    if edad >= 32:
+        return random.choice([
+            f"El cuerpo empieza a pasar factura, pero la cabeza de {nombre} sigue tan afilada como siempre.",
+            f"{nombre} juega ahora con la experiencia de quien ya lo vio casi todo en una cancha.",
+        ])
+    return random.choice([
+        f"Una temporada más, una oportunidad más para que {nombre} demuestre de qué está hecho.",
+        f"{nombre} llega con la confianza de quien sabe que el esfuerzo del año pasado no fue en vano.",
+        f"Nuevos objetivos, mismo hambre de siempre. {nombre} se pone la camiseta con ganas de más.",
+    ])
+
+
+def narrativa_resultado_temporada(resultado, posicion, nombre, nota):
+    if resultado.get("lesionado"):
+        return random.choice([
+            f"Una lesión le robó tiempo valioso a {nombre} esta temporada, pero se sobrepuso para volver a las canchas.",
+            f"El parón por lesión fue dura para {nombre}, aunque el regreso demostró que el carácter no se lesiona.",
+        ])
+    if nota >= 85:
+        return random.choice([
+            f"Temporada de ensueño. {nombre} fue de lo mejor que se vio en la liga y ya empieza a sonar en otros países.",
+            f"{nombre} firmó una campaña brillante, de esas que quedan marcadas en la memoria de la hinchada.",
+        ])
+    if nota >= 65:
+        return random.choice([
+            f"Una temporada sólida para {nombre}, con más aciertos que dudas y una progresión clara.",
+            f"{nombre} fue ganando protagonismo partido a partido hasta hacerse indispensable.",
+        ])
+    if nota >= 40:
+        return random.choice([
+            f"Temporada irregular para {nombre}: destellos de buen nivel mezclados con partidos para el olvido.",
+            f"{nombre} tuvo altibajos, pero cada tropiezo se sintió como aprendizaje para lo que viene.",
+        ])
+    return random.choice([
+        f"Año difícil para {nombre}, de esos que ponen a prueba las ganas de seguir en esto.",
+        f"{nombre} no encontró su mejor versión esta temporada, pero en el fútbol la memoria es corta.",
+    ])
+
+
+def render_stepper(paso_actual):
+    iconos = ["🎯", "🧠", "📋"]
+    html = '<div class="stepper">'
+    for i, icono in enumerate(iconos, start=1):
+        clase = "activo" if i == paso_actual else ("hecho" if i < paso_actual else "")
+        contenido = "✓" if i < paso_actual else icono
+        html += f'<div class="paso {clase}">{contenido}</div>'
+        if i < len(iconos):
+            linea_clase = "hecha" if i < paso_actual else ""
+            html += f'<div class="linea {linea_clase}"></div>'
+    html += "</div>"
+    st.markdown(html, unsafe_allow_html=True)
 
 
 def cargar_carreras():
@@ -534,7 +659,7 @@ st.markdown("""
     <p>Tu carrera depende de tu desempeño, no de la suerte</p>
 </div>
 """, unsafe_allow_html=True)
-st.markdown(f'<p class="firma">Desarrollado por <a href="{INSTAGRAM_URL}" target="_blank">Gabriel.S</a></p>', unsafe_allow_html=True)
+st.markdown('<p class="firma">Creado por <a href="https://www.instagram.com/g2bri3l_sumoza" target="_blank">Gabriel.S</a></p>', unsafe_allow_html=True)
 
 # =========================================================
 # ETAPA: CREAR JUGADOR
@@ -572,6 +697,13 @@ elif st.session_state.etapa == "inicio_temporada":
     s = st.session_state.stats
     cfg = POSICIONES[j["posicion"]]
     ovr = calcular_ovr(s)
+    valor_mercado = calcular_valor_mercado(ovr, st.session_state.edad)
+
+    if "historial_ovr" not in st.session_state:
+        st.session_state.historial_ovr = []
+    if not st.session_state.historial_ovr or st.session_state.historial_ovr[-1] != ovr:
+        st.session_state.historial_ovr.append(ovr)
+    racha = hay_racha(st.session_state.historial_ovr)
 
     club_nombre = st.session_state.club_actual["club"] if st.session_state.club_actual else "Sin club (cantera)"
     bandera = BANDERAS.get(j["nacionalidad"], "🌍")
@@ -582,11 +714,14 @@ elif st.session_state.etapa == "inicio_temporada":
         <div class="info" style="flex:1; min-width:150px;">
             <h3>{j['nombre']}</h3>
             <p>{j['posicion']} · {j['nacionalidad']} · Temporada {st.session_state.temporada} · {st.session_state.edad} años</p>
-            <p>🏟️ {club_nombre}</p>
+            <p>🏟️ {club_nombre} · 💰 €{valor_mercado}M</p>
         </div>
         <div class="ovr-gema"><div class="num">{ovr}</div><div class="lbl">OVR</div></div>
     </div>
     """, unsafe_allow_html=True)
+
+    if racha:
+        st.markdown('<span class="badge-racha">🔥 En racha: subiendo de nivel 3 temporadas seguidas</span>', unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
     for col, nombre_attr, valor in zip([col1, col2, col3],
@@ -595,7 +730,11 @@ elif st.session_state.etapa == "inicio_temporada":
         icono = ICONO_ATRIBUTO.get(nombre_attr, "⚽")
         col.markdown(f'<div class="stat-box"><span class="icono">{icono}</span><div class="valor">{valor}</div><div class="etiqueta">{nombre_attr}</div></div>', unsafe_allow_html=True)
 
-    st.markdown("---")
+    if "narrativa_temporada_actual" not in st.session_state or st.session_state.get("narrativa_temporada_num") != st.session_state.temporada:
+        st.session_state.narrativa_temporada_actual = narrativa_inicio_temporada(st.session_state.temporada, st.session_state.edad, j["nombre"])
+        st.session_state.narrativa_temporada_num = st.session_state.temporada
+    st.markdown(f'<div class="narrativa-box"><p>📰 {st.session_state.narrativa_temporada_actual}</p></div>', unsafe_allow_html=True)
+
     st.markdown(f"Esta temporada te tocan **3 retos** hechos a la medida de un {j['posicion'].lower()}. Tu desempeño define cuánto mejoran tus estadísticas y qué clubes se fijan en ti.")
 
     if st.button("🎯 Comenzar retos de la temporada", use_container_width=True):
@@ -614,11 +753,11 @@ elif st.session_state.etapa == "inicio_temporada":
 elif st.session_state.etapa == "reto_precision":
     j = st.session_state.jugador
     cfg = POSICIONES[j["posicion"]]
+    render_stepper(1)
     st.markdown(f"### 🎯 Reto de {cfg['atr1_nombre']}")
     st.caption(cfg["desc_precision"])
 
     with st.container(border=True):
-        st.markdown('<span class="tag-verde">Reto 1 de 3</span>', unsafe_allow_html=True)
         potencia = st.session_state.precision_potencia
         st.progress(min(potencia, 100) / 100)
         st.markdown(f"**Carga actual:** {min(potencia, 100)}%")
@@ -661,12 +800,11 @@ elif st.session_state.etapa == "reto_precision":
 elif st.session_state.etapa == "reto_memoria":
     j = st.session_state.jugador
     cfg = POSICIONES[j["posicion"]]
+    render_stepper(2)
     st.markdown(f"### 🧠 Reto de {cfg['atr2_nombre']}")
     st.caption(cfg["desc_memoria"])
 
     with st.container(border=True):
-        st.markdown('<span class="tag-verde">Reto 2 de 3</span>', unsafe_allow_html=True)
-
         if st.session_state.memoria_fase == "mostrando":
             secuencia_txt = "  →  ".join(st.session_state.memoria_objetivo)
             st.info(f"**Secuencia a memorizar:**\n\n{secuencia_txt}")
@@ -711,6 +849,7 @@ elif st.session_state.etapa == "reto_memoria":
 elif st.session_state.etapa == "reto_trivia":
     j = st.session_state.jugador
     cfg = POSICIONES[j["posicion"]]
+    render_stepper(3)
     st.markdown(f"### 📋 Reto de {cfg['atr3_nombre']}")
     st.caption("Lee la jugada y elige la mejor decisión.")
 
@@ -718,13 +857,12 @@ elif st.session_state.etapa == "reto_trivia":
     preguntas = st.session_state.trivia_preguntas
 
     with st.container(border=True):
-        st.markdown('<span class="tag-verde">Reto 3 de 3</span>', unsafe_allow_html=True)
         st.caption(f"Situación {idx + 1} de {len(preguntas)}")
         p = preguntas[idx]
         st.markdown(f"#### {p['pregunta']}")
 
         seleccion = st.radio("Elige tu decisión:", p["opciones"], index=None,
-                             key=f"trivia_radio_{idx}", disabled=st.session_state.trivia_respondido)
+                              key=f"trivia_radio_{idx}", disabled=st.session_state.trivia_respondido)
 
         if not st.session_state.trivia_respondido:
             if st.button("✅ Confirmar decisión", disabled=(seleccion is None)):
@@ -793,7 +931,18 @@ elif st.session_state.etapa == "resumen_entrenamiento":
             st.session_state.etapa = "cerrar_temporada_sin_club"
             st.rerun()
     else:
-        st.markdown("Elige el club con el que quieres firmar:")
+        if st.session_state.club_actual:
+            with st.container(border=True):
+                color_club = COLOR_CLUB.get(st.session_state.club_actual["club"], "#0E6B3A")
+                st.markdown(f'<span class="tag-club" style="background:{color_club};">🏠 Tu club actual</span>', unsafe_allow_html=True)
+                st.markdown(f"#### {st.session_state.club_actual['club']}")
+                st.caption("Si ninguna oferta te convence, puedes quedarte donde estás.")
+                if st.button(f"🤝 Quedarme en {st.session_state.club_actual['club']}", use_container_width=True):
+                    st.session_state.etapa = "simular_temporada"
+                    st.rerun()
+            st.markdown("**O firma con una nueva oferta:**")
+        else:
+            st.markdown("Elige el club con el que quieres firmar:")
         for i, oferta in enumerate(st.session_state.ofertas_actuales):
             with st.container(border=True):
                 etiqueta_tier = {"grande": "Club grande", "mediano": "Club mediano", "pequeño": "Club pequeño"}[oferta["tier"]]
@@ -866,6 +1015,19 @@ elif st.session_state.etapa == "simular_temporada":
         col1.markdown(f'<div class="stat-box"><div class="valor">{r["partidos"]}</div><div class="etiqueta">Partidos</div></div>', unsafe_allow_html=True)
         col2.markdown(f'<div class="stat-box"><div class="valor">{r["goles"]}</div><div class="etiqueta">Goles</div></div>', unsafe_allow_html=True)
         col3.markdown(f'<div class="stat-box"><div class="valor">{r["asistencias"]}</div><div class="etiqueta">Asistencias</div></div>', unsafe_allow_html=True)
+
+    if r.get("lesionado"):
+        st.warning(f"🩹 Sufriste una lesión esta temporada y te perdiste {r['partidos_perdidos']} partidos de recuperación.")
+
+    if j["posicion"] == "Portero":
+        rendimiento = min(100, round((r["atajadas"] / max(1, r["partidos"])) * 15 + r["vallas_invictas"] * 8))
+    else:
+        rendimiento = min(100, round(((r["goles"] * 3 + r["asistencias"] * 2) / max(1, r["partidos"])) * 40))
+
+    if "narrativa_resultado_actual" not in st.session_state or st.session_state.get("narrativa_resultado_num") != st.session_state.temporada:
+        st.session_state.narrativa_resultado_actual = narrativa_resultado_temporada(r, j["posicion"], j["nombre"], rendimiento)
+        st.session_state.narrativa_resultado_num = st.session_state.temporada
+    st.markdown(f'<div class="narrativa-box"><p>📰 {st.session_state.narrativa_resultado_actual}</p></div>', unsafe_allow_html=True)
 
     if r["convocado_seleccion"]:
         st.success(f"🇻🇪 ¡Fuiste convocado a la selección de {j['nacionalidad']} esta temporada!")
