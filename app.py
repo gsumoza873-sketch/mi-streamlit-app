@@ -174,6 +174,14 @@ span.tag-club {{
     letter-spacing: 0.02em; margin-bottom: 10px;
 }}
 
+.oferta-card {{
+    background: linear-gradient(160deg, #ffffff, var(--dorado-claro));
+    border: 2px solid var(--dorado);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+}}
+
 .resultado-box {{
     text-align: center; padding: 26px; border-radius: 18px;
     background: linear-gradient(135deg, var(--verde-oscuro), var(--verde));
@@ -595,4 +603,345 @@ elif st.session_state.etapa == "inicio_temporada":
         st.session_state.etapa = "reto_precision"
         st.rerun()
 
-    if st.session_state.
+    if st.session_state.edad >= EDAD_MIN_RETIRO_VOLUNTARIO:
+        if st.button("🏁 Retirarme ahora", use_container_width=True):
+            st.session_state.etapa = "retirado"
+            st.rerun()
+
+# =========================================================
+# ETAPA: RETO DE PRECISIÓN (atr1)
+# =========================================================
+elif st.session_state.etapa == "reto_precision":
+    j = st.session_state.jugador
+    cfg = POSICIONES[j["posicion"]]
+    st.markdown(f"### 🎯 Reto de {cfg['atr1_nombre']}")
+    st.caption(cfg["desc_precision"])
+
+    with st.container(border=True):
+        st.markdown('<span class="tag-verde">Reto 1 de 3</span>', unsafe_allow_html=True)
+        potencia = st.session_state.precision_potencia
+        st.progress(min(potencia, 100) / 100)
+        st.markdown(f"**Carga actual:** {min(potencia, 100)}%")
+
+        if not st.session_state.precision_disparado:
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("⚡ Cargar", use_container_width=True):
+                    st.session_state.precision_potencia += random.randint(6, 14)
+                    st.rerun()
+            with col2:
+                if st.button("🥅 ¡Ejecutar!", use_container_width=True, disabled=(potencia == 0)):
+                    t_min, t_max = st.session_state.precision_target
+                    if t_min <= potencia <= t_max:
+                        score = 100
+                    else:
+                        diff = min(abs(potencia - t_min), abs(potencia - t_max))
+                        score = max(0, 100 - diff * 4)
+                    st.session_state.precision_score = score
+                    st.session_state.precision_disparado = True
+                    st.rerun()
+        else:
+            t_min, t_max = st.session_state.precision_target
+            score = st.session_state.precision_score
+            if score >= 90:
+                st.success(f"¡Excelente! Zona ideal: {t_min}-{t_max}% · Tu carga: {min(potencia,100)}% · Puntaje: {score}")
+            elif score >= 60:
+                st.info(f"Buen intento. Zona ideal: {t_min}-{t_max}% · Tu carga: {min(potencia,100)}% · Puntaje: {score}")
+            else:
+                st.error(f"No salió bien. Zona ideal: {t_min}-{t_max}% · Tu carga: {min(potencia,100)}% · Puntaje: {score}")
+
+            if st.button("➡️ Siguiente reto", use_container_width=True):
+                reset_reto_memoria(j["posicion"])
+                st.session_state.etapa = "reto_memoria"
+                st.rerun()
+
+# =========================================================
+# ETAPA: RETO DE MEMORIA (atr2)
+# =========================================================
+elif st.session_state.etapa == "reto_memoria":
+    j = st.session_state.jugador
+    cfg = POSICIONES[j["posicion"]]
+    st.markdown(f"### 🧠 Reto de {cfg['atr2_nombre']}")
+    st.caption(cfg["desc_memoria"])
+
+    with st.container(border=True):
+        st.markdown('<span class="tag-verde">Reto 2 de 3</span>', unsafe_allow_html=True)
+
+        if st.session_state.memoria_fase == "mostrando":
+            secuencia_txt = "  →  ".join(st.session_state.memoria_objetivo)
+            st.info(f"**Secuencia a memorizar:**\n\n{secuencia_txt}")
+            if st.button("👁️ Ya la memoricé, ocultar y repetir", use_container_width=True):
+                st.session_state.memoria_fase = "repitiendo"
+                st.rerun()
+
+        elif st.session_state.memoria_fase == "repitiendo":
+            largo = len(st.session_state.memoria_objetivo)
+            progreso = len(st.session_state.memoria_usuario)
+            st.markdown(f"**Tu secuencia hasta ahora ({progreso}/{largo}):** " + " → ".join(st.session_state.memoria_usuario))
+            jugadas = cfg["jugadas_memoria"]
+            cols = st.columns(len(jugadas))
+            for c, jugada in zip(cols, jugadas):
+                if c.button(jugada, use_container_width=True, disabled=(progreso >= largo)):
+                    st.session_state.memoria_usuario.append(jugada)
+                    if len(st.session_state.memoria_usuario) == largo:
+                        correctas = sum(1 for a, b in zip(st.session_state.memoria_usuario, st.session_state.memoria_objetivo) if a == b)
+                        st.session_state.memoria_score = round(correctas / largo * 100)
+                        st.session_state.memoria_fase = "resultado"
+                    st.rerun()
+
+        elif st.session_state.memoria_fase == "resultado":
+            score = st.session_state.memoria_score
+            st.markdown("**Secuencia correcta:** " + " → ".join(st.session_state.memoria_objetivo))
+            st.markdown("**Tu secuencia:** " + " → ".join(st.session_state.memoria_usuario))
+            if score >= 90:
+                st.success(f"¡Jugada perfecta! Puntaje: {score}")
+            elif score >= 50:
+                st.info(f"Jugada aceptable. Puntaje: {score}")
+            else:
+                st.error(f"Se te complicó la jugada. Puntaje: {score}")
+
+            if st.button("➡️ Siguiente reto", use_container_width=True):
+                reset_reto_trivia(j["posicion"])
+                st.session_state.etapa = "reto_trivia"
+                st.rerun()
+
+# =========================================================
+# ETAPA: RETO TÁCTICO (atr3)
+# =========================================================
+elif st.session_state.etapa == "reto_trivia":
+    j = st.session_state.jugador
+    cfg = POSICIONES[j["posicion"]]
+    st.markdown(f"### 📋 Reto de {cfg['atr3_nombre']}")
+    st.caption("Lee la jugada y elige la mejor decisión.")
+
+    idx = st.session_state.trivia_idx
+    preguntas = st.session_state.trivia_preguntas
+
+    with st.container(border=True):
+        st.markdown('<span class="tag-verde">Reto 3 de 3</span>', unsafe_allow_html=True)
+        st.caption(f"Situación {idx + 1} de {len(preguntas)}")
+        p = preguntas[idx]
+        st.markdown(f"#### {p['pregunta']}")
+
+        seleccion = st.radio("Elige tu decisión:", p["opciones"], index=None,
+                             key=f"trivia_radio_{idx}", disabled=st.session_state.trivia_respondido)
+
+        if not st.session_state.trivia_respondido:
+            if st.button("✅ Confirmar decisión", disabled=(seleccion is None)):
+                st.session_state.trivia_respondido = True
+                if seleccion == p["correcta"]:
+                    st.session_state.trivia_correctas += 1
+                    st.success("¡Buena lectura del juego!")
+                else:
+                    st.error(f"No era lo ideal. La mejor decisión era: **{p['correcta']}**")
+                st.rerun()
+        else:
+            es_ultima = idx == len(preguntas) - 1
+            if st.button("➡️ Siguiente" if not es_ultima else "🏁 Ver resultado del reto"):
+                if es_ultima:
+                    st.session_state.trivia_score = round(st.session_state.trivia_correctas / len(preguntas) * 100)
+                    st.session_state.etapa = "resumen_entrenamiento"
+                else:
+                    st.session_state.trivia_idx += 1
+                    st.session_state.trivia_respondido = False
+                st.rerun()
+
+# =========================================================
+# ETAPA: RESUMEN DE ENTRENAMIENTO + OFERTAS
+# =========================================================
+elif st.session_state.etapa == "resumen_entrenamiento":
+    j = st.session_state.jugador
+    cfg = POSICIONES[j["posicion"]]
+    s = st.session_state.stats
+    p_score = st.session_state.precision_score
+    m_score = st.session_state.memoria_score
+    t_score = st.session_state.trivia_score
+    nota_prueba = round((p_score + m_score + t_score) / 3)
+
+    ganancia_atr1 = round(p_score / 100 * 6)
+    ganancia_atr2 = round(m_score / 100 * 6)
+    ganancia_atr3 = round(t_score / 100 * 6)
+
+    if "aplicado_ganancias" not in st.session_state or st.session_state.aplicado_ganancias != st.session_state.temporada:
+        s["atr1"] = min(99, s["atr1"] + ganancia_atr1)
+        s["atr2"] = min(99, s["atr2"] + ganancia_atr2)
+        s["atr3"] = min(99, s["atr3"] + ganancia_atr3)
+        if st.session_state.edad >= 30:
+            for k in s:
+                s[k] = max(30, s[k] - random.randint(0, 2))
+        ovr_actual = calcular_ovr(s)
+        if ovr_actual > st.session_state.ovr_pico:
+            st.session_state.ovr_pico = ovr_actual
+        st.session_state.aplicado_ganancias = st.session_state.temporada
+        st.session_state.ofertas_actuales = generar_ofertas(nota_prueba, ovr_actual)
+
+    st.markdown("### 📊 Resultado de los retos")
+    col1, col2, col3 = st.columns(3)
+    for col, nombre_attr, valor in zip([col1, col2, col3],
+                                        [cfg["atr1_nombre"], cfg["atr2_nombre"], cfg["atr3_nombre"]],
+                                        [p_score, m_score, t_score]):
+        icono = ICONO_ATRIBUTO.get(nombre_attr, "⚽")
+        col.markdown(f'<div class="stat-box"><span class="icono">{icono}</span><div class="valor">{valor}</div><div class="etiqueta">{nombre_attr}</div></div>', unsafe_allow_html=True)
+
+    st.markdown(f"**Nota general de la prueba:** {nota_prueba}/100")
+    st.markdown(f"{cfg['atr1_nombre']} +{ganancia_atr1} · {cfg['atr2_nombre']} +{ganancia_atr2} · {cfg['atr3_nombre']} +{ganancia_atr3}")
+
+    st.markdown("### 📨 Ofertas de clubes")
+    if not st.session_state.ofertas_actuales:
+        st.warning("Ningún club se fijó en ti esta temporada. Te quedas en la cantera entrenando otro año más.")
+        if st.button("➡️ Continuar", use_container_width=True):
+            st.session_state.etapa = "cerrar_temporada_sin_club"
+            st.rerun()
+    else:
+        st.markdown("Elige el club con el que quieres firmar:")
+        for i, oferta in enumerate(st.session_state.ofertas_actuales):
+            with st.container(border=True):
+                etiqueta_tier = {"grande": "Club grande", "mediano": "Club mediano", "pequeño": "Club pequeño"}[oferta["tier"]]
+                color_club = COLOR_CLUB.get(oferta["club"], "#C9962C")
+                st.markdown(f'<span class="tag-dorado">{etiqueta_tier}</span> <span class="tag-club" style="background:{color_club};">⚽ {oferta["club"]}</span>', unsafe_allow_html=True)
+                st.markdown(f"#### {oferta['club']}")
+                if st.button(f"✍️ Firmar con {oferta['club']}", key=f"firmar_{i}", use_container_width=True):
+                    st.session_state.club_actual = oferta
+                    st.session_state.etapa = "simular_temporada"
+                    st.rerun()
+
+# =========================================================
+# ETAPA: SIN CLUB ESTA TEMPORADA
+# =========================================================
+elif st.session_state.etapa == "cerrar_temporada_sin_club":
+    st.session_state.historial_temporadas.append({
+        "temporada": st.session_state.temporada, "edad": st.session_state.edad,
+        "club": "Cantera (sin club)", "goles": 0, "asistencias": 0, "atajadas": 0, "partidos": 0,
+    })
+    st.session_state.temporada += 1
+    st.session_state.edad += 1
+    st.session_state.etapa = "inicio_temporada"
+    st.rerun()
+
+# =========================================================
+# ETAPA: SIMULAR TEMPORADA CON CLUB
+# =========================================================
+elif st.session_state.etapa == "simular_temporada":
+    j = st.session_state.jugador
+    if "temporada_simulada" not in st.session_state or st.session_state.temporada_simulada != st.session_state.temporada:
+        resultado = simular_temporada(st.session_state.stats, st.session_state.club_actual, j["posicion"])
+        st.session_state.resultado_temporada = resultado
+        st.session_state.totales["goles"] += resultado["goles"]
+        st.session_state.totales["asistencias"] += resultado["asistencias"]
+        st.session_state.totales["atajadas"] += resultado["atajadas"]
+        st.session_state.totales["vallas_invictas"] += resultado["vallas_invictas"]
+        st.session_state.totales["partidos"] += resultado["partidos"]
+        if resultado["gana_titulo"]:
+            st.session_state.totales["trofeos"] += 1
+        if resultado["convocado_seleccion"]:
+            st.session_state.totales["convocatorias"] += 1
+        st.session_state.historial_temporadas.append({
+            "temporada": st.session_state.temporada, "edad": st.session_state.edad,
+            "club": st.session_state.club_actual["club"], "goles": resultado["goles"],
+            "asistencias": resultado["asistencias"], "atajadas": resultado["atajadas"],
+            "partidos": resultado["partidos"],
+        })
+        st.session_state.temporada_simulada = st.session_state.temporada
+
+    r = st.session_state.resultado_temporada
+    color_club = COLOR_CLUB.get(st.session_state.club_actual["club"], "#0E6B3A")
+    bandera = BANDERAS.get(j["nacionalidad"], "🌍")
+    st.markdown(f"""
+    <div class="jugador-card" style="background: linear-gradient(120deg, {color_club} 0%, var(--verde-oscuro) 100%);">
+        <div class="bandera">{bandera}</div>
+        <div class="info" style="flex:1; min-width:150px;">
+            <h3>📅 Temporada {st.session_state.temporada}</h3>
+            <p>{j['nombre']} · {st.session_state.club_actual['club']}</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if j["posicion"] == "Portero":
+        col1, col2, col3 = st.columns(3)
+        col1.markdown(f'<div class="stat-box"><div class="valor">{r["partidos"]}</div><div class="etiqueta">Partidos</div></div>', unsafe_allow_html=True)
+        col2.markdown(f'<div class="stat-box"><div class="valor">{r["atajadas"]}</div><div class="etiqueta">Atajadas</div></div>', unsafe_allow_html=True)
+        col3.markdown(f'<div class="stat-box"><div class="valor">{r["vallas_invictas"]}</div><div class="etiqueta">Vallas invictas</div></div>', unsafe_allow_html=True)
+    else:
+        col1, col2, col3 = st.columns(3)
+        col1.markdown(f'<div class="stat-box"><div class="valor">{r["partidos"]}</div><div class="etiqueta">Partidos</div></div>', unsafe_allow_html=True)
+        col2.markdown(f'<div class="stat-box"><div class="valor">{r["goles"]}</div><div class="etiqueta">Goles</div></div>', unsafe_allow_html=True)
+        col3.markdown(f'<div class="stat-box"><div class="valor">{r["asistencias"]}</div><div class="etiqueta">Asistencias</div></div>', unsafe_allow_html=True)
+
+    if r["convocado_seleccion"]:
+        st.success(f"🇻🇪 ¡Fuiste convocado a la selección de {j['nacionalidad']} esta temporada!")
+    if r["gana_titulo"]:
+        st.success(f"🏆 ¡Ganaste un título con el {st.session_state.club_actual['club']}!")
+
+    if st.button("➡️ Siguiente temporada", use_container_width=True):
+        st.session_state.temporada += 1
+        st.session_state.edad += 1
+        st.session_state.etapa = "inicio_temporada"
+        st.rerun()
+
+    if st.session_state.edad >= EDAD_MIN_RETIRO_VOLUNTARIO:
+        if st.button("🏁 Retirarme ahora", use_container_width=True):
+            st.session_state.etapa = "retirado"
+            st.rerun()
+
+    if st.session_state.edad >= EDAD_RETIRO_FORZOSO:
+        st.warning("Tu jugador ya alcanzó la edad de retiro. La próxima temporada será obligatorio retirarte.")
+
+# =========================================================
+# ETAPA: RETIRADO — RESUMEN DE CARRERA
+# =========================================================
+elif st.session_state.etapa == "retirado":
+    j = st.session_state.jugador
+    t = st.session_state.totales
+
+    if "carrera_guardada" not in st.session_state:
+        guardar_carrera(j["nombre"], j["posicion"], j["nacionalidad"], st.session_state.ovr_pico, t["goles"], t["asistencias"], t["atajadas"], t["trofeos"])
+        st.session_state.carrera_guardada = True
+
+    bandera = BANDERAS.get(j["nacionalidad"], "🌍")
+    st.markdown(f"""
+    <div class="resultado-box">
+        <div style="font-size:2.8em; line-height:1;">{bandera}</div>
+        <h2>🏁 {j['nombre']} se retira</h2>
+        <p>{j['posicion']} · {j['nacionalidad']} · {st.session_state.temporada - 1} temporadas jugadas</p>
+        <h1>OVR pico: {st.session_state.ovr_pico}</h1>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if j["posicion"] == "Portero":
+        col1, col2, col3, col4 = st.columns(4)
+        col1.markdown(f'<div class="stat-box"><div class="valor">{t["partidos"]}</div><div class="etiqueta">Partidos</div></div>', unsafe_allow_html=True)
+        col2.markdown(f'<div class="stat-box"><div class="valor">{t["atajadas"]}</div><div class="etiqueta">Atajadas</div></div>', unsafe_allow_html=True)
+        col3.markdown(f'<div class="stat-box"><div class="valor">{t["vallas_invictas"]}</div><div class="etiqueta">Vallas invictas</div></div>', unsafe_allow_html=True)
+        col4.markdown(f'<div class="stat-box"><div class="valor">{t["trofeos"]}</div><div class="etiqueta">Títulos</div></div>', unsafe_allow_html=True)
+    else:
+        col1, col2, col3, col4 = st.columns(4)
+        col1.markdown(f'<div class="stat-box"><div class="valor">{t["partidos"]}</div><div class="etiqueta">Partidos</div></div>', unsafe_allow_html=True)
+        col2.markdown(f'<div class="stat-box"><div class="valor">{t["goles"]}</div><div class="etiqueta">Goles</div></div>', unsafe_allow_html=True)
+        col3.markdown(f'<div class="stat-box"><div class="valor">{t["asistencias"]}</div><div class="etiqueta">Asistencias</div></div>', unsafe_allow_html=True)
+        col4.markdown(f'<div class="stat-box"><div class="valor">{t["trofeos"]}</div><div class="etiqueta">Títulos</div></div>', unsafe_allow_html=True)
+
+    if t["convocatorias"] > 0:
+        st.info(f"Fuiste convocado a la selección nacional {t['convocatorias']} temporada(s).")
+
+    st.markdown("### 🏆 Salón de la Fama")
+    df = cargar_carreras()
+    df_ordenado = df.sort_values(by=["ovr_pico"], ascending=False).reset_index(drop=True)
+    for i, fila in df_ordenado.head(10).iterrows():
+        clase = "rank-1" if i == 0 else "rank-2" if i == 1 else "rank-3" if i == 2 else "rank-other"
+        if fila["posicion"] == "Portero":
+            detalle = f"{int(fila['atajadas'])} atajadas"
+        else:
+            detalle = f"{int(fila['goles'])} goles"
+        bandera_fila = BANDERAS.get(fila.get("nacionalidad", "Otro"), "🌍")
+        st.markdown(f"""
+        <div class="leaderboard-row {clase}">
+            #{i+1} — {bandera_fila} {fila['nombre']} ({fila['posicion']}) — OVR pico {fila['ovr_pico']} · {detalle} · {int(fila['trofeos'])} títulos
+        </div>
+        """, unsafe_allow_html=True)
+
+    if st.button("🔄 Crear un nuevo jugador", use_container_width=True):
+        for clave in list(st.session_state.keys()):
+            del st.session_state[clave]
+        st.rerun()
+
+st.markdown('<p class="firma">Los nombres de clubes se usan solo con fines de ambientación, sin afiliación oficial.</p>', unsafe_allow_html=True)
