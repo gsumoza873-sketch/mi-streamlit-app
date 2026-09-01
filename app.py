@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 import random
+import time
 from datetime import datetime
 
 # =========================================================
@@ -292,7 +293,7 @@ POSICIONES = {
         "atr1_nombre": "Finalización",
         "atr2_nombre": "Regate",
         "atr3_nombre": "Táctica Ofensiva",
-        "desc_precision": "Carga el remate y dispara al arco cuando estés en la zona ideal.",
+        "desc_precision": "Observa el indicador moverse y dispara justo cuando entre en la zona dorada.",
         "desc_memoria": "Memoriza la secuencia de gambetas y repítela para superar al rival.",
         "jugadas_memoria": ["🌀 Elástica", "⚡ Cambio de ritmo", "↩️ Recorte interior", "🎯 Amague"],
         "stats_base": {"atr1": 52, "atr2": 42, "atr3": 38},
@@ -327,7 +328,7 @@ POSICIONES = {
         "atr1_nombre": "Llegada",
         "atr2_nombre": "Pase",
         "atr3_nombre": "Visión de Juego",
-        "desc_precision": "Carga el remate de media distancia y dispara en el momento justo.",
+        "desc_precision": "Sigue el indicador y suelta el remate de media distancia en el momento exacto.",
         "desc_memoria": "Memoriza la secuencia de pases para conducir la jugada.",
         "jugadas_memoria": ["⬆️ Vertical", "↔️ Horizontal", "🔄 Diagonal", "⚡ Pared (uno-dos)"],
         "stats_base": {"atr1": 35, "atr2": 52, "atr3": 48},
@@ -362,7 +363,7 @@ POSICIONES = {
         "atr1_nombre": "Anticipación",
         "atr2_nombre": "Salida de Balón",
         "atr3_nombre": "Táctica Defensiva",
-        "desc_precision": "Carga el timing y entra a la disputa justo cuando el rival esté a tu alcance.",
+        "desc_precision": "Sigue el indicador y entra a la disputa justo cuando esté en la zona ideal.",
         "desc_memoria": "Memoriza la secuencia de pases para salir jugando desde el fondo.",
         "jugadas_memoria": ["↔️ Corto al lateral", "⬆️ Vertical al mediocampista", "🔙 Retroceso al portero", "↗️ Diagonal larga"],
         "stats_base": {"atr1": 52, "atr2": 42, "atr3": 50},
@@ -397,7 +398,7 @@ POSICIONES = {
         "atr1_nombre": "Reflejos",
         "atr2_nombre": "Distribución",
         "atr3_nombre": "Colocación",
-        "desc_precision": "Carga tu reacción y estira las manos en el momento justo para atajar.",
+        "desc_precision": "Sigue el indicador y estira las manos justo cuando entre en la zona ideal para atajar.",
         "desc_memoria": "Memoriza la secuencia de saques para iniciar el ataque de tu equipo.",
         "jugadas_memoria": ["🤾 Saque corto", "🚀 Saque largo", "↔️ Lateral al defensa", "⚡ Contragolpe rápido"],
         "stats_base": {"atr1": 50, "atr2": 35, "atr3": 45},
@@ -513,11 +514,33 @@ def simular_temporada(stats, club, posicion):
     return resultado
 
 
-def calcular_valor_mercado(ovr, edad):
-    pico_edad = 27
-    factor_edad = max(0.35, 1 - abs(edad - pico_edad) * 0.035)
-    valor = (ovr ** 2.1) * factor_edad * 0.045
-    return round(valor, 1)
+def calcular_valor_mercado(ovr, edad, club_tier):
+    """
+    Calibrado para parecerse a rangos reales de Transfermarkt: la edad y el
+    rendimiento importan, pero el factor que más dispara el valor es jugar
+    en un club grande con buen nivel. Un juvenil de 16 años sin club, por
+    ejemplo, vale apenas unos miles de euros (no millones) — así es en la
+    vida real: sin minutos ni club, no hay valor de mercado real todavía.
+    """
+    base_millones = 0.00017 * (1.1616 ** ovr)
+
+    if edad < 22:
+        factor_edad = 0.70 + (edad - 16) * 0.05
+    elif edad <= 29:
+        factor_edad = 1.0
+    else:
+        factor_edad = max(0.15, 1 - (edad - 29) * 0.09)
+
+    factor_club = {"grande": 1.5, "mediano": 1.0, "pequeño": 0.5}.get(club_tier, 0.12)
+
+    valor = base_millones * factor_edad * factor_club
+    return round(min(valor, 220), 3)
+
+
+def formatear_valor(valor_millones):
+    if valor_millones < 1:
+        return f"€{round(valor_millones * 1000)}K"
+    return f"€{valor_millones:.1f}M"
 
 
 def hay_racha(historial_ovr):
@@ -607,12 +630,24 @@ def guardar_carrera(nombre, posicion, nacionalidad, ovr_pico, goles, asistencias
 
 
 def reset_reto_precision():
-    ancho = random.randint(10, 16)
-    inicio = random.randint(45, 85 - ancho)
+    ancho = random.randint(14, 20)
+    inicio = random.randint(10, 88 - ancho)
     st.session_state.precision_target = (inicio, inicio + ancho)
-    st.session_state.precision_potencia = 0
+    st.session_state.precision_periodo = round(random.uniform(1.7, 2.6), 2)
+    st.session_state.precision_t_inicio = time.time()
     st.session_state.precision_disparado = False
     st.session_state.precision_score = 0
+
+
+def posicion_barra(t_inicio, periodo):
+    """Réplica en Python de la misma animación CSS (ida y vuelta lineal),
+    para poder puntuar el disparo según el instante real del clic sin
+    depender de que el navegador nos devuelva ningún dato."""
+    transcurrido = time.time() - t_inicio
+    ciclo = (transcurrido % periodo) / periodo
+    if ciclo < 0.5:
+        return ciclo * 2 * 100
+    return (1 - ciclo) * 2 * 100
 
 
 def reset_reto_memoria(posicion):
@@ -697,7 +732,8 @@ elif st.session_state.etapa == "inicio_temporada":
     s = st.session_state.stats
     cfg = POSICIONES[j["posicion"]]
     ovr = calcular_ovr(s)
-    valor_mercado = calcular_valor_mercado(ovr, st.session_state.edad)
+    tier_actual = st.session_state.club_actual["tier"] if st.session_state.club_actual else None
+    valor_mercado = calcular_valor_mercado(ovr, st.session_state.edad, tier_actual)
 
     if "historial_ovr" not in st.session_state:
         st.session_state.historial_ovr = []
@@ -714,7 +750,7 @@ elif st.session_state.etapa == "inicio_temporada":
         <div class="info" style="flex:1; min-width:150px;">
             <h3>{j['nombre']}</h3>
             <p>{j['posicion']} · {j['nacionalidad']} · Temporada {st.session_state.temporada} · {st.session_state.edad} años</p>
-            <p>🏟️ {club_nombre} · 💰 €{valor_mercado}M</p>
+            <p>🏟️ {club_nombre} · 💰 {formatear_valor(valor_mercado)}</p>
         </div>
         <div class="ovr-gema"><div class="num">{ovr}</div><div class="lbl">OVR</div></div>
     </div>
@@ -758,36 +794,51 @@ elif st.session_state.etapa == "reto_precision":
     st.caption(cfg["desc_precision"])
 
     with st.container(border=True):
-        potencia = st.session_state.precision_potencia
-        st.progress(min(potencia, 100) / 100)
-        st.markdown(f"**Carga actual:** {min(potencia, 100)}%")
-
         if not st.session_state.precision_disparado:
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("⚡ Cargar", use_container_width=True):
-                    st.session_state.precision_potencia += random.randint(6, 14)
-                    st.rerun()
-            with col2:
-                if st.button("🥅 ¡Ejecutar!", use_container_width=True, disabled=(potencia == 0)):
-                    t_min, t_max = st.session_state.precision_target
-                    if t_min <= potencia <= t_max:
-                        score = 100
-                    else:
-                        diff = min(abs(potencia - t_min), abs(potencia - t_max))
-                        score = max(0, 100 - diff * 4)
-                    st.session_state.precision_score = score
-                    st.session_state.precision_disparado = True
-                    st.rerun()
+            t_min, t_max = st.session_state.precision_target
+            periodo = st.session_state.precision_periodo
+            barra_html = f"""
+            <div style="padding:6px 2px;">
+              <div style="position:relative; width:100%; height:38px; background:#EAF0EC;
+                          border-radius:10px; overflow:hidden; border:2px solid #0A4D2A;">
+                <div style="position:absolute; top:0; bottom:0; left:{t_min}%; width:{t_max - t_min}%;
+                            background:#C9962C; opacity:0.55;"></div>
+                <div style="position:absolute; top:-3px; bottom:-3px; width:12px; border-radius:5px;
+                            background:#0E6B3A; box-shadow:0 0 10px rgba(14,107,58,0.7);
+                            animation: mover_barra {periodo}s linear infinite alternate;"></div>
+              </div>
+            </div>
+            <style>
+              @keyframes mover_barra {{
+                from {{ left: 0%; }}
+                to {{ left: calc(100% - 12px); }}
+              }}
+            </style>
+            """
+            st.iframe(barra_html, height=54)
+            st.caption("La franja dorada es la zona ideal. Presiona el botón cuando el indicador verde esté ahí.")
+
+            if st.button("🥅 ¡Disparar ahora!", use_container_width=True):
+                posicion_click = posicion_barra(st.session_state.precision_t_inicio, periodo)
+                if t_min <= posicion_click <= t_max:
+                    score = 100
+                else:
+                    diff = min(abs(posicion_click - t_min), abs(posicion_click - t_max))
+                    score = max(0, round(100 - diff * 4))
+                st.session_state.precision_score = score
+                st.session_state.precision_posicion_click = round(posicion_click)
+                st.session_state.precision_disparado = True
+                st.rerun()
         else:
             t_min, t_max = st.session_state.precision_target
             score = st.session_state.precision_score
+            posicion_click = st.session_state.precision_posicion_click
             if score >= 90:
-                st.success(f"¡Excelente! Zona ideal: {t_min}-{t_max}% · Tu carga: {min(potencia,100)}% · Puntaje: {score}")
+                st.success(f"¡Excelente timing! Zona ideal: {t_min}-{t_max}% · Tu disparo: {posicion_click}% · Puntaje: {score}")
             elif score >= 60:
-                st.info(f"Buen intento. Zona ideal: {t_min}-{t_max}% · Tu carga: {min(potencia,100)}% · Puntaje: {score}")
+                st.info(f"Buen intento. Zona ideal: {t_min}-{t_max}% · Tu disparo: {posicion_click}% · Puntaje: {score}")
             else:
-                st.error(f"No salió bien. Zona ideal: {t_min}-{t_max}% · Tu carga: {min(potencia,100)}% · Puntaje: {score}")
+                st.error(f"No salió bien. Zona ideal: {t_min}-{t_max}% · Tu disparo: {posicion_click}% · Puntaje: {score}")
 
             if st.button("➡️ Siguiente reto", use_container_width=True):
                 reset_reto_memoria(j["posicion"])
