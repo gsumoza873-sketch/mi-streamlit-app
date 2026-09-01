@@ -36,7 +36,11 @@ st.markdown("""
 }
 
 .stApp {
-    background: linear-gradient(170deg, #F3FBF5 0%, #FFFFFF 45%, #FDF7EC 100%);
+    background:
+        radial-gradient(circle at 12% 0%, rgba(201,150,44,0.16) 0%, transparent 38%),
+        radial-gradient(circle at 88% 8%, rgba(14,107,58,0.20) 0%, transparent 42%),
+        repeating-linear-gradient(115deg, rgba(14,107,58,0.05) 0px, rgba(14,107,58,0.05) 46px, transparent 46px, transparent 92px),
+        linear-gradient(180deg, #F0FAF3 0%, #FFFFFF 40%, #FDF8EC 100%);
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
@@ -117,12 +121,50 @@ span.tag-dorado {
     background: linear-gradient(160deg, #ffffff, var(--verde-claro));
     border: 2px solid var(--verde);
     border-radius: 14px;
-    padding: 12px 6px;
+    padding: 14px 6px 10px 6px;
     text-align: center;
     margin-bottom: 10px;
+    box-shadow: 0 3px 10px rgba(14,107,58,0.12);
 }
-.stat-box .valor { font-family: 'Poppins', sans-serif; font-size: 1.7em; font-weight: 800; color: var(--verde-oscuro) !important; }
-.stat-box .etiqueta { font-size: 0.78em; color: var(--texto) !important; font-weight: 600; }
+.stat-box .icono { font-size: 1.3em; display: block; margin-bottom: 2px; }
+.stat-box .valor { font-family: 'Poppins', sans-serif; font-size: 1.9em; font-weight: 800; color: var(--verde-oscuro) !important; line-height: 1.1; }
+.stat-box .etiqueta { font-size: 0.76em; color: var(--texto) !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+
+/* Tarjeta de jugador estilo "carta" con bandera, posición y OVR destacado */
+.jugador-card {
+    background: linear-gradient(120deg, var(--verde-oscuro) 0%, var(--verde) 60%, var(--dorado) 130%);
+    border-radius: 20px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 22px rgba(10,77,42,0.28);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.jugador-card .info h3 { color: #ffffff !important; margin: 0 0 2px 0; font-size: 1.3em; }
+.jugador-card .info p { color: #EAF7EE !important; margin: 0; font-size: 0.92em; font-weight: 600; }
+.jugador-card .bandera { font-size: 2.6em; line-height: 1; }
+.jugador-card .ovr-gema {
+    background: #ffffff;
+    color: var(--verde-oscuro) !important;
+    border-radius: 50%;
+    width: 68px; height: 68px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    border: 3px solid var(--dorado);
+}
+.jugador-card .ovr-gema .num { font-size: 1.5em; font-weight: 800; color: var(--verde-oscuro) !important; line-height: 1; }
+.jugador-card .ovr-gema .lbl { font-size: 0.55em; font-weight: 700; color: var(--verde) !important; letter-spacing: 0.05em; }
+
+span.tag-club {
+    display: inline-block; color: #ffffff !important;
+    padding: 5px 14px; border-radius: 20px; font-size: 0.78em; font-weight: 700;
+    letter-spacing: 0.02em; margin-bottom: 10px;
+}
 
 .oferta-card {
     background: linear-gradient(160deg, #ffffff, var(--dorado-claro));
@@ -169,6 +211,28 @@ CLUBES = {
     "pequeño": ["Estudiantes de Mérida", "Zamora FC", "Deportivo Lara", "CD Godoy Cruz", "Real Cartagena"],
 }
 FUERZA_CLUB = {"grande": 88, "mediano": 74, "pequeño": 58}
+
+# Color propio de cada club, para que la app se sienta distinta según dónde firmes
+COLOR_CLUB = {
+    "Real Madrid": "#8A6D00", "Manchester City": "#6CABDD", "Bayern Múnich": "#DC052D",
+    "Flamengo": "#C8102E", "Boca Juniors": "#1E3A8A",
+    "Sevilla FC": "#D2001C", "AS Mónaco": "#E4002B", "River Plate": "#E30613",
+    "Deportivo Táchira": "#8B1E3F", "Millonarios FC": "#004C97",
+    "Estudiantes de Mérida": "#6B2E8C", "Zamora FC": "#7A1FA2", "Deportivo Lara": "#003DA5",
+    "CD Godoy Cruz": "#004B87", "Real Cartagena": "#B5121B",
+}
+
+BANDERAS = {
+    "Venezuela": "🇻🇪", "Argentina": "🇦🇷", "Brasil": "🇧🇷", "Colombia": "🇨🇴",
+    "España": "🇪🇸", "México": "🇲🇽", "Otro": "🌍",
+}
+
+ICONO_ATRIBUTO = {
+    "Finalización": "🎯", "Regate": "🌀", "Táctica Ofensiva": "🧠",
+    "Llegada": "🚀", "Pase": "🎯", "Visión de Juego": "🧠",
+    "Anticipación": "🛡️", "Salida de Balón": "🎯", "Táctica Defensiva": "🧠",
+    "Reflejos": "🧤", "Distribución": "🎯", "Colocación": "🧠",
+}
 
 # =========================================================
 # CONFIGURACIÓN POR POSICIÓN
@@ -397,14 +461,17 @@ def simular_temporada(stats, club, posicion):
 
 def cargar_carreras():
     if os.path.exists(CARRERAS_FILE):
-        return pd.read_csv(CARRERAS_FILE)
-    return pd.DataFrame(columns=["nombre", "posicion", "ovr_pico", "goles", "asistencias", "atajadas", "trofeos", "fecha"])
+        df = pd.read_csv(CARRERAS_FILE)
+        if "nacionalidad" not in df.columns:
+            df["nacionalidad"] = "Otro"
+        return df
+    return pd.DataFrame(columns=["nombre", "posicion", "nacionalidad", "ovr_pico", "goles", "asistencias", "atajadas", "trofeos", "fecha"])
 
 
-def guardar_carrera(nombre, posicion, ovr_pico, goles, asistencias, atajadas, trofeos):
+def guardar_carrera(nombre, posicion, nacionalidad, ovr_pico, goles, asistencias, atajadas, trofeos):
     df = cargar_carreras()
     nueva = pd.DataFrame([{
-        "nombre": nombre, "posicion": posicion, "ovr_pico": ovr_pico,
+        "nombre": nombre, "posicion": posicion, "nacionalidad": nacionalidad, "ovr_pico": ovr_pico,
         "goles": goles, "asistencias": asistencias, "atajadas": atajadas, "trofeos": trofeos,
         "fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }])
@@ -505,15 +572,27 @@ elif st.session_state.etapa == "inicio_temporada":
     cfg = POSICIONES[j["posicion"]]
     ovr = calcular_ovr(s)
 
-    st.markdown(f"### 👤 {j['nombre']} — {j['posicion']} ({j['nacionalidad']})")
     club_nombre = st.session_state.club_actual["club"] if st.session_state.club_actual else "Sin club (cantera)"
-    st.markdown(f"**Temporada {st.session_state.temporada}** · Edad: {st.session_state.edad} años · Club actual: {club_nombre}")
+    bandera = BANDERAS.get(j["nacionalidad"], "🌍")
 
-    col1, col2, col3, col4 = st.columns(4)
-    for col, (etiqueta, valor) in zip([col1, col2, col3, col4],
-                                       [(cfg["atr1_nombre"], s["atr1"]), (cfg["atr2_nombre"], s["atr2"]),
-                                        (cfg["atr3_nombre"], s["atr3"]), ("OVR", ovr)]):
-        col.markdown(f'<div class="stat-box"><div class="valor">{valor}</div><div class="etiqueta">{etiqueta}</div></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="jugador-card">
+        <div class="bandera">{bandera}</div>
+        <div class="info" style="flex:1; min-width:150px;">
+            <h3>{j['nombre']}</h3>
+            <p>{j['posicion']} · {j['nacionalidad']} · Temporada {st.session_state.temporada} · {st.session_state.edad} años</p>
+            <p>🏟️ {club_nombre}</p>
+        </div>
+        <div class="ovr-gema"><div class="num">{ovr}</div><div class="lbl">OVR</div></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns(3)
+    for col, nombre_attr, valor in zip([col1, col2, col3],
+                                        [cfg["atr1_nombre"], cfg["atr2_nombre"], cfg["atr3_nombre"]],
+                                        [s["atr1"], s["atr2"], s["atr3"]]):
+        icono = ICONO_ATRIBUTO.get(nombre_attr, "⚽")
+        col.markdown(f'<div class="stat-box"><span class="icono">{icono}</span><div class="valor">{valor}</div><div class="etiqueta">{nombre_attr}</div></div>', unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown(f"Esta temporada te tocan **3 retos** hechos a la medida de un {j['posicion'].lower()}. Tu desempeño define cuánto mejoran tus estadísticas y qué clubes se fijan en ti.")
@@ -697,9 +776,11 @@ elif st.session_state.etapa == "resumen_entrenamiento":
 
     st.markdown("### 📊 Resultado de los retos")
     col1, col2, col3 = st.columns(3)
-    col1.markdown(f'<div class="stat-box"><div class="valor">{p_score}</div><div class="etiqueta">{cfg["atr1_nombre"]}</div></div>', unsafe_allow_html=True)
-    col2.markdown(f'<div class="stat-box"><div class="valor">{m_score}</div><div class="etiqueta">{cfg["atr2_nombre"]}</div></div>', unsafe_allow_html=True)
-    col3.markdown(f'<div class="stat-box"><div class="valor">{t_score}</div><div class="etiqueta">{cfg["atr3_nombre"]}</div></div>', unsafe_allow_html=True)
+    for col, nombre_attr, valor in zip([col1, col2, col3],
+                                        [cfg["atr1_nombre"], cfg["atr2_nombre"], cfg["atr3_nombre"]],
+                                        [p_score, m_score, t_score]):
+        icono = ICONO_ATRIBUTO.get(nombre_attr, "⚽")
+        col.markdown(f'<div class="stat-box"><span class="icono">{icono}</span><div class="valor">{valor}</div><div class="etiqueta">{nombre_attr}</div></div>', unsafe_allow_html=True)
 
     st.markdown(f"**Nota general de la prueba:** {nota_prueba}/100")
     st.markdown(f"{cfg['atr1_nombre']} +{ganancia_atr1} · {cfg['atr2_nombre']} +{ganancia_atr2} · {cfg['atr3_nombre']} +{ganancia_atr3}")
@@ -715,7 +796,8 @@ elif st.session_state.etapa == "resumen_entrenamiento":
         for i, oferta in enumerate(st.session_state.ofertas_actuales):
             with st.container(border=True):
                 etiqueta_tier = {"grande": "Club grande", "mediano": "Club mediano", "pequeño": "Club pequeño"}[oferta["tier"]]
-                st.markdown(f'<span class="tag-dorado">{etiqueta_tier}</span>', unsafe_allow_html=True)
+                color_club = COLOR_CLUB.get(oferta["club"], "#C9962C")
+                st.markdown(f'<span class="tag-dorado">{etiqueta_tier}</span> <span class="tag-club" style="background:{color_club};">⚽ {oferta["club"]}</span>', unsafe_allow_html=True)
                 st.markdown(f"#### {oferta['club']}")
                 if st.button(f"✍️ Firmar con {oferta['club']}", key=f"firmar_{i}", use_container_width=True):
                     st.session_state.club_actual = oferta
@@ -761,7 +843,17 @@ elif st.session_state.etapa == "simular_temporada":
         st.session_state.temporada_simulada = st.session_state.temporada
 
     r = st.session_state.resultado_temporada
-    st.markdown(f"### 📅 Resumen — Temporada {st.session_state.temporada} en {st.session_state.club_actual['club']}")
+    color_club = COLOR_CLUB.get(st.session_state.club_actual["club"], "#0E6B3A")
+    bandera = BANDERAS.get(j["nacionalidad"], "🌍")
+    st.markdown(f"""
+    <div class="jugador-card" style="background: linear-gradient(120deg, {color_club} 0%, var(--verde-oscuro) 100%);">
+        <div class="bandera">{bandera}</div>
+        <div class="info" style="flex:1; min-width:150px;">
+            <h3>📅 Temporada {st.session_state.temporada}</h3>
+            <p>{j['nombre']} · {st.session_state.club_actual['club']}</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     if j["posicion"] == "Portero":
         col1, col2, col3 = st.columns(3)
@@ -801,11 +893,13 @@ elif st.session_state.etapa == "retirado":
     t = st.session_state.totales
 
     if "carrera_guardada" not in st.session_state:
-        guardar_carrera(j["nombre"], j["posicion"], st.session_state.ovr_pico, t["goles"], t["asistencias"], t["atajadas"], t["trofeos"])
+        guardar_carrera(j["nombre"], j["posicion"], j["nacionalidad"], st.session_state.ovr_pico, t["goles"], t["asistencias"], t["atajadas"], t["trofeos"])
         st.session_state.carrera_guardada = True
 
+    bandera = BANDERAS.get(j["nacionalidad"], "🌍")
     st.markdown(f"""
     <div class="resultado-box">
+        <div style="font-size:2.8em; line-height:1;">{bandera}</div>
         <h2>🏁 {j['nombre']} se retira</h2>
         <p>{j['posicion']} · {j['nacionalidad']} · {st.session_state.temporada - 1} temporadas jugadas</p>
         <h1>OVR pico: {st.session_state.ovr_pico}</h1>
@@ -837,9 +931,10 @@ elif st.session_state.etapa == "retirado":
             detalle = f"{int(fila['atajadas'])} atajadas"
         else:
             detalle = f"{int(fila['goles'])} goles"
+        bandera_fila = BANDERAS.get(fila.get("nacionalidad", "Otro"), "🌍")
         st.markdown(f"""
         <div class="leaderboard-row {clase}">
-            #{i+1} — {fila['nombre']} ({fila['posicion']}) — OVR pico {fila['ovr_pico']} · {detalle} · {int(fila['trofeos'])} títulos
+            #{i+1} — {bandera_fila} {fila['nombre']} ({fila['posicion']}) — OVR pico {fila['ovr_pico']} · {detalle} · {int(fila['trofeos'])} títulos
         </div>
         """, unsafe_allow_html=True)
 
