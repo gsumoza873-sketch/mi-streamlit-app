@@ -37,10 +37,8 @@ st.markdown("""
 
 .stApp {
     background:
-        radial-gradient(circle at 12% 0%, rgba(201,150,44,0.16) 0%, transparent 38%),
-        radial-gradient(circle at 88% 8%, rgba(14,107,58,0.20) 0%, transparent 42%),
-        repeating-linear-gradient(115deg, rgba(14,107,58,0.05) 0px, rgba(14,107,58,0.05) 46px, transparent 46px, transparent 92px),
-        linear-gradient(180deg, #F0FAF3 0%, #FFFFFF 40%, #FDF8EC 100%);
+        radial-gradient(circle at 50% -5%, rgba(255,255,255,0.55) 0%, transparent 32%),
+        repeating-linear-gradient(100deg, #CDEEDA 0px, #CDEEDA 70px, #B4E3C4 70px, #B4E3C4 140px);
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
