@@ -15,9 +15,12 @@ st.set_page_config(
 )
 
 CARRERAS_FILE = "carreras.csv"
+REGISTROS_FILE = "registros.csv"
+ADMIN_PASSWORD = "vinotinto2026"  # Cámbiala por la que quieras, Gabriel
 EDAD_INICIAL = 16
 EDAD_RETIRO_FORZOSO = 36
 EDAD_MIN_RETIRO_VOLUNTARIO = 30
+TEMPORADA_DESBLOQUEO_CLUBES_GRANDES = 3
 
 # =========================================================
 # ESTILOS
@@ -256,7 +259,11 @@ hr { border-color: var(--verde-claro) !important; }
 CLUBES = {
     "grande": ["Real Madrid", "Manchester City", "Bayern Múnich", "Flamengo", "Boca Juniors"],
     "mediano": ["Sevilla FC", "AS Mónaco", "River Plate", "Deportivo Táchira", "Millonarios FC"],
-    "pequeño": ["Estudiantes de Mérida", "Zamora FC", "Deportivo Lara", "CD Godoy Cruz", "Real Cartagena"],
+    "pequeño": [
+        "Estudiantes de Mérida", "Zamora FC", "Deportivo Lara", "CD Godoy Cruz", "Real Cartagena",
+        "Metropolitanos FC", "Portuguesa FC", "Yaracuyanos FC", "Aragua FC", "Deportivo Rionegro",
+        "Unión Magdalena", "CD Palestino",
+    ],
 }
 FUERZA_CLUB = {"grande": 88, "mediano": 74, "pequeño": 58}
 
@@ -268,6 +275,9 @@ COLOR_CLUB = {
     "Deportivo Táchira": "#8B1E3F", "Millonarios FC": "#004C97",
     "Estudiantes de Mérida": "#6B2E8C", "Zamora FC": "#7A1FA2", "Deportivo Lara": "#003DA5",
     "CD Godoy Cruz": "#004B87", "Real Cartagena": "#B5121B",
+    "Metropolitanos FC": "#5A2A82", "Portuguesa FC": "#B01E23", "Yaracuyanos FC": "#1E7A3D",
+    "Aragua FC": "#8B1E1E", "Deportivo Rionegro": "#D2001C", "Unión Magdalena": "#B5121B",
+    "CD Palestino": "#8B1E1E",
 }
 
 BANDERAS = {
@@ -322,6 +332,15 @@ POSICIONES = {
             {"pregunta": "Fallaste un mano a mano importante. ¿Qué actitud táctica conviene para seguir siendo útil?",
              "opciones": ["Seguir generando desmarques y buscando la siguiente jugada", "Dejar de participar el resto del partido", "Discutir con el árbitro", "Bajar a defender toda la línea"],
              "correcta": "Seguir generando desmarques y buscando la siguiente jugada"},
+            {"pregunta": "El lateral rival sube mucho al ataque y deja espacio a su espalda. ¿Qué haces?",
+             "opciones": ["Atacar esa espalda en cuanto tu equipo recupere el balón", "Ignorar el espacio y quedarte quieto", "Bajar a marcarlo en su propio campo", "Pedir el cambio inmediatamente"],
+             "correcta": "Atacar esa espalda en cuanto tu equipo recupere el balón"},
+            {"pregunta": "Te marcan con dos defensores todo el partido. ¿Cómo le sacas provecho a la situación?",
+             "opciones": ["Abriendo espacio para que un compañero libre reciba y remate", "Quejándote con el árbitro por la marca doble", "Peleando físicamente con los dos marcadores", "Dejando de moverte para cansarlos"],
+             "correcta": "Abriendo espacio para que un compañero libre reciba y remate"},
+            {"pregunta": "Vas empatando y tu equipo tiene un tiro de esquina a favor en el último minuto. ¿Dónde te ubicas?",
+             "opciones": ["En una zona de remate con buen ángulo al arco", "En tu propia área por si acaso", "Fuera del campo de juego", "Pegado al banderín del córner"],
+             "correcta": "En una zona de remate con buen ángulo al arco"},
         ],
     },
     "Centrocampista": {
@@ -357,6 +376,15 @@ POSICIONES = {
             {"pregunta": "El rival te marca hombre a hombre muy de cerca. ¿Cómo te desmarcas?",
              "opciones": ["Con movimientos cortos y cambios de ritmo para generar espacio", "Quedándote quieto esperando el balón", "Corriendo siempre en línea recta", "Alejándote del juego por completo"],
              "correcta": "Con movimientos cortos y cambios de ritmo para generar espacio"},
+            {"pregunta": "Tu equipo pierde la posesión justo después de un ataque fallido. ¿Qué prioridad táctica tienes de inmediato?",
+             "opciones": ["Presionar rápido para recuperar el balón cerca del área rival", "Retroceder caminando sin prisa", "Ir a discutir la jugada con el árbitro", "Quedarte parado esperando instrucciones"],
+             "correcta": "Presionar rápido para recuperar el balón cerca del área rival"},
+            {"pregunta": "Ves que tu equipo está jugando demasiado por el mismo costado. ¿Qué aportas?",
+             "opciones": ["Buscar cambios de orientación hacia el lado libre", "Insistir todavía más por ese mismo costado", "Bajar a jugar de defensor central", "Pedir que te saquen del partido"],
+             "correcta": "Buscar cambios de orientación hacia el lado libre"},
+            {"pregunta": "Faltan 20 minutos y tu equipo va perdiendo. ¿Qué tipo de pase prioriza el mediocampo?",
+             "opciones": ["Pases más verticales y directos hacia los atacantes", "Pases exclusivamente hacia atrás", "Ningún pase, solo balones al córner", "Pases cruzados sin sentido"],
+             "correcta": "Pases más verticales y directos hacia los atacantes"},
         ],
     },
     "Defensa": {
@@ -392,6 +420,15 @@ POSICIONES = {
             {"pregunta": "Tienes que iniciar la jugada desde el fondo bajo presión rival. ¿Qué priorizas?",
              "opciones": ["Buscar líneas de pase seguras con apoyos cercanos", "Un pelotazo largo sin pensar", "Perder tiempo driblando en tu propia área", "Pasarle siempre al arquero y nada más"],
              "correcta": "Buscar líneas de pase seguras con apoyos cercanos"},
+            {"pregunta": "El delantero rival intenta ponerse en fuera de juego constantemente. ¿Qué haces con la línea defensiva?",
+             "opciones": ["Coordinar la subida de línea junto a tus compañeros", "Retroceder tú solo sin avisar a nadie", "Ignorar la posición de la línea", "Salir corriendo del campo"],
+             "correcta": "Coordinar la subida de línea junto a tus compañeros"},
+            {"pregunta": "Tu equipo defiende un tiro libre indirecto muy cerca del área. ¿Qué prioridad tienes?",
+             "opciones": ["Formar una barrera compacta y cubrir bien el arco", "Salir todos del área antes de que pateen", "No prestar atención a la jugada", "Dejar la barrera desorganizada"],
+             "correcta": "Formar una barrera compacta y cubrir bien el arco"},
+            {"pregunta": "Un rival te encara con una finta rápida hacia adentro. ¿Cómo reaccionas?",
+             "opciones": ["Mantener el equilibrio y no comprometerte antes de tiempo", "Lanzarte al primer amague", "Darle la espalda al balón", "Salir corriendo del área"],
+             "correcta": "Mantener el equilibrio y no comprometerte antes de tiempo"},
         ],
     },
     "Portero": {
@@ -427,6 +464,15 @@ POSICIONES = {
             {"pregunta": "El delantero rival remata cruzado desde un ángulo cerrado. ¿Qué cubres primero?",
              "opciones": ["El primer palo, la zona más probable de remate", "El segundo palo siempre", "El centro del arco sin ajustar", "Sales del arco a tapar el ángulo completo"],
              "correcta": "El primer palo, la zona más probable de remate"},
+            {"pregunta": "Tu defensa comete un error y un rival queda solo frente a ti dentro del área. ¿Qué transmites en ese instante?",
+             "opciones": ["Calma y concentración para achicar bien el ángulo", "Gritos de pánico sin enfocarte en la jugada", "Salir del arco antes de que controle el balón", "Cerrar los ojos y esperar el disparo"],
+             "correcta": "Calma y concentración para achicar bien el ángulo"},
+            {"pregunta": "Terminas de atajar un remate fuerte y el balón queda suelto cerca del área. ¿Qué haces primero?",
+             "opciones": ["Reaccionar rápido para asegurar el rebote antes que el rival", "Quedarte en el piso sin reaccionar", "Mirar a la grada", "Esperar instrucciones del entrenador"],
+             "correcta": "Reaccionar rápido para asegurar el rebote antes que el rival"},
+            {"pregunta": "Tu equipo defiende con una línea alta y hay un balón por encima de la defensa. ¿Qué haces?",
+             "opciones": ["Salir del área a despejar si llegas primero que el rival", "Quedarte fijo en la línea de gol sin moverte", "Ignorar el balón por completo", "Salir del campo de juego"],
+             "correcta": "Salir del área a despejar si llegas primero que el rival"},
         ],
     },
 }
@@ -438,16 +484,28 @@ def calcular_ovr(stats):
     return round((stats["atr1"] + stats["atr2"] + stats["atr3"]) / 3)
 
 
-def generar_ofertas(nota_prueba, ovr):
+def generar_ofertas(nota_prueba, ovr, temporada):
     combinada = (nota_prueba + ovr) / 2
-    if combinada >= 78:
-        tiers = ["grande", "grande", "mediano"]
-    elif combinada >= 58:
-        tiers = ["mediano", "mediano", "pequeño"]
-    elif combinada >= 38:
-        tiers = ["pequeño", "pequeño", "mediano"]
+
+    if temporada < TEMPORADA_DESBLOQUEO_CLUBES_GRANDES:
+        # Nadie ficha por un club grande recién salido de la cantera:
+        # las primeras 2 temporadas son solo de clubes modestos.
+        if combinada >= 60:
+            tiers = ["pequeño", "pequeño", "mediano"]
+        elif combinada >= 35:
+            tiers = ["pequeño", "pequeño"]
+        else:
+            tiers = ["pequeño"]
     else:
-        tiers = ["pequeño"]
+        if combinada >= 78:
+            tiers = ["grande", "grande", "mediano"]
+        elif combinada >= 58:
+            tiers = ["mediano", "mediano", "pequeño"]
+        elif combinada >= 38:
+            tiers = ["pequeño", "pequeño", "mediano"]
+        else:
+            tiers = ["pequeño"]
+
     ofertas = []
     usados = set()
     for tier in tiers:
@@ -629,6 +687,23 @@ def guardar_carrera(nombre, posicion, nacionalidad, ovr_pico, goles, asistencias
     return df
 
 
+def cargar_registros():
+    if os.path.exists(REGISTROS_FILE):
+        return pd.read_csv(REGISTROS_FILE)
+    return pd.DataFrame(columns=["nombre_jugador", "posicion", "nacionalidad", "fecha"])
+
+
+def registrar_persona(nombre, posicion, nacionalidad):
+    df = cargar_registros()
+    nueva = pd.DataFrame([{
+        "nombre_jugador": nombre, "posicion": posicion, "nacionalidad": nacionalidad,
+        "fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }])
+    df = pd.concat([df, nueva], ignore_index=True)
+    df.to_csv(REGISTROS_FILE, index=False)
+    return df
+
+
 def reset_reto_precision():
     ancho = random.randint(14, 20)
     inicio = random.randint(10, 88 - ancho)
@@ -655,12 +730,36 @@ def reset_reto_memoria(posicion):
     st.session_state.memoria_objetivo = [random.choice(jugadas) for _ in range(5)]
     st.session_state.memoria_usuario = []
     st.session_state.memoria_fase = "mostrando"
+    st.session_state.memoria_revelados = 1
     st.session_state.memoria_score = 0
+
+
+def render_secuencia_visual(pasos, total):
+    html = '<div style="display:flex; align-items:center; gap:4px; flex-wrap:wrap; margin:12px 0;">'
+    for i in range(total):
+        if i < len(pasos):
+            contenido = pasos[i]
+            estilo = "background:var(--verde-claro); border:2px solid var(--verde); color:var(--verde-oscuro);"
+        else:
+            contenido = "?"
+            estilo = "background:#F0F2F0; border:2px dashed #C7D6CC; color:#AEBFB4;"
+        html += (f'<div style="{estilo} border-radius:12px; padding:10px 8px; font-weight:800; '
+                 f'font-size:0.82em; min-width:64px; text-align:center; flex:1;">{contenido}</div>')
+        if i < total - 1:
+            html += '<div style="color:var(--dorado); font-size:1.2em; font-weight:800;">➜</div>'
+    html += "</div>"
+    st.markdown(html, unsafe_allow_html=True)
 
 
 def reset_reto_trivia(posicion):
     banco = POSICIONES[posicion]["preguntas"]
-    st.session_state.trivia_preguntas = random.sample(banco, min(5, len(banco)))
+    preguntas = random.sample(banco, min(5, len(banco)))
+    st.session_state.trivia_preguntas = preguntas
+    st.session_state.trivia_opciones = []
+    for p in preguntas:
+        opciones_mezcladas = p["opciones"][:]
+        random.shuffle(opciones_mezcladas)
+        st.session_state.trivia_opciones.append(opciones_mezcladas)
     st.session_state.trivia_idx = 0
     st.session_state.trivia_correctas = 0
     st.session_state.trivia_respondido = False
@@ -684,6 +783,25 @@ if "ovr_pico" not in st.session_state:
     st.session_state.ovr_pico = 0
 if "historial_temporadas" not in st.session_state:
     st.session_state.historial_temporadas = []
+
+# =========================================================
+# PANEL DE ADMINISTRADOR (barra lateral, con contraseña)
+# =========================================================
+with st.sidebar:
+    st.markdown("#### 🔐 Panel de administrador")
+    clave_ingresada = st.text_input("Contraseña", type="password", key="clave_admin")
+    if clave_ingresada == ADMIN_PASSWORD:
+        st.success("Acceso concedido")
+        df_registros = cargar_registros()
+        st.markdown(f"**Total de personas registradas:** {len(df_registros)}")
+        if not df_registros.empty:
+            st.dataframe(df_registros.sort_values(by="fecha", ascending=False), use_container_width=True, hide_index=True)
+            csv_registros = df_registros.to_csv(index=False).encode("utf-8")
+            st.download_button("⬇️ Descargar registros (CSV)", csv_registros, "registros.csv", "text/csv")
+        else:
+            st.info("Todavía no hay registros.")
+    elif clave_ingresada:
+        st.error("Contraseña incorrecta")
 
 # =========================================================
 # ENCABEZADO
@@ -717,6 +835,7 @@ if st.session_state.etapa == "crear_jugador":
             st.warning("Escribe un nombre para tu jugador.")
         else:
             st.session_state.jugador = {"nombre": nombre.strip(), "posicion": posicion, "nacionalidad": nacionalidad, "pie": pie}
+            registrar_persona(nombre.strip(), posicion, nacionalidad)
             st.session_state.stats = dict(POSICIONES[posicion]["stats_base"])
             for k in st.session_state.stats:
                 st.session_state.stats[k] = max(15, min(60, st.session_state.stats[k] + random.randint(-5, 5)))
@@ -856,17 +975,27 @@ elif st.session_state.etapa == "reto_memoria":
     st.caption(cfg["desc_memoria"])
 
     with st.container(border=True):
+        largo = len(st.session_state.memoria_objetivo)
+
         if st.session_state.memoria_fase == "mostrando":
-            secuencia_txt = "  →  ".join(st.session_state.memoria_objetivo)
-            st.info(f"**Secuencia a memorizar:**\n\n{secuencia_txt}")
-            if st.button("👁️ Ya la memoricé, ocultar y repetir", use_container_width=True):
-                st.session_state.memoria_fase = "repitiendo"
-                st.rerun()
+            revelados = st.session_state.memoria_revelados
+            st.markdown(f"**Jugada ensayada — paso {revelados} de {largo}:**")
+            render_secuencia_visual(st.session_state.memoria_objetivo[:revelados], largo)
+
+            if revelados < largo:
+                if st.button("👁️ Ver el siguiente paso de la jugada", use_container_width=True):
+                    st.session_state.memoria_revelados += 1
+                    st.rerun()
+            else:
+                st.caption("Ya viste la jugada completa. Memorízala antes de continuar.")
+                if st.button("🔁 ¡La memoricé! Ahora la repito", use_container_width=True):
+                    st.session_state.memoria_fase = "repitiendo"
+                    st.rerun()
 
         elif st.session_state.memoria_fase == "repitiendo":
-            largo = len(st.session_state.memoria_objetivo)
             progreso = len(st.session_state.memoria_usuario)
-            st.markdown(f"**Tu secuencia hasta ahora ({progreso}/{largo}):** " + " → ".join(st.session_state.memoria_usuario))
+            st.markdown(f"**Reconstruye la jugada ({progreso}/{largo}):**")
+            render_secuencia_visual(st.session_state.memoria_usuario, largo)
             jugadas = cfg["jugadas_memoria"]
             cols = st.columns(len(jugadas))
             for c, jugada in zip(cols, jugadas):
@@ -880,8 +1009,10 @@ elif st.session_state.etapa == "reto_memoria":
 
         elif st.session_state.memoria_fase == "resultado":
             score = st.session_state.memoria_score
-            st.markdown("**Secuencia correcta:** " + " → ".join(st.session_state.memoria_objetivo))
-            st.markdown("**Tu secuencia:** " + " → ".join(st.session_state.memoria_usuario))
+            st.markdown("**Jugada correcta:**")
+            render_secuencia_visual(st.session_state.memoria_objetivo, largo)
+            st.markdown("**Tu repetición:**")
+            render_secuencia_visual(st.session_state.memoria_usuario, largo)
             if score >= 90:
                 st.success(f"¡Jugada perfecta! Puntaje: {score}")
             elif score >= 50:
@@ -912,7 +1043,7 @@ elif st.session_state.etapa == "reto_trivia":
         p = preguntas[idx]
         st.markdown(f"#### {p['pregunta']}")
 
-        seleccion = st.radio("Elige tu decisión:", p["opciones"], index=None,
+        seleccion = st.radio("Elige tu decisión:", st.session_state.trivia_opciones[idx], index=None,
                               key=f"trivia_radio_{idx}", disabled=st.session_state.trivia_respondido)
 
         if not st.session_state.trivia_respondido:
@@ -962,7 +1093,7 @@ elif st.session_state.etapa == "resumen_entrenamiento":
         if ovr_actual > st.session_state.ovr_pico:
             st.session_state.ovr_pico = ovr_actual
         st.session_state.aplicado_ganancias = st.session_state.temporada
-        st.session_state.ofertas_actuales = generar_ofertas(nota_prueba, ovr_actual)
+        st.session_state.ofertas_actuales = generar_ofertas(nota_prueba, ovr_actual, st.session_state.temporada)
 
     st.markdown("### 📊 Resultado de los retos")
     col1, col2, col3 = st.columns(3)
@@ -976,6 +1107,8 @@ elif st.session_state.etapa == "resumen_entrenamiento":
     st.markdown(f"{cfg['atr1_nombre']} +{ganancia_atr1} · {cfg['atr2_nombre']} +{ganancia_atr2} · {cfg['atr3_nombre']} +{ganancia_atr3}")
 
     st.markdown("### 📨 Ofertas de clubes")
+    if st.session_state.temporada < TEMPORADA_DESBLOQUEO_CLUBES_GRANDES:
+        st.caption("🌱 Todavía te estás dando a conocer: por ahora solo se fijan en ti clubes modestos. Los grandes empiezan a mirarte a partir de la temporada 3, si rindes bien.")
     if not st.session_state.ofertas_actuales:
         st.warning("Ningún club se fijó en ti esta temporada. Te quedas en la cantera entrenando otro año más.")
         if st.button("➡️ Continuar", use_container_width=True):
