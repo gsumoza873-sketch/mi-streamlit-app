@@ -16,7 +16,7 @@ st.set_page_config(
 
 CARRERAS_FILE = "carreras.csv"
 REGISTROS_FILE = "registros.csv"
-ADMIN_PASSWORD = "vinotinto2026"  # Cámbiala por la que quieras, Gabriel
+ADMIN_PASSWORD = "vinotinto2026"  # Cámbiala por la que quieras
 EDAD_INICIAL = 16
 EDAD_RETIRO_FORZOSO = 36
 EDAD_MIN_RETIRO_VOLUNTARIO = 30
@@ -57,8 +57,7 @@ st.markdown("""
     z-index: 999;
 }
 
-/* Regla base de texto oscuro con especificidad CERO (gracias a :where),
-   así cualquier clase específica (badges, botones, banners) la gana sin pelear. */
+/* Regla base de texto oscuro para la app general */
 :where(
     .stApp p, .stApp li, .stApp span, .stApp label,
     .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5,
@@ -71,6 +70,24 @@ st.markdown("""
     .stCaption, [data-testid="stCaptionContainer"]
 ) {
     color: var(--texto) !important;
+}
+
+/* ESTILOS DE LA BARRA LATERAL (SIDEBAR / ADMIN) */
+[data-testid="stSidebar"] {
+    background-color: #121212 !important;
+    border-right: 2px solid var(--verde-oscuro);
+}
+
+[data-testid="stSidebar"] * {
+    color: #FFFFFF !important;
+}
+
+/* Input de contraseña dentro de la barra lateral */
+[data-testid="stSidebar"] input {
+    background-color: #222222 !important;
+    color: #FFFFFF !important;
+    border: 1px solid var(--verde) !important;
+    border-radius: 8px !important;
 }
 
 h1, h2, h3, h4 {
@@ -143,7 +160,6 @@ span.tag-dorado {
 .stat-box .valor { font-family: 'Poppins', sans-serif; font-size: 1.9em; font-weight: 800; color: var(--verde-oscuro) !important; line-height: 1.1; }
 .stat-box .etiqueta { font-size: 0.76em; color: var(--texto) !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
 
-/* Tarjeta de jugador estilo "carta" con bandera, posición y OVR destacado */
 .jugador-card {
     background: linear-gradient(120deg, var(--verde-oscuro) 0%, var(--verde) 60%, var(--dorado) 130%);
     border-radius: 20px;
@@ -173,8 +189,6 @@ span.tag-dorado {
 .jugador-card .ovr-gema .num { font-size: 1.5em; font-weight: 800; color: var(--verde-oscuro) !important; line-height: 1; }
 .jugador-card .ovr-gema .lbl { font-size: 0.55em; font-weight: 700; color: var(--verde) !important; letter-spacing: 0.05em; }
 
-/* Consistencia: todos los encabezados dentro de tarjetas usan el verde de marca,
-   no el negro genérico, para que el look se sienta diseñado y no plano */
 div[data-testid="stVerticalBlockBorderWrapper"] h1,
 div[data-testid="stVerticalBlockBorderWrapper"] h2,
 div[data-testid="stVerticalBlockBorderWrapper"] h3,
@@ -182,7 +196,6 @@ div[data-testid="stVerticalBlockBorderWrapper"] h4 {
     color: var(--verde-oscuro) !important;
 }
 
-/* Indicador de pasos (stepper) para los 3 retos de la temporada */
 .stepper { display: flex; align-items: center; justify-content: center; margin-bottom: 18px; gap: 4px; }
 .stepper .paso {
     width: 40px; height: 40px; border-radius: 50%;
@@ -267,7 +280,6 @@ CLUBES = {
 }
 FUERZA_CLUB = {"grande": 88, "mediano": 74, "pequeño": 58}
 
-# Color propio de cada club, para que la app se sienta distinta según dónde firmes
 COLOR_CLUB = {
     "Real Madrid": "#8A6D00", "Manchester City": "#6CABDD", "Bayern Múnich": "#DC052D",
     "Flamengo": "#C8102E", "Boca Juniors": "#1E3A8A",
@@ -294,9 +306,6 @@ ICONO_ATRIBUTO = {
 
 # =========================================================
 # CONFIGURACIÓN POR POSICIÓN
-# (cada posición tiene sus propios 3 atributos, su propio banco de
-#  preguntas tácticas y su propio vocabulario de jugadas para el reto
-#  de memoria — así un portero nunca entrena ni es evaluado como delantero)
 # =========================================================
 POSICIONES = {
     "Delantero": {
@@ -488,8 +497,6 @@ def generar_ofertas(nota_prueba, ovr, temporada):
     combinada = (nota_prueba + ovr) / 2
 
     if temporada < TEMPORADA_DESBLOQUEO_CLUBES_GRANDES:
-        # Nadie ficha por un club grande recién salido de la cantera:
-        # las primeras 2 temporadas son solo de clubes modestos.
         if combinada >= 60:
             tiers = ["pequeño", "pequeño", "mediano"]
         elif combinada >= 35:
@@ -573,13 +580,6 @@ def simular_temporada(stats, club, posicion):
 
 
 def calcular_valor_mercado(ovr, edad, club_tier):
-    """
-    Calibrado para parecerse a rangos reales de Transfermarkt: la edad y el
-    rendimiento importan, pero el factor que más dispara el valor es jugar
-    en un club grande con buen nivel. Un juvenil de 16 años sin club, por
-    ejemplo, vale apenas unos miles de euros (no millones) — así es en la
-    vida real: sin minutos ni club, no hay valor de mercado real todavía.
-    """
     base_millones = 0.00017 * (1.1616 ** ovr)
 
     if edad < 22:
@@ -629,7 +629,7 @@ def narrativa_resultado_temporada(resultado, posicion, nombre, nota):
     if resultado.get("lesionado"):
         return random.choice([
             f"Una lesión le robó tiempo valioso a {nombre} esta temporada, pero se sobrepuso para volver a las canchas.",
-            f"El parón por lesión fue dura para {nombre}, aunque el regreso demostró que el carácter no se lesiona.",
+            f"El parón por lesión fue dura para {nombre}, aunque el regreso demonstrated que el carácter no se lesiona.",
         ])
     if nota >= 85:
         return random.choice([
@@ -715,9 +715,6 @@ def reset_reto_precision():
 
 
 def posicion_barra(t_inicio, periodo):
-    """Réplica en Python de la misma animación CSS (ida y vuelta lineal),
-    para poder puntuar el disparo según el instante real del clic sin
-    depender de que el navegador nos devuelva ningún dato."""
     transcurrido = time.time() - t_inicio
     ciclo = (transcurrido % periodo) / periodo
     if ciclo < 0.5:
@@ -1044,7 +1041,7 @@ elif st.session_state.etapa == "reto_trivia":
         st.markdown(f"#### {p['pregunta']}")
 
         seleccion = st.radio("Elige tu decisión:", st.session_state.trivia_opciones[idx], index=None,
-                              key=f"trivia_radio_{idx}", disabled=st.session_state.trivia_respondido)
+                             key=f"trivia_radio_{idx}", disabled=st.session_state.trivia_respondido)
 
         if not st.session_state.trivia_respondido:
             if st.button("✅ Confirmar decisión", disabled=(seleccion is None)):
